@@ -1,0 +1,20 @@
+  /* TEAM */
+
+  Web Designer: Ed Jones
+  Contact: ed [at] cornellstudios.com
+  Website: https://www.cornellstudios.com
+  From: Portadown, Northern Ireland
+
+  Web Developer: Gary McNally
+  Contact: gary [at] cornellstudios.com
+  Twitter: @garymcnally
+  Website: https://www.cornellstudios.com
+  From: Ireland/Northern Ireland
+
+  /* SITE */
+
+  Version: 1.5
+  Site live: 09.09.2019
+  Last update: 29.06.2023
+  Standards/Tech: HTML5, CSS3, PHP, mySQL
+  Frameworks: Laravel, Bootstrap v4, matchheight.js

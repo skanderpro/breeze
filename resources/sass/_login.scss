@@ -1,0 +1,106 @@
+.login {
+  background: #2B88F1 url(../images/login_bg.jpg) center center no-repeat;
+  background-size: cover;
+  form {
+    padding: 15px;
+    height: 100%;
+    color: #fff;
+    background: rgba(43, 136, 241, .5);
+    input {
+      color: #fff;
+      border-radius: 0;
+      border-bottom: 1px solid #fff;
+      font-weight: 700;
+      width: 100%;
+    }
+    input[type="email"] {
+      background: url(../images/email.svg) left no-repeat !important;
+      padding-left: 25px;
+      color: #fff;
+      &:focus {
+        background: none;
+      }
+    }
+    input[type="password"] {
+      background: url(../images/password.svg) left no-repeat !important;
+      padding-left: 25px;
+      color: #fff;
+      &:focus {
+        background: none;
+      }
+    }
+    button {
+      width: 100%;
+      background-color: #0D2134;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    a {
+      color: #fff;
+    }
+    ::placeholder {
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .login_branding {
+      max-width: 100%;
+      @include media-breakpoint-up(md) {
+        position: absolute;
+        bottom: 50px;
+      }
+      @include media-breakpoint-down(md) {
+        margin-top: 25px;
+      }
+    }
+  }
+  .content {
+    color: #fff;
+    font-weight: 300;
+    padding-left: 50px;
+    padding-bottom: 50px;
+    background: rgb(42,137,244);
+    background: linear-gradient(180deg, rgba(42,137,244,0.6) 0%, rgba(17,49,87,0.6) 100%);
+    h1 {
+      font-size: 60px;
+      margin-bottom: 100px;
+      font-weight: 200;
+      span {
+        font-weight: 700;
+      }
+    }
+    p {
+      width: 50%;
+      margin-bottom: 25px;
+      &:first-of-type {
+        font-size: 25px;
+        width: 75%;
+        margin-bottom: 75px;
+      }
+    }
+    a {
+      font-size: 45px;
+      color: #fff;
+      font-weight: 300;
+      transition: .5s;
+      &:hover {
+        color: #000;
+      }
+    }
+  }
+  footer {
+    color: #fff;
+    a {
+      color: #fff;
+      &:hover {
+        color: #000;
+      }
+    }
+    .byline {
+      span {
+        border-bottom: 6px solid #fff;
+      }
+    }
+  }
+}
