@@ -58,6 +58,10 @@
           <div class="offset-md-3 col-md-6">
 
             <div class="row">
+            <div class="col-lg-4 {{ $errors->has('green_supplier') ? ' has-error' : '' }}">
+                <label for="name" class="col-form-label">{{ __('Green Supplier') }}</label>
+                <input type="checkbox" id="green_supplier" name="green_supplier" value="1">
+            </div>
               <div class="col-lg-4 {{ $errors->has('merchantPlumbing') ? ' has-error' : '' }}">
                 <label for="name" class="col-form-label">{{ __('Plumbing') }}</label>
                 <input type="checkbox" id="merchantPlumbing" name="merchantPlumbing" value="YES">

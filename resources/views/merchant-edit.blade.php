@@ -152,6 +152,20 @@
             </div>
 
             <div class="form-group row">
+                <div class="col-lg-2 {{ $errors->has('green_supplier') ? ' has-error' : '' }}">
+                    <label for="name" class="col-form-label">{{ __('Green Supplier') }}</label>
+
+
+                    <input type="checkbox" id="green_supplier" name="green_supplier" value="1" @if($merchants->green_supplier) checked @endif>
+
+                    @if ($errors->has('green_supplier'))
+                        <span class="help-block">
+                  <strong>{{ $errors->first('green_supplier') }}</strong>
+                </span>
+                    @endif
+
+                </div>
+
               <div class="col-lg-2 {{ $errors->has('merchantPlumbing') ? ' has-error' : '' }}">
                 <label for="name" class="col-form-label">{{ __('Plumbing') }}</label>
 

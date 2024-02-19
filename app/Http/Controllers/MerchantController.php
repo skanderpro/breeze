@@ -29,7 +29,7 @@ class MerchantController extends Controller
   public function createMerchant(Request $request)
   {
 
-    $this->validate($request, [
+    $payload = $this->validate($request, [
         'merchantName' => 'required|max:255',
         'merchantId' => 'required|max:255',
         'merchantAddress1' => 'required|max:255',
@@ -38,11 +38,14 @@ class MerchantController extends Controller
         'merchantPostcode' => 'required|max:10',
         'merchantPhone' => 'required|max:22',
         'merchantEmail' => 'required|max:255',
+
         'lng' => 'required|max:12',
         'lat' => 'required|max:12',
         ]);
 
-    Merchant::create($request->toArray());
+    $payload['green_supplier'] = $request->input('green_supplier', false);
+
+    Merchant::create($payload);
 
     return Redirect::to('merchant-list')->with('message', 'Merchant successfully added');
 
@@ -128,9 +131,10 @@ class MerchantController extends Controller
         ]);
 
     $editMerchant = Merchant::findOrFail($id);
-    $input = $request->all();
+      $input = $request->all();
+      $input['green_supplier'] = $request->input('green_supplier', false);
 
-    $editMerchant->fill($input)->save();
+      $editMerchant->fill($input)->save();
 
     return Redirect::to("/merchant-edit/$id")
     ->with('message', 'Merchant successfully edited');

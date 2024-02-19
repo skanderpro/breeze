@@ -31,6 +31,7 @@ class Merchant extends Model
         'merchantIronmongery',
         'merchantTyres',
         'merchantHealth',
+        'green_supplier',
         'lng',
         'lat',
         'merchantContactName',
