@@ -2,16 +2,11 @@
 
 namespace App\Exports;
 
-use App\Po;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use App\Models\Po;
 use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromView;
 
-use Auth;
-
-use Illuminate\Http\Request;
 
 class PoExport implements FromView
 {

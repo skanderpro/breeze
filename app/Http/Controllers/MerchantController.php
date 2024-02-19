@@ -8,6 +8,7 @@ use App\Exports\MerchantExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class MerchantController extends Controller

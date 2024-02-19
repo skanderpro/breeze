@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Merchant;
+use App\Models\Merchant;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 
