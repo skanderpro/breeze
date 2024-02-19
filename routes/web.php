@@ -15,6 +15,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PoController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,19 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('users/{id}', [UserController::class, 'edit']);
     Route::post('users/{id}', [UserController::class, 'update']);
+
+//company routes
+    Route::get('pages', [PageController::class, 'index'])->name('pages');
+    Route::get('page/create', [PageController::class, 'create'])->name('create-page');
+    Route::post('page/create', [PageController::class, 'store'])->name('store-page');
+    Route::get('page/{page}/edit', [PageController::class, 'edit'])->name('edit-page');
+    Route::post('page/{page}/edit', [PageController::class, 'update'])->name('update-page');
+//    Route::get('/company-delete/{id}', [CompanyController::class, 'removeCompany']);
+//    Route::get('/company-edit/{id}', [CompanyController::class, 'detailsCompany']);
+//    Route::post('company-edit/{id}', [CompanyController::class, 'editCompany']);
+//    Route::get('/company-disable/{id}', [CompanyController::class, 'disableCompany']);
+//    Route::get('/company-enable/{id}', [CompanyController::class, 'enableCompany']);
+
 
 //company routes
     Route::get('company-list', [CompanyController::class, 'showCompany']);

@@ -53,6 +53,24 @@
             </div>
 
             <div class="blue">
+                <div class="hash">
+                    #
+                </div>
+                <a href="{{ route('create-page') }}">
+                    <span>Create</span><br />Page
+                </a>
+            </div>
+
+            <div class="blue">
+                <div class="hash">
+                    #
+                </div>
+                <a href="{{ route('pages') }}">
+                    <span>Manage</span><br />Pages
+                </a>
+            </div>
+
+            <div class="blue">
               <div class="hash">
                 #
               </div>

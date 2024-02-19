@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->name('v1.')->group(function () {
-   Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+   Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/pages', [PageController::class, 'index'])->name('get-pages');
+    Route::get('/page/{page:slug}', [PageController::class, 'single'])->name('get-page');
 });
