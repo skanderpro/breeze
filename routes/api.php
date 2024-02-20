@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\MerchantController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
@@ -37,6 +38,12 @@ Route::prefix('v1')->name('v1.')->group(function () {
 
     Route::name('merchants.')->prefix('/merchants')->group(function () {
         Route::get('/', [MerchantController::class, 'index'])->name('index');
+    });
+
+    Route::name('notifications.')->prefix('/notifications')->middleware(['auth:sanctum'])->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::patch('/{notification}', [NotificationController::class, 'markAsRead'])->name('markAsRead');
+        Route::delete('/', [NotificationController::class, 'removeRead'])->name('removeRead');
     });
 
 });
