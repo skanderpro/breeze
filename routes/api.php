@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
@@ -32,6 +33,10 @@ Route::prefix('v1')->name('v1.')->group(function () {
     Route::name('companies.')->prefix('/companies')->group(function () {
         Route::get('/', [CompanyController::class, 'index'])->name('index');
         Route::get('/{company}', [CompanyController::class, 'single'])->name('single');
+    });
+
+    Route::name('merchants.')->prefix('/merchants')->group(function () {
+        Route::get('/', [MerchantController::class, 'index'])->name('index');
     });
 
 });
