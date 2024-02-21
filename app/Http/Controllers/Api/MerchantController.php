@@ -13,6 +13,17 @@ class MerchantController extends Controller
     {
         $qb = Merchant::query();
 
+        $search = $request->get('search');
+        if (!empty($search)) {
+            $qb = $qb->where('merchantName','LIKE',"%$search%")
+                ->orwhere('merchantId','LIKE',"%$search%")
+                ->orwhere('merchantAddress1','LIKE',"%$search%")
+                ->orwhere('merchantAddress2','LIKE',"%$search%")
+                ->orwhere('merchantPostcode','LIKE',"%$search%")
+                ->orwhere('merchantEmail','LIKE',"%$search%")
+                ->orderBy('merchantName', 'asc');
+        }
+
         $name = $request->get('name');
         if (!empty($name)) {
             $qb = $qb->where('merchantName', 'like', '%' . $name . '%');
