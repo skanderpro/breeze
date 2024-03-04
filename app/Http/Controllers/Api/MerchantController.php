@@ -104,6 +104,6 @@ class MerchantController extends Controller
             $qb = $qb->where('merchantHealth', $merchantHealth);
         }
 
-        return MerchantResource::collection($qb->paginate());
+        return MerchantResource::collection($qb->get());
     }
 }
