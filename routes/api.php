@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PoController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,4 +48,16 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::delete('/', [NotificationController::class, 'removeRead'])->name('removeRead');
     });
 
+    Route::name('users.')->prefix('/users')->middleware(['auth:sanctum'])->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/account', [UserController::class, 'account'])->name('account');
+        Route::patch('/enable/{id}', [UserController::class, 'enableUser'])->name('enable');
+        Route::patch('/disable/{id}', [UserController::class, 'disableUser'])->name('disable');
+        Route::patch('/update/{id}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{id}', [UserController::class, 'removeUser'])->name('remove');
+    });
+
+    Route::name('po.')->prefix('/po')->middleware(['auth:sanctum'])->group(function () {
+        Route::get('/', [PoController::class, 'index'])->name('index');
+    });
 });
