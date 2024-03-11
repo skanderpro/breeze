@@ -59,5 +59,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
 
     Route::name('po.')->prefix('/po')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [PoController::class, 'index'])->name('index');
+        Route::get('/{id}', [PoController::class, 'show'])->name('show');
+        Route::post('/', [PoController::class, 'storePo'])->name('storePo');
+        Route::patch('/{id}', [PoController::class, 'update'])->name('update');
     });
 });
