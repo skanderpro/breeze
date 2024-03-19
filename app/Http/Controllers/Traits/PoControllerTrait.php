@@ -333,4 +333,13 @@ trait PoControllerTrait
 
         return $editPo;
     }
+	
+	
+	public function cancelPo($id){
+		$editPo = Po::findOrFail($id);
+		$editPo->poCancelled = 1;
+		$editPo->update();
+		return $editPo;
+	}
+	
 }

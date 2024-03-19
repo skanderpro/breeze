@@ -38,4 +38,11 @@ class PoController extends Controller
 
         return PoResource::make($po);
     }
+	
+	public function cancel($id)
+	{
+		$po = $this->cancelPo($id);
+
+        return PoResource::make($po);
+	}
 }
