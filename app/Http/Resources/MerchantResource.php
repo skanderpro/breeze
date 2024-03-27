@@ -44,8 +44,8 @@ class MerchantResource extends JsonResource
             'contact_name' => $this->resource->merchantContactName,
             'contact_email' => $this->resource->merchantContactEmail,
             'contact_phone' => $this->resource->merchantContactPhone,
-            'created_at' => $this->resource->created_at,
-            'updated_at' => $this->resource->updated_at,
+            // 'created_at' => $this->resource->created_at,
+            // 'updated_at' => $this->resource->updated_at,
             'green_supplier' => $this->resource->green_supplier,
 
         ];

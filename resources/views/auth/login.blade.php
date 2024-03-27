@@ -1,6 +1,7 @@
 @extends('layouts.login')
 
 @section('content')
+@php echo phpinfo(); @endphp
 	<style>
 		header,
 		footer{
