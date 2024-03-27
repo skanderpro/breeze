@@ -42,7 +42,7 @@
           <div class="form-group row  {{ $errors->has('description') ? ' has-error' : '' }}">
               <div class="offset-md-3 col-md-6">
                   <label for="name" class="col-form-label">{{ __('Description') }}</label>
-                  <textarea class="form-control" id="description" name="description" rows="10" cols="30" required>
+                  <textarea class="form-control tinymce" id="description" name="description" rows="10" cols="30" required>
                       {{ !empty($page->description) ? $page->description : '' }}
                   </textarea>
 
