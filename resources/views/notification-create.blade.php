@@ -12,12 +12,12 @@
       <h3>Operator</h3>
       <p>{{ Auth::user()->name }}</p>
 
-      @if (Auth::user()->accessLevel == '3' || Auth::user()->accessLevel == '2')
+      @cannot(\App\Enums\Permission::MENU_READ_ADMIN)
 
         <h3>For assistance please call</h3>
         <p class="phone">{{ $adminusr->phone }}</p>
 
-      @endif
+      @endcannot
 
       <h3>Date</h3>
       <p><?php echo date('d.m.y') ?></p>

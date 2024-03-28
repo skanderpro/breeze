@@ -15,7 +15,7 @@
             </a>
           </div>
 
-          @if (Auth::user()->accessLevel == '1')
+          @can (\App\Enums\Permission::MENU_READ_ADMIN->value)
             <div class="blue">
               <div class="hash">
                 #
@@ -78,7 +78,7 @@
                 <span>Create</span><br />Notification
               </a>
             </div>
-          @endif
+          @endcan
           {{-- @if (Auth::user()->accessLevel != '1') --}}
           <div class="navy">
             <div class="hash">
@@ -140,7 +140,7 @@
                   </div>
                 </div>
               </a>
-              @if (Auth::user()->accessLevel == '1' || Auth::user()->accessLevel == '2')
+              @can (\App\Enums\Permission::COMPANY_MANAGE)
               <a href="{{ url('/register') }}">
                 <div class="row add">
                   <div class="col-6">
@@ -162,7 +162,7 @@
                   </div>
                 </div>
               </a>
-              @endif
+              @endcan
             </div>
 
 

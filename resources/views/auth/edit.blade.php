@@ -23,7 +23,7 @@
       <div class="col-md-7 col-lg-9 form">
         @if (Auth::check())
 
-        @if (Auth::user()->accessLevel == 1 || Auth::user()->accessLevel == 2)
+        @can (\App\Enums\Permission::COMPANY_MANAGE)
 
         <div class="row">
 
@@ -96,7 +96,7 @@
                 <div class="form-group row">
                   <div class="offset-md-3 col-md-8">
 
-                    @if (Auth::user()->accessLevel == 1)
+                    @can(\App\Enums\Permission::USERS_READ_ALL)
 
                       <label for="name" class="col-form-label">{{ __('Access Level') }}</label>
 
@@ -107,7 +107,7 @@
                         <option value="3" @if ($user->accessLevel == 3) selected @endif>Company User</option>
                       </select>
 
-                    @endif
+                    @endcan
 
 
 
@@ -125,7 +125,7 @@
                 <div class="form-group row">
                   <div class="offset-md-3 col-md-8">
 
-                    @if (Auth::user()->accessLevel == 1)
+                    @can (\App\Enums\Permission::COMPANY_MANAGE_ALL)
 
                       <label for="companyId" class="col-form-label">{{ __('Company') }}</label>
 
@@ -136,7 +136,7 @@
                         @endforeach
                       </select>
 
-                    @endif
+                    @endcan
 
                     @if ($errors->has('companyId'))
                     <span class="help-block">
@@ -209,7 +209,7 @@
 
           You have no business being here
 
-          @endif
+          @endcan
 
           @endif
       </div>

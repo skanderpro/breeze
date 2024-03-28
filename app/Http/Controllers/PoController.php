@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Models\Company;
 use App\Models\Merchant;
 use App\Models\Po;
 use App\Models\User;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use App\Exports\PoExport;
 use App\Exports\PoExportEngineer;
@@ -24,6 +26,11 @@ use Maatwebsite\Excel\Facades\Excel;
 class PoController extends Controller
 {
     use PoControllerTrait;
+
+    public function __construct(AccessCheckInterface $accessCheckService)
+    {
+        $this->accessCheckService = $accessCheckService;
+    }
 
     public function export(Request $request)
     {
@@ -166,7 +173,7 @@ class PoController extends Controller
         return Excel::download(new PoExportNoDate, 'po_export.xlsx');
     }
 
-    public function addPo(Request $request)
+    public function addPo(Request $request, AccessCheckInterface $accessCheck)
     {
         $companies = Company::all();
         // $users = User::all();
@@ -174,7 +181,7 @@ class PoController extends Controller
 
         $companyId = $request->get('companyId');
 
-        if (Auth::user()->accessLevel == '1') {
+        if ($accessCheck->check(Permission::PO_READ_USERS_ALL->value)) {
 
             // if ($companyId) {
             $users = User::select('users.*', 'companies.companyName')
@@ -217,14 +224,14 @@ class PoController extends Controller
 
     }
 
-    public function listPo_bkup(Request $request)
+    public function listPo_bkup(Request $request, AccessCheckInterface $accessCheck)
     {
 
         $adminusr = User::where('accessLevel', '2')->where('companyId', Auth::user()->companyId)->first();
 
         $search = $request->get('search');
 
-        if (Auth::user()->accessLevel == '1') {
+        if ($accessCheck->check(Permission::PO_READ_LIST_ALL)) {
 
 
             if ($search != "") {
@@ -249,7 +256,7 @@ class PoController extends Controller
             }
 
 
-        } elseif (Auth::user()->accessLevel == '2') {
+        } elseif ($accessCheck->check(Permission::PO_READ_LIST_COMPANY_ALL)) {
 
 
             if ($search != "") {
@@ -316,14 +323,14 @@ class PoController extends Controller
 
     }
 
-    public function showPo($id)
+    public function showPo($id, AccessCheckInterface $accessCheck)
     {
 
         // $po = Po::where('id','=',$id)->firstOrFail();
 
         $po = $this->getSingle($id);
 
-        if (Auth::user()->accessLevel == '1') {
+        if ($accessCheck->check(Permission::PO_READ_LIST_ALL)) {
             return view('po-edit', compact('po'));
         } elseif (Auth::user()->companyId != $po->companyId) {
             return Redirect::to('/po-list')
