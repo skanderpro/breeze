@@ -11,7 +11,7 @@
       <h3>Operator</h3>
       <p>{{ Auth::user()->name }}</p>
 
-      @cannot (\App\Enums\Permission::MENU_READ_ADMIN)
+      @cannot (\App\Enums\Permission::MENU_READ_ADMIN->value)
 
         <h3>For assistance please call</h3>
         <p class="phone">{{ $adminusr->phone }}</p>

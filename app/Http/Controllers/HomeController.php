@@ -29,7 +29,7 @@ class HomeController extends Controller
      */
     public function index(AccessCheckInterface $accessCheck)
     {
-      if ($accessCheck->check(Permission::PO_READ_LIST_ALL)) {
+      if ($accessCheck->check(Permission::PO_READ_LIST_ALL->value)) {
         $count = Po::where('poPod',"")
         ->get();
       } else {

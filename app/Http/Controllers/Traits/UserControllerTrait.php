@@ -65,6 +65,8 @@ trait UserControllerTrait
         $input = $request->validate([
             'name' => 'required',
             'email' => 'required|email',
+            'accessLevel' => 'required',
+            'permissions' => 'required'
             // 'password' => 'required|min:6|confirmed'
         ]);
 

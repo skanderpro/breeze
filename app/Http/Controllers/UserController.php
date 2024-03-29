@@ -30,7 +30,7 @@ class UserController extends Controller
 
     public function searchUser(Request $search, AccessCheckInterface $accessCheck)
     {
-        if (!$accessCheck->check(Permission::USERS_READ_ALL)) {
+        if (!$accessCheck->check(Permission::USERS_READ_ALL->value)) {
             return Redirect::to('/');
         } else {
             return view('userlist', compact('merchants', 'search'));
@@ -71,11 +71,11 @@ class UserController extends Controller
         $companies = Company::all();
 
 
-        if ($accessCheck->check(Permission::USERS_READ_ALL)) {
+        if ($accessCheck->check(Permission::USERS_READ_ALL->value)) {
             // $users = User::all();
             $user = User::where('id', '=', $id)->firstOrFail();
 
-        } elseif ($accessCheck->check(Permission::USERS_READ_COMPANY)) {
+        } elseif ($accessCheck->check(Permission::USERS_READ_COMPANY->value)) {
 
 
             $user = User::where('id', '=', $id)->where('companyId', '=', Auth::user()->companyId)->firstOrFail();

@@ -140,7 +140,7 @@
                   </div>
                 </div>
               </a>
-              @can (\App\Enums\Permission::COMPANY_MANAGE)
+              @can (\App\Enums\Permission::COMPANY_MANAGE->value)
               <a href="{{ url('/register') }}">
                 <div class="row add">
                   <div class="col-6">
