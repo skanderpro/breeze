@@ -1,6 +1,7 @@
 @extends('layouts.login')
 
 @section('content')
+
 	<style>
 		header,
 		footer{
