@@ -14,11 +14,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script type="text/javascript" charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfU2hsPF_D_DwXwxr8QEk2NU_RPzBO4YA&libraries=places&callback=initMap"></script>
-
+    <script src="https://cdn.tiny.cloud/1/wvpri8c34wyw7s9x07d2v13gupsvcizxwcihk0rv32gmd3f3/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script type="text/javascript" src="{{ asset('js/infobubble-compiled.js') }}"></script>
 	  <script type="text/javascript" src="{{ asset('js/store-locator.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/em-static-ds.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/map.js') }}"></script>
+
+  
+
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -171,6 +174,20 @@
 
 
 
+    </script>
+    <script>
+      tinymce.init({
+        selector: 'textarea.tinymce',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+          { value: 'First.Name', title: 'First Name' },
+          { value: 'Email', title: 'Email' },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+      });
     </script>
   </body>
 </html>
