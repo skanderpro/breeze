@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers\Traits;
 
+use App\Enums\Permission;
 use App\Models\Company;
 use App\Models\Merchant;
 use App\Models\Po;
 use App\Models\User;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 trait PoControllerTrait
 {
+    /** @var AccessCheckInterface */
+    public $accessCheckService;
+
     public function store(Request $request)
     {
 
@@ -130,7 +135,7 @@ trait PoControllerTrait
 
         $companies = Company::all();
 
-        if (Auth::user()->accessLevel == '1') {
+        if ($this->accessCheckService->check(Permission::PO_READ_LIST_ALL->value)) {
 
 
             $users = User::all();
@@ -182,7 +187,7 @@ trait PoControllerTrait
 
         }
 
-        if (Auth::user()->accessLevel == '2') {
+        if ($this->accessCheckService->check(Permission::PO_READ_LIST_COMPANY_ALL->value)) {
 
 
             $users = User::where('companyId', Auth::user()->companyId)->get();
@@ -221,7 +226,7 @@ trait PoControllerTrait
 
         }
 
-        if (Auth::user()->accessLevel == '3') {
+        if ($this->accessCheckService->check(Permission::PO_READ_LIST_COMPANY->value)) {
 
             if ($u_id) {
                 $query->where('u_id', '=', $u_id);

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Models\Merchant;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use App\Exports\MerchantExport;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +16,10 @@ use Maatwebsite\Excel\Facades\Excel;
 class MerchantController extends Controller
 {
 
-  public function addMerchant()
+  public function addMerchant(AccessCheckInterface $accessCheck)
   {
 
-    if (Auth::user()->accessLevel != '1') {
+    if (!$accessCheck->check(Permission::MERCHANT_MANAGE_ALL)) {
     return Redirect::to('/');
     } else {
       return view('merchant-create');
@@ -71,7 +73,7 @@ class MerchantController extends Controller
 
   }
 
-  public function showMerchant(Request $request)
+  public function showMerchant(Request $request, AccessCheckInterface $accessCheck)
   {
 
       $search = $request->get('search');
@@ -95,7 +97,7 @@ class MerchantController extends Controller
 
       // Merchant::all()->paginate(25);
 
-      if (Auth::user()->accessLevel != '1') {
+      if (!$accessCheck->check(Permission::MERCHANT_MANAGE_ALL)) {
         return Redirect::to('/');
       } else {
         return view('merchant-list', compact('merchants', 'search'));

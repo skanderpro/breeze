@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 
 
+use App\Enums\Permission;
 use App\Models\Notification;
 use App\Models\Po;
+use App\Services\AccessCheckInterface;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -25,9 +27,9 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(AccessCheckInterface $accessCheck)
     {
-      if (Auth::user()->accessLevel == '1') {
+      if ($accessCheck->check(Permission::PO_READ_LIST_ALL->value)) {
         $count = Po::where('poPod',"")
         ->get();
       } else {

@@ -5,11 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Http\Resources\PoResource;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 
 class PoController extends Controller
 {
     use PoControllerTrait;
+
+    public function __construct(AccessCheckInterface $accessCheckService)
+    {
+        $this->accessCheckService = $accessCheckService;
+    }
+
 
     public function storePo(Request $request)
     {

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Models\Company;
 use App\Models\Notification;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -12,10 +14,10 @@ use Illuminate\Support\Facades\Redirect;
 class NotificationController extends Controller
 {
 
-  public function addNotification()
+  public function addNotification(AccessCheckInterface $accessCheck)
   {
 
-    if (Auth::user()->accessLevel != '1') {
+    if (!$accessCheck->check(Permission::NOTIFICATION_MANAGE_ALL)) {
     return Redirect::to('/');
     } else {
       return view('notification-create');
@@ -38,13 +40,13 @@ class NotificationController extends Controller
 
   }
 
-  public function showNotification()
+  public function showNotification(AccessCheckInterface $accessCheck)
   {
 
       // $companies = Company::all();
       $notifications = Notification::orderBy('id', 'desc')->paginate(25);
 
-      if (Auth::user()->accessLevel != '1') {
+      if (!$accessCheck->check(Permission::NOTIFICATION_MANAGE_ALL)) {
       return Redirect::to('/');
       } else {
         return view('notification-list', compact('notifications'));

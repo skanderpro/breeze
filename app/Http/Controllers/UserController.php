@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Http\Controllers\Traits\UserControllerTrait;
 use App\Models\Company;
 use App\Models\User;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -26,9 +28,9 @@ class UserController extends Controller
         }
     }
 
-    public function searchUser(Request $search)
+    public function searchUser(Request $search, AccessCheckInterface $accessCheck)
     {
-        if (Auth::user()->accessLevel != '1') {
+        if (!$accessCheck->check(Permission::USERS_READ_ALL->value)) {
             return Redirect::to('/');
         } else {
             return view('userlist', compact('merchants', 'search'));
@@ -62,18 +64,18 @@ class UserController extends Controller
     }
 
 
-    public function edit($id)
+    public function edit($id, AccessCheckInterface $accessCheck)
     {
 
 
         $companies = Company::all();
 
 
-        if (Auth::user()->accessLevel == '1') {
+        if ($accessCheck->check(Permission::USERS_READ_ALL->value)) {
             // $users = User::all();
             $user = User::where('id', '=', $id)->firstOrFail();
 
-        } elseif (Auth::user()->accessLevel == '2') {
+        } elseif ($accessCheck->check(Permission::USERS_READ_COMPANY->value)) {
 
 
             $user = User::where('id', '=', $id)->where('companyId', '=', Auth::user()->companyId)->firstOrFail();
