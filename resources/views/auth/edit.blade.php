@@ -23,7 +23,7 @@
       <div class="col-md-7 col-lg-9 form">
         @if (Auth::check())
 
-        @if (Auth::user()->accessLevel == 1 || Auth::user()->accessLevel == 2)
+        @canany ([\App\Enums\Permission::COMPANY_MANAGE->value, \App\Enums\Permission::COMPANY_MANAGE_ALL->value])
 
         <div class="row">
 
@@ -96,7 +96,7 @@
                 <div class="form-group row">
                   <div class="offset-md-3 col-md-8">
 
-                    @if (Auth::user()->accessLevel == 1)
+                    @can(\App\Enums\Permission::USERS_READ_ALL->value)
 
                       <label for="name" class="col-form-label">{{ __('Access Level') }}</label>
 
@@ -107,7 +107,15 @@
                         <option value="3" @if ($user->accessLevel == 3) selected @endif>Company User</option>
                       </select>
 
-                    @endif
+                          <select class="form-control" name="permissions[]" multiple id="permissions" required>
+                              @foreach(\App\Enums\Permission::getRoleMap() as $role => $permissions)
+                                  @foreach($permissions as $permission)
+                                      <option value="{{$permission}}" data-role-id="{{$role}}" @if (!empty($user->permissions[$permission])) selected @endif>{{$permission}}</option>
+                                  @endforeach
+                              @endforeach
+                          </select>
+
+                    @endcan
 
 
 
@@ -125,7 +133,7 @@
                 <div class="form-group row">
                   <div class="offset-md-3 col-md-8">
 
-                    @if (Auth::user()->accessLevel == 1)
+                    @can (\App\Enums\Permission::COMPANY_MANAGE_ALL->value)
 
                       <label for="companyId" class="col-form-label">{{ __('Company') }}</label>
 
@@ -136,7 +144,7 @@
                         @endforeach
                       </select>
 
-                    @endif
+                    @endcan
 
                     @if ($errors->has('companyId'))
                     <span class="help-block">
@@ -206,10 +214,9 @@
         </div>
 
           @else
-
           You have no business being here
 
-          @endif
+          @endcanany
 
           @endif
       </div>
@@ -217,7 +224,19 @@
 </div>
 
 
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const permsSelect = document.querySelector('#permissions');
+        const rolesSelect = document.querySelector('#accessLevel');
+        rolesSelect.addEventListener('change', () => {
+            permsSelect.value = '';
+            const optionsToSelect = permsSelect.querySelectorAll(`[data-role-id="${rolesSelect.value}"]`);
+            optionsToSelect.forEach((opt) => {
+                opt.selected = true;
+            })
+        })
+    })
+</script>
 
 
 

@@ -2,7 +2,9 @@
 
 namespace App\Exports;
 
+use App\Enums\Permission;
 use App\Models\Po;
+use App\Services\AccessCheckInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -11,10 +13,10 @@ class PoExportNoDate implements FromView
 {
 
 
-    public function view(): View
+    public function view(AccessCheckInterface $accessCheck): View
     {
 
-      if (Auth::user()->accessLevel == '1') {
+      if ($accessCheck->check(Permission::PO_EXPORT_ALL)) {
 
         return view('exports.po', [
             'poExports' => Po::select('pos.*', 'merchants.merchantName', 'users.name')
@@ -25,7 +27,7 @@ class PoExportNoDate implements FromView
 
       }
 
-      if (Auth::user()->accessLevel == '2') {
+      if ($accessCheck->check(Permission::PO_EXPORT_COMPANY)) {
 
         return view('exports.po', [
             'poExports' => Po::select('pos.*', 'merchants.merchantName', 'users.name')
@@ -37,7 +39,7 @@ class PoExportNoDate implements FromView
 
       }
 
-      if (Auth::user()->accessLevel == '3') {
+      if ($accessCheck->check(Permission::PO_EXPORT_CLIENT)) {
 
         return view('exports.po', [
             'poExports' => Po::select('pos.*', 'merchants.merchantName', 'users.name')

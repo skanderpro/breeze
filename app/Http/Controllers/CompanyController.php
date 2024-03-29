@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
+use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 
 use App\Models\Company;
@@ -13,10 +15,10 @@ use Illuminate\Support\Facades\Redirect;
 class CompanyController extends Controller
 {
 
-    public function addCompany()
+    public function addCompany(AccessCheckInterface $accessCheck)
     {
 
-        if (Auth::user()->accessLevel != '1') {
+        if (!$accessCheck->check(Permission::COMPANY_MANAGE_ALL)) {
             return Redirect::to('/');
         } else {
             return view('create-company');
@@ -42,13 +44,13 @@ class CompanyController extends Controller
 
     }
 
-    public function showCompany()
+    public function showCompany(AccessCheckInterface $accessCheck)
     {
 
         // $companies = Company::all();
         $companies = DB::table('companies')->paginate(25);
 
-        if (Auth::user()->accessLevel != '1') {
+        if (!$accessCheck->check(Permission::COMPANY_MANAGE_ALL)) {
             return Redirect::to('/');
         } else {
             return view('company-list', compact('companies'));
