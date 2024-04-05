@@ -27,7 +27,8 @@ trait PoControllerTrait
                 'u_id' => 'required',
                 'poType' => 'required|max:255',
                 'poPurpose' => 'required|max:255',
-                'inputMerchant' => 'required',
+                'alt_merchant_name' => 'required',
+				'alt_merchant_contact' => 'required',
                 'poProjectLocation' => 'required|max:255',
             ]);
 
