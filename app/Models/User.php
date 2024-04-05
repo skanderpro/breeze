@@ -42,6 +42,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+
     public function getPermissionsAttribute($permissions)
     {
         if (empty($this->permsJson)) {
@@ -70,6 +71,7 @@ class User extends Authenticatable
 
     public function company(){
         return $this->belongsTo(Company::class, 'company_id');
+
     }
 
     public function companies(){
@@ -77,6 +79,7 @@ class User extends Authenticatable
     }
 
     public function getOrderLimitAttribute(){
+		
         if(!!$this->price_limit){
             return $this->price_limit;
         } elseif ($this->accessLevel == 4) {

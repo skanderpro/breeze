@@ -26,6 +26,8 @@ class CompanyResource extends JsonResource
             'limit' => $this->resource->limit,
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at,
+			'company' => !!$this->root_company ? ['id' => $this->root_company->id, 'name' => $this->root_company->companyName ] : null
+			
         ];
     }
 }

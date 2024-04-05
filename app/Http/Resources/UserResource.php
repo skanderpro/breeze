@@ -16,7 +16,7 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-			'companyId' => $this->resource->companyId,
+			'companies' => CompanyResource::collection($this->companies),
             'name' => $this->name,
             'companyLimit' => $this->order_limit,
             'phone' => $this->resource->phone,
