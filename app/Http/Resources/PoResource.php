@@ -37,6 +37,7 @@ class PoResource extends JsonResource
             'notes' => $this->resource->poNotes,
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at,
+            'merchantId' => $this->merchant->merchantId
         ];
     }
 }

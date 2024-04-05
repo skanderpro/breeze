@@ -48,6 +48,8 @@ trait PoControllerTrait
 
 
         $creatPO = Po::create($request->toArray());
+        $creatPO->poNumber = "EM-{$creatPO->id}";
+        $creatPO->update();
 
         $poUser = User::all()->where('id', $request->input('u_id'))->first();
 
