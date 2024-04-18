@@ -12,6 +12,14 @@ class Po extends Model
 
 
     public function merchant(){
-        return $this->belongsTo('merchants', 'selectMerchant');
+        return $this->belongsTo(Merchant::class, 'selectMerchant');
     }
+	
+	public function user(){
+		return $this->belongsTo(User::class,'u_id');
+	}
+	
+	public function contract(){
+		return $this->belongsTo(Company::class,'companyId');
+	}
 }

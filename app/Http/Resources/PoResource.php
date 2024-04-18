@@ -19,6 +19,7 @@ class PoResource extends JsonResource
             'number' => $this->resource->poNumber,
             'select_merchant' => $this->resource->selectMerchant,
             'input_merchant' => $this->resource->inputMerchant,
+			'company_id' => $this->companyId,
             'type' => $this->resource->poType,
             'purpose' => $this->resource->poPurpose,
             'materials' => $this->resource->poMaterials,
@@ -37,7 +38,11 @@ class PoResource extends JsonResource
             'notes' => $this->resource->poNotes,
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at,
-            'merchantId' => $this->merchant->merchantId
+            'merchantId' => $this->merchant?->merchantId ?? null,
+			'status' => 'POD Required',
+			'username' => $this->user->name,
+			'merchantName' => $this->merchant?->merchantName ?? null,
+			'contractName' => $this->contract?->companyName ?? null,
         ];
     }
 }
