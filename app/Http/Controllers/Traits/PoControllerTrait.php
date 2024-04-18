@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Traits;
 
+
 use App\Enums\Permission;
 use App\Models\Company;
 use App\Models\Merchant;
@@ -342,10 +343,20 @@ trait PoControllerTrait
         return $editPo;
     }
 	
+	public function getList4Role($user){
+		
+		$pos = Po::select("pos.*")->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
+		 
+		return $pos;
+		
+	}
 	
-	public function cancelPo($id){
+	
+	public function cancelPo($id,$status){
 		$editPo = Po::findOrFail($id);
 		$editPo->poCancelled = 1;
+		$editPo->poCancelledBy = Auth::user()->name;
+		$editPo->poCompletedStatus = $status;
 		$editPo->update();
 		return $editPo;
 	}
