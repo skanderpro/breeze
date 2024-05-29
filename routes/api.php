@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\PoController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PoRequestController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -37,6 +38,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
     Route::name('companies.')->prefix('/companies')->group(function () {
         Route::get('/', [CompanyController::class, 'index'])->name('index');
         Route::get('/{company}', [CompanyController::class, 'single'])->name('single');
+        Route::post('/', [CompanyController::class, 'store'])->name('store');
+        Route::put('/{company}', [CompanyController::class, 'update'])->name('update');
     });
 
     Route::name('merchants.')->prefix('/merchants')->group(function () {
@@ -48,7 +51,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::patch('/{notification}', [NotificationController::class, 'markAsRead'])->name('markAsRead');
         Route::delete('/', [NotificationController::class, 'removeRead'])->name('removeRead');
     });
-	
+
 	Route::name('users.')->prefix('/users')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/account', [UserController::class, 'account'])->name('account');
@@ -65,6 +68,13 @@ Route::prefix('v1')->name('v1.')->group(function () {
 		Route::post('/upload-pod/{id}', [PoController::class, 'uploadPOD'])->name('uploadPOD');
         Route::patch('/{id}', [PoController::class, 'update'])->name('update');
 		Route::patch('/{id}/cancel',[PoController::class, 'cancel'])->name('cancel');
+    });
+
+    Route::name('poRequest.')->prefix('/po-request')->middleware(['auth:sanctum'])->group(function () {
+        Route::get('/', [PoRequestController::class, 'index'])->name('index');
+        Route::get('/{id}', [PoRequestController::class, 'show'])->name('show');
+        Route::post('/', [PoRequestController::class, 'storePo'])->name('storePo');
+        Route::patch('/{id}/cancel',[PoRequestController::class, 'cancel'])->name('cancel');
     });
 
 });

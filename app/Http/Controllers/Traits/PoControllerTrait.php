@@ -12,11 +12,39 @@ use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Ramsey\Uuid\Uuid;
 
 trait PoControllerTrait
 {
     /** @var AccessCheckInterface */
     public $accessCheckService;
+
+    public function storeRequests(Request $request)
+    {
+        $this->validate($request, [
+            'items.*.companyId' => 'required',
+            'items.*.u_id' => 'required',
+            'items.*.poType' => 'required|max:255',
+            'items.*.poPurpose' => 'required|max:255',
+            'items.*.alt_merchant_name' => 'nullable',
+            'items.*.alt_merchant_contact' => 'nullable',
+            'items.*.poProjectLocation' => 'required|max:255',
+            'items.*.selectMerchant' => 'required',
+        ]);
+
+        $uuid = Uuid::uuid4()->toString();
+        $poNumber = "RK-{$uuid}";
+
+        $payload = $request->toArray();
+        $pos = [];
+        foreach ($payload['items'] as $item) {
+            $item['poType'] = 'request';
+            $item['poNumber'] = $poNumber;
+            $pos[] = Po::create($item);
+        }
+
+        return $pos;
+    }
 
     public function store(Request $request)
     {
@@ -342,16 +370,24 @@ trait PoControllerTrait
 
         return $editPo;
     }
-	
+
 	public function getList4Role($user){
-		
+
 		$pos = Po::select("pos.*")->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
-		 
+
 		return $pos;
-		
+
 	}
-	
-	
+
+    public function getRequestList4Role($user){
+
+        $pos = Po::select("pos.*")->where('pos.poType', 'request')->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
+
+        return $pos;
+
+    }
+
+
 	public function cancelPo($id,$status){
 		$editPo = Po::findOrFail($id);
 		$editPo->poCancelled = 1;
@@ -360,5 +396,5 @@ trait PoControllerTrait
 		$editPo->update();
 		return $editPo;
 	}
-	
+
 }
