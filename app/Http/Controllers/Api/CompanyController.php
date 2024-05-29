@@ -24,4 +24,36 @@ class CompanyController extends Controller
     {
         return new CompanyResource($company);
     }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'companyName' => 'required|max:255',
+            'companyPhone' => 'required|max:12',
+            'companyContact' => 'required|max:255',
+            'companyContactEmail' => 'required|email|max:255',
+            'companyAddress' => 'required|max:255'
+        ]);
+
+        $createdCompany = Company::create($request->toArray());
+
+        return new CompanyResource($createdCompany);
+    }
+
+    public function update(Company $company, Request $request)
+    {
+        $this->validate($request, [
+            'companyName' => 'required|max:255',
+            'companyPhone' => 'required|max:12',
+            'companyContact' => 'required|max:255',
+            'companyContactEmail' => 'required|email|max:255',
+            'companyAddress' => 'required|max:255'
+        ]);
+
+        $input = $request->all();
+
+        $company->fill($input)->save();
+
+        return new CompanyResource($company);
+    }
 }
