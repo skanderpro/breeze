@@ -30,8 +30,9 @@ class PoController extends Controller
 
     public function index(Request $request)
     {
+		$input = $request->all();
 		$user = Auth::user();
-        $data = $this->getList4Role($user);
+        $data = $this->getList4Role($user,$input);
 
         return PoResource::collection($data);
     }
@@ -68,6 +69,7 @@ class PoController extends Controller
 		// Отримуємо URL збереженого файлу.
 		$url = Storage::disk('local')->url($path . $filename);
 		$po->poPod = ($url);
+		$po->poCompleted = 1;
 		$po->update();
 	
 		return response( url($url), 200);
@@ -80,6 +82,12 @@ class PoController extends Controller
 		$input = $request->all();
 		
 		$po = $this->cancelPo($id, $input['status']);
+
+        return PoResource::make($po);
+	}
+	
+	public function visit($id){
+		$po = $this->visitPo($id);
 
         return PoResource::make($po);
 	}

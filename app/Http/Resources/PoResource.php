@@ -39,10 +39,12 @@ class PoResource extends JsonResource
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at,
             'merchantId' => $this->merchant?->merchantId ?? null,
-			'status' => 'POD Required',
+			'status' => $this->status,
 			'username' => $this->user->name,
 			'merchantName' => $this->merchant?->merchantName ?? null,
 			'contractName' => $this->contract?->companyName ?? null,
+			'poVisitStatus' => !!$this->resource->poVisitStatus,
+			
         ];
     }
 }
