@@ -39,6 +39,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::get('/', [CompanyController::class, 'index'])->name('index');
         Route::get('/{company}', [CompanyController::class, 'single'])->name('single');
         Route::post('/', [CompanyController::class, 'store'])->name('store');
+        Route::put('/{company}/toggle', [CompanyController::class, 'toggle'])->name('toggle');
         Route::put('/{company}', [CompanyController::class, 'update'])->name('update');
     });
 
