@@ -56,4 +56,12 @@ class CompanyController extends Controller
 
         return new CompanyResource($company);
     }
+
+    public function toggle(Company $company)
+    {
+        $company->disabled = (int)$company->disabled ? '' : '1';
+        $company->save();
+
+        return new CompanyResource($company);
+    }
 }
