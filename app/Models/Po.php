@@ -13,6 +13,8 @@ class Po extends Model
         'selectMerchant',
         'inputMerchant',
         'poType',
+        'status',
+        'is_request',
         'poPurpose',
         'poMaterials',
         'poProject',
@@ -49,12 +51,12 @@ class Po extends Model
 	public function contract(){
 		return $this->belongsTo(Company::class,'companyId');
 	}
-	
+
 	public function getStatusAttribute(){
 		$statuses = [];
 		if(Auth::user()->id != $this->u_id && !$this->poVisitStatus){
 			$statuses[] = 'Unused';
-		} 
+		}
 		if(Auth::user()->id == $this->u_id || $this->poVisitStatus){
 			$statuses[] = 'POD Required';
 		}

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\PoController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PoRequestController;
+use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -77,6 +78,15 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::get('/{id}', [PoRequestController::class, 'show'])->name('show');
         Route::post('/', [PoRequestController::class, 'storePo'])->name('storePo');
         Route::patch('/{id}/cancel',[PoRequestController::class, 'cancel'])->name('cancel');
+        Route::patch('/{po}/set-status',[PoRequestController::class, 'setStatus'])->name('setStatus');
+    });
+
+    Route::name('setting.')->prefix('/setting')->middleware(['auth:sanctum'])->group(function () {
+        Route::get('/', [SettingController::class, 'index'])->name('index');
+        Route::get('/{setting}', [SettingController::class, 'show'])->name('show');
+        Route::post('/', [SettingController::class, 'store'])->name('store');
+        Route::patch('/{setting}',[SettingController::class, 'update'])->name('update');
+        Route::delete('/{setting}',[SettingController::class, 'delete'])->name('delete');
     });
 
 });

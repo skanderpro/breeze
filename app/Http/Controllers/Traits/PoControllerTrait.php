@@ -19,18 +19,35 @@ trait PoControllerTrait
     /** @var AccessCheckInterface */
     public $accessCheckService;
 
+    protected function validateStoreRequest(Request $request)
+    {
+        if ($request->input('poType') == "alternate") {
+            return $this->validate($request, [
+                'companyId' => 'required',
+                'u_id' => 'required',
+                'poType' => 'required|max:255',
+                'poPurpose' => 'required|max:255',
+                'alt_merchant_name' => 'required',
+                'alt_merchant_contact' => 'required',
+                'poProjectLocation' => 'required|max:255',
+            ]);
+        } else if ($request->input('poType') == "Pre Approved") {
+            return $this->validate($request, [
+                'companyId' => 'required',
+                'u_id' => 'required',
+                'poType' => 'required|max:255',
+                'poPurpose' => 'required|max:255',
+                'selectMerchant' => 'required',
+                'poProjectLocation' => 'required|max:255',
+            ]);
+        }
+
+        throw new \Exception('poType validation failed');
+    }
+
     public function storeRequests(Request $request)
     {
-        $this->validate($request, [
-            'items.*.companyId' => 'required',
-            'items.*.u_id' => 'required',
-            'items.*.poType' => 'required|max:255',
-            'items.*.poPurpose' => 'required|max:255',
-            'items.*.alt_merchant_name' => 'nullable',
-            'items.*.alt_merchant_contact' => 'nullable',
-            'items.*.poProjectLocation' => 'required|max:255',
-            'items.*.selectMerchant' => 'required',
-        ]);
+        $this->validateStoreRequest($request);
 
         $uuid = Uuid::uuid4()->toString();
         $poNumber = "RK-{$uuid}";
@@ -38,7 +55,7 @@ trait PoControllerTrait
         $payload = $request->toArray();
         $pos = [];
         foreach ($payload['items'] as $item) {
-            $item['poType'] = 'request';
+            $item['is_request'] = '1';
             $item['poNumber'] = $poNumber;
             $pos[] = Po::create($item);
         }
@@ -48,34 +65,7 @@ trait PoControllerTrait
 
     public function store(Request $request)
     {
-
-        if ($request->input('poType') == "alternate") {
-
-            $this->validate($request, [
-                'companyId' => 'required',
-                'u_id' => 'required',
-                'poType' => 'required|max:255',
-                'poPurpose' => 'required|max:255',
-                'alt_merchant_name' => 'required',
-				'alt_merchant_contact' => 'required',
-                'poProjectLocation' => 'required|max:255',
-            ]);
-
-        }
-
-        if ($request->input('poType') == "Pre Approved") {
-
-            $this->validate($request, [
-                'companyId' => 'required',
-                'u_id' => 'required',
-                'poType' => 'required|max:255',
-                'poPurpose' => 'required|max:255',
-                'selectMerchant' => 'required',
-                'poProjectLocation' => 'required|max:255',
-            ]);
-
-        }
-
+        $this->validateStoreRequest($request);
 
         $creatPO = Po::create($request->toArray());
         $creatPO->poNumber = "EM-{$creatPO->id}";
@@ -157,7 +147,7 @@ trait PoControllerTrait
         $date = $request->get('date');
         $poPod = $request->get('poPod');
 
-        $query = Po::query();
+        $query = Po::query()->whereNot('is_request', '1');
 
         // $pos = DB::table('pos')
         // ->join('companies', 'pos.companyId', '=', 'companies.id')
@@ -371,10 +361,11 @@ trait PoControllerTrait
         return $editPo;
     }
 
-	
+
 	public function getList4Role($user, $filter){
-		
+
 		$pos = Po::select("pos.*")
+            ->whereNot('pos.is_request', '1')
 			->join('companies','companies.id','=','pos.companyId' )
 			->join('merchants','merchants.id','=','pos.selectMerchant')
 			->where('companies.parent_id', $user->companyId)
@@ -382,7 +373,7 @@ trait PoControllerTrait
 			->orderBy('pos.id','desc');
 		if($filter['filter']['search']){
 			$pos = $pos->where('merchants.merchantName','like','%' . $filter['filter']['search'] . '%');
-		}				
+		}
 		$pos = $pos->get();
 		return $pos;
 
@@ -390,7 +381,7 @@ trait PoControllerTrait
 
     public function getRequestList4Role($user){
 
-        $pos = Po::select("pos.*")->where('pos.poType', 'request')->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
+        $pos = Po::select("pos.*")->where('pos.is_request', '1')->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
 
         return $pos;
 
@@ -406,13 +397,13 @@ trait PoControllerTrait
 		return $editPo;
 	}
 
-	
-	
+
+
 	public function visitPo($id){
 		$editPo = Po::findOrFail($id);
 		$editPo->poVisitStatus = 1;
 		return $editPo;
 	}
-	
+
 
 }

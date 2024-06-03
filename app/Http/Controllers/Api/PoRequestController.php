@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Http\Resources\PoResource;
+use App\Models\Po;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,18 @@ class PoRequestController extends Controller
     public function update($id, Request $request)
     {
         $po = $this->updadePo($id, $request);
+
+        return PoResource::make($po);
+    }
+
+    public function setStatus(Po $po, Request $request)
+    {
+        $request->validate([
+            'status' => 'required',
+        ]);
+
+        $po->status = $request->input('status');
+        $po->save();
 
         return PoResource::make($po);
     }
