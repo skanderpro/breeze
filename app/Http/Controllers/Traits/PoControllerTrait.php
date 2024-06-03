@@ -371,10 +371,19 @@ trait PoControllerTrait
         return $editPo;
     }
 
-	public function getList4Role($user){
-
-		$pos = Po::select("pos.*")->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
-
+	
+	public function getList4Role($user, $filter){
+		
+		$pos = Po::select("pos.*")
+			->join('companies','companies.id','=','pos.companyId' )
+			->join('merchants','merchants.id','=','pos.selectMerchant')
+			->where('companies.parent_id', $user->companyId)
+			->whereBetween('pos.created_at',[ date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])),  date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))])
+			->orderBy('pos.id','desc');
+		if($filter['filter']['search']){
+			$pos = $pos->where('merchants.merchantName','like','%' . $filter['filter']['search'] . '%');
+		}				
+		$pos = $pos->get();
 		return $pos;
 
 	}
@@ -396,5 +405,14 @@ trait PoControllerTrait
 		$editPo->update();
 		return $editPo;
 	}
+
+	
+	
+	public function visitPo($id){
+		$editPo = Po::findOrFail($id);
+		$editPo->poVisitStatus = 1;
+		return $editPo;
+	}
+	
 
 }
