@@ -19,6 +19,7 @@ class UserResource extends JsonResource
 			'companies' => CompanyResource::collection($this->companies),
             'name' => $this->name,
             'companyLimit' => $this->order_limit,
+            'accessLevel' => $this->resource->accessLevel,
             'phone' => $this->resource->phone,
             'email' => $this->resource->email,
             'created_at' => $this->resource->created_at,
