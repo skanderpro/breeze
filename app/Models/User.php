@@ -78,8 +78,13 @@ class User extends Authenticatable
         return $this->belongsToMany(Company::class,'companies_users');
     }
 
+    public function settings()
+    {
+        return $this->hasMany(UserSetting::class);
+    }
+
     public function getOrderLimitAttribute(){
-		
+
         if(!!$this->price_limit){
             return $this->price_limit;
         } elseif ($this->accessLevel == 4) {

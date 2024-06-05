@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\UserControllerTrait;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserSettingResource;
+use App\Models\User;
+use App\Models\UserSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
@@ -51,5 +55,34 @@ class UserController extends Controller
         $user = $this->updateUser($id,$request);
 
         return UserResource::make($user);
+    }
+
+    public function userSettings(User $user)
+    {
+        return UserSettingResource::collection($user->settings);
+    }
+
+    public function updateUserSettings(User $user, Request $request)
+    {
+        $request->validate([
+            'settings.*.key' => 'required|string',
+            'settings.*.value' => 'nullable|string',
+        ]);
+
+        $payload = [];
+        foreach ($request->input('settings') as $item) {
+            $payload[] = [
+                'key' => $item['key'],
+                'value' => $item['value'],
+                'user_id' => $user->id,
+            ];
+        }
+
+        DB::transaction(function () use ($user, $payload) {
+            UserSetting::removeUserSettings($user->id);
+            UserSetting::insert($payload);
+        });
+
+        return UserSettingResource::collection($user->settings);
     }
 }

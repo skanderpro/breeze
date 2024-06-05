@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends JsonResource
 {
@@ -23,6 +24,12 @@ class UserResource extends JsonResource
             'phone' => $this->resource->phone,
             'email' => $this->resource->email,
             'created_at' => $this->resource->created_at,
-        ];
+        ] + (
+            $this->resource->id === Auth::id()
+                ? [
+                    'settings' => UserSettingResource::collection($this->settings)
+            ]
+                : []
+        );
     }
 }
