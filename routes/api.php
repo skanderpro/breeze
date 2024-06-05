@@ -57,6 +57,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
 	Route::name('users.')->prefix('/users')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/account', [UserController::class, 'account'])->name('account');
+        Route::get('/{user}/settings', [UserController::class, 'userSettings'])->name('settings');
+        Route::patch('/{user}/settings', [UserController::class, 'updateUserSettings'])->name('updateUserSettings');
         Route::patch('/enable/{id}', [UserController::class, 'enableUser'])->name('enable');
         Route::patch('/disable/{id}', [UserController::class, 'disableUser'])->name('disable');
         Route::patch('/update/{id}', [UserController::class, 'update'])->name('update');
