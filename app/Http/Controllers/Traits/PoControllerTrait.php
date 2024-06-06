@@ -7,6 +7,7 @@ use App\Enums\Permission;
 use App\Models\Company;
 use App\Models\Merchant;
 use App\Models\Po;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
@@ -47,10 +48,12 @@ trait PoControllerTrait
 
     public function storeRequests(Request $request)
     {
+        $numberKey = 'po-request-key';
+        $number = Setting::getInt($numberKey) + 1;
+        Setting::set($numberKey, $number);
         $this->validateStoreRequest($request);
 
-        $uuid = Uuid::uuid4()->toString();
-        $poNumber = "RK-{$uuid}";
+        $poNumber = "RK-{$number}";
 
         $payload = $request->toArray();
         $pos = [];

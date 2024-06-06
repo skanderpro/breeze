@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class PoResource extends JsonResource
 {
@@ -44,7 +45,9 @@ class PoResource extends JsonResource
 			'merchantName' => $this->merchant?->merchantName ?? null,
 			'contractName' => $this->contract?->companyName ?? null,
 			'poVisitStatus' => !!$this->resource->poVisitStatus,
-			
+            'request_file' => !empty($this->request_file) ? asset(Storage::url($this->request_file)) : null,
+            'taxed_value' => $this->taxed_value,
+
         ];
     }
 }
