@@ -29,6 +29,24 @@ class PoRequestController extends Controller
         return PoResource::collection($createdPo);
     }
 
+    public function uploadRequestFile($poNumber, Request $request)
+    {
+        $file = $request->file('file');
+        if (!$file) {
+            return response()->json([
+                'error' => 'File is required',
+            ]);
+        }
+
+        $path = $file->store('files', 'public');
+
+        Po::updateRequests($poNumber, [
+            'request_file' => $path,
+        ]);
+
+        return PoResource::collection(Po::getRequestsByNumber($poNumber));
+    }
+
     public function index(Request $request)
     {
 		$user = Auth::user();
