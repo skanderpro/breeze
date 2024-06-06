@@ -36,7 +36,9 @@ class Po extends Model
         'alt_merchant_name',
         "alt_merchant_contact",
 		"alt_merchant_email",
-        "contract_id"
+        "contract_id",
+        'request_file',
+        'taxed_value',
     ];
 
 
@@ -68,4 +70,23 @@ class Po extends Model
 		}
 		return end($statuses);
 	}
+
+    protected static function getRequestsQB($number)
+    {
+        return static::query()
+            ->where('poNumber', $number)
+            ->where('is_request', 1);
+    }
+
+    public static function getRequestsByNumber($number)
+    {
+        return static::getRequestsQB($number)
+            ->get();
+    }
+
+    public static function updateRequests($number, $fields)
+    {
+        return static::getRequestsQB($number)
+            ->update($fields);
+    }
 }
