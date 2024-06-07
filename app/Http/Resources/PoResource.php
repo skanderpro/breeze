@@ -46,7 +46,7 @@ class PoResource extends JsonResource
 			'contractName' => $this->contract?->companyName ?? null,
 			'poVisitStatus' => !!$this->resource->poVisitStatus,
             'request_file' => !empty($this->request_file) ? asset(Storage::url($this->request_file)) : null,
-            'taxed_value' => $this->taxed_value,
+            'billable_value' => $this->billable_value,
 
         ];
     }

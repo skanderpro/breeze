@@ -38,7 +38,7 @@ class Po extends Model
 		"alt_merchant_email",
         "contract_id",
         'request_file',
-        'taxed_value',
+        'billable_value',
     ];
 
 
