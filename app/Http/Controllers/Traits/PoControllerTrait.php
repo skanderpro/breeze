@@ -72,6 +72,7 @@ trait PoControllerTrait
 
         $creatPO = Po::create($request->toArray());
         $creatPO->poNumber = "EM-{$creatPO->id}";
+        $creatPO->billable_value = $creatPO->value * (Auth::user()->company?->agreed_markup ?? 1);
         $creatPO->update();
 
         $poUser = User::all()->where('id', $request->input('u_id'))->first();
@@ -360,6 +361,8 @@ trait PoControllerTrait
 
 
         $editPo->fill($input)->save();
+        $editPo->billable_value = $editPo->value * (Auth::user()->company?->agreed_markup ?? 1);
+        $editPo->save();
 
         return $editPo;
     }
