@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('pos', function (Blueprint $table) {
             $table->string('request_file')->nullable();
-            $table->decimal('taxed_value', 15, 2)->nullable();
+            $table->decimal('billable_value', 15, 2)->nullable();
         });
 
         DB::transaction(function () {
@@ -25,6 +25,11 @@ return new class extends Migration
                     'is_request' => 1,
                     'poType' => 'Pre Approved'
                 ]);
+        });
+
+        Schema::table('companies', function (Blueprint $table) {
+            $table->decimal('agreed_rebate', 15, 2)->nullable();
+            $table->decimal('agreed_markup', 15, 2)->nullable();
         });
     }
 
