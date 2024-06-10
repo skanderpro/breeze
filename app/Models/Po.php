@@ -41,6 +41,22 @@ class Po extends Model
         'billable_value',
     ];
 
+    public static function getRequestCount()
+    {
+        return static::query()
+            ->where('is_request', 1)
+            ->count();
+    }
+
+    public static function getApprovedRequestsCount()
+    {
+        return static::query()
+            ->where('is_request', 1)
+            ->whereNotNull('poValue')
+            ->whereNotNull('billable_value')
+            ->whereNotNull('request_file')
+            ->count();
+    }
 
     public function merchant(){
         return $this->belongsTo(Merchant::class, 'selectMerchant');
