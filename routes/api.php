@@ -77,7 +77,9 @@ Route::prefix('v1')->name('v1.')->group(function () {
 
     Route::name('poRequest.')->prefix('/po-request')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [PoRequestController::class, 'index'])->name('index');
+        Route::get('/counts', [PoRequestController::class, 'getCounts'])->name('counts');
         Route::get('/{id}', [PoRequestController::class, 'show'])->name('show');
+        Route::patch('/{id}/approve', [PoRequestController::class, 'approve'])->name('approve');
         Route::post('/', [PoRequestController::class, 'storePo'])->name('storePo');
         Route::post('/{poNumber}/upload-file', [PoRequestController::class, 'uploadRequestFile'])->name('up');
         Route::patch('/{id}/cancel',[PoRequestController::class, 'cancel'])->name('cancel');

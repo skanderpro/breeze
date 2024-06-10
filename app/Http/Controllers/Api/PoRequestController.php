@@ -21,12 +21,24 @@ class PoRequestController extends Controller
         $this->accessCheckService = $accessCheckService;
     }
 
+    protected function groupRequests($poRequests)
+    {
+        return PoResource::collection($poRequests)->collection->groupBy('poNumber');
+    }
 
     public function storePo(Request $request)
     {
         $createdPo = $this->storeRequests($request);
 
-        return PoResource::collection($createdPo);
+        return $this->groupRequests($createdPo);
+    }
+
+    public function getCounts()
+    {
+        return response()->json([
+            'total' => Po::getRequestCount(),
+            'admin_approved' => Po::getApprovedRequestsCount(),
+        ]);
     }
 
     public function uploadRequestFile($poNumber, Request $request)
@@ -44,7 +56,7 @@ class PoRequestController extends Controller
             'request_file' => $path,
         ]);
 
-        return PoResource::collection(Po::getRequestsByNumber($poNumber));
+        return $this->groupRequests(Po::getRequestsByNumber($poNumber));
     }
 
     public function index(Request $request)
@@ -52,7 +64,16 @@ class PoRequestController extends Controller
 		$user = Auth::user();
         $data = $this->getRequestList4Role($user);
 
-        return PoResource::collection($data);
+        return $this->groupRequests($data);
+    }
+
+    public function approve($id)
+    {
+        $po = $this->getSingle($id);
+        $po->is_request = 0;
+        $po->save();
+
+        return PoResource::make($po);
     }
 
     public function show($id)
