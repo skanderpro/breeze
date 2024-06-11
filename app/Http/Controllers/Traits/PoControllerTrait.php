@@ -20,7 +20,34 @@ trait PoControllerTrait
     /** @var AccessCheckInterface */
     public $accessCheckService;
 
+
     protected function validateStoreRequest(Request $request)
+    {
+        if ($request->input('poType') == "alternate") {
+            return $this->validate($request, [
+                'items.*.companyId' => 'required',
+                'items.*.u_id' => 'required',
+                'items.*.poType' => 'required|max:255',
+                'items.*.poPurpose' => 'required|max:255',
+                'items.*.alt_merchant_name' => 'required',
+                'items.*.alt_merchant_contact' => 'required',
+                'items.*.poProjectLocation' => 'required|max:255',
+            ]);
+        } else if ($request->input('poType') == "Pre Approved") {
+            return $this->validate($request, [
+                'items.*.companyId' => 'required',
+                'items.*.u_id' => 'required',
+                'items.*.poType' => 'required|max:255',
+                'items.*.poPurpose' => 'required|max:255',
+                'items.*.selectMerchant' => 'required',
+                'items.*.poProjectLocation' => 'required|max:255',
+            ]);
+        }
+
+        throw new \Exception('poType validation failed');
+    }
+	
+    protected function validateStore(Request $request)
     {
         if ($request->input('poType') == "alternate") {
             return $this->validate($request, [
@@ -68,7 +95,7 @@ trait PoControllerTrait
 
     public function store(Request $request)
     {
-        $this->validateStoreRequest($request);
+        $this->validateStore($request);
 
         $creatPO = Po::create($request->toArray());
         $creatPO->poNumber = "EM-{$creatPO->id}";
