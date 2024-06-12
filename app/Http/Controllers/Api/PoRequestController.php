@@ -41,6 +41,14 @@ class PoRequestController extends Controller
         ]);
     }
 
+    public function getSingleCounts($number)
+    {
+        return response()->json([
+            'total' => Po::getRequestCount($number),
+            'admin_approved' => Po::getApprovedRequestsCount($number),
+        ]);
+    }
+
     public function uploadRequestFile($poNumber, Request $request)
     {
         $file = $request->file('file');
@@ -71,6 +79,7 @@ class PoRequestController extends Controller
     {
         $po = $this->getSingle($id);
         $po->is_request = 0;
+        $po->poNumber = "EM-{$po->id}";
         $po->save();
 
         return PoResource::make($po);
