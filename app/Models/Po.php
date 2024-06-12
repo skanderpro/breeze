@@ -41,17 +41,28 @@ class Po extends Model
         'billable_value',
     ];
 
-    public static function getRequestCount()
+    public static function getRequestCount($number = null)
     {
-        return static::query()
-            ->where('is_request', 1)
-            ->count();
+        $qb = static::query()
+            ->where('is_request', 1);
+
+        if (!empty($number)) {
+            $qb = $qb->where('poNumber', $number);
+        }
+
+        return $qb->count();
     }
 
-    public static function getApprovedRequestsCount()
+    public static function getApprovedRequestsCount($number = null)
     {
-        return static::query()
-            ->where('is_request', 1)
+        $qb = static::query()
+            ->where('is_request', 1);
+
+        if (!empty($number)) {
+            $qb = $qb->where('poNumber', $number);
+        }
+
+        return $qb
             ->whereNotNull('poValue')
             ->whereNotNull('billable_value')
             ->whereNotNull('request_file')
