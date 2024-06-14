@@ -83,6 +83,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::get('/counts', [PoRequestController::class, 'getCounts'])->name('counts');
         Route::get('/counts/{number}', [PoRequestController::class, 'getSingleCounts'])->name('singleCounts');
         Route::get('/{id}', [PoRequestController::class, 'show'])->name('show');
+		Route::get('/by-number/{number}', [PoRequestController::class, 'getByNumber'])->name('showByNumber');
         Route::patch('/{id}/approve', [PoRequestController::class, 'approve'])->name('approve');
         Route::post('/', [PoRequestController::class, 'storePo'])->name('storePo');
         Route::post('/{poNumber}/upload-file', [PoRequestController::class, 'uploadRequestFile'])->name('up');

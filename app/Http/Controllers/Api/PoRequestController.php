@@ -126,4 +126,9 @@ class PoRequestController extends Controller
 
         return PoResource::make($po);
 	}
+	
+	public function getByNumber($number){
+		$pos = $this->getRequestsByNumber($number);
+		return PoResource::collection($pos);
+	}
 }
