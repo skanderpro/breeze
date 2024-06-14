@@ -78,9 +78,16 @@ class PoRequestController extends Controller
     public function approve($id)
     {
         $po = $this->getSingle($id);
+
+        $number = $po->poNumber;
+
         $po->is_request = 0;
         $po->poNumber = "EM-{$po->id}";
         $po->save();
+
+        Po::query()
+        ->where('poNumber', $number)
+        ->delete();
 
         return PoResource::make($po);
     }

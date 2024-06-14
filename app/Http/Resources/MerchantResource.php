@@ -17,7 +17,7 @@ class MerchantResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->merchantName,
-            'merchant_id' => $this->resource->merchantID,
+            'merchant_id' => $this->resource->merchantId,
             'address_1' => $this->resource->merchantAddress1,
             'address_2' => $this->resource->merchantAddress2,
             'country' => $this->resource->merchantCountry,
@@ -47,6 +47,7 @@ class MerchantResource extends JsonResource
             // 'created_at' => $this->resource->created_at,
             // 'updated_at' => $this->resource->updated_at,
             'green_supplier' => $this->resource->green_supplier,
+            'disabled' => $this->resource->disabled,
 
         ];
     }
