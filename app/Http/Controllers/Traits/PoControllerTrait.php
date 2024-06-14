@@ -445,4 +445,12 @@ trait PoControllerTrait
     }
 
 
+	
+	public function getRequestsByNumber($number){
+		$pos = PO::where('poNumber', $number)->get();
+		return $pos;
+	}
+
+
+
 }
