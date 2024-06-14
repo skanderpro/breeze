@@ -80,7 +80,7 @@ trait PoControllerTrait
         Setting::set($numberKey, $number);
         $this->validateStoreRequest($request);
 
-        $poNumber = "RK-{$number}";
+        $poNumber = "RQ-{$number}";
 
         $payload = $request->toArray();
         $pos = [];
