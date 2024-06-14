@@ -44,8 +44,11 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::put('/{company}', [CompanyController::class, 'update'])->name('update');
     });
 
-    Route::name('merchants.')->prefix('/merchants')->group(function () {
+    Route::name('merchants.')->prefix('/merchants')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [MerchantController::class, 'index'])->name('index');
+        Route::post('/', [MerchantController::class, 'createMerchant'])->name('store');
+        Route::put('/{id}', [MerchantController::class, 'updateMerchant'])->name('update');
+        Route::put('/{merchant}/toggle', [MerchantController::class, 'toggle'])->name('toggle');
     });
 
     Route::name('notifications.')->prefix('/notifications')->middleware(['auth:sanctum'])->group(function () {
