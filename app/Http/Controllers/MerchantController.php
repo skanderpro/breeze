@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Permission;
+use App\Http\Controllers\Traits\MerchantControllerTrait;
 use App\Models\Merchant;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
@@ -15,142 +16,108 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class MerchantController extends Controller
 {
+    use MerchantControllerTrait;
 
-  public function addMerchant(AccessCheckInterface $accessCheck)
-  {
 
-    if (!$accessCheck->check(Permission::MERCHANT_MANAGE_ALL)) {
-    return Redirect::to('/');
-    } else {
-      return view('merchant-create');
+    public function addMerchant(AccessCheckInterface $accessCheck)
+    {
+
+        if (!$accessCheck->check(Permission::MERCHANT_MANAGE_ALL)) {
+            return Redirect::to('/');
+        } else {
+            return view('merchant-create');
+        }
+
+
     }
 
+    public function createMerchant(Request $request)
+    {
+        $this->store($request);
 
-  }
+        return Redirect::to('merchant-list')->with('message', 'Merchant successfully added');
 
-  public function createMerchant(Request $request)
-  {
+    }
 
-    $payload = $this->validate($request, [
-        'merchantName' => 'required|max:255',
-        'merchantId' => 'required|max:255',
-        'merchantAddress1' => 'required|max:255',
-        'merchantAddress2' => 'required|max:255',
-        'merchantCounty' => 'required|max:255',
-        'merchantPostcode' => 'required|max:10',
-        'merchantPhone' => 'required|max:22',
-        'merchantEmail' => 'required|max:255',
+    public function findMerchant()
+    {
 
-        'lng' => 'required|max:12',
-        'lat' => 'required|max:12',
-        ]);
+        Excel::store(new MerchantExport, 'public/em.csv');
 
-    $payload['green_supplier'] = $request->input('green_supplier', false);
-
-    Merchant::create($payload);
-
-    return Redirect::to('merchant-list')->with('message', 'Merchant successfully added');
-
-  }
-
-  public function findMerchant()
-  {
-
-    Excel::store(new MerchantExport, 'public/em.csv');
-
-    // return view('merchant-find', compact('results', 'content'));
-    return view('merchant-find');
-    // return view('merchant-find');
+        // return view('merchant-find', compact('results', 'content'));
+        return view('merchant-find');
+        // return view('merchant-find');
 
 
+    }
 
-  }
+    public function resultsMerchant()
+    {
 
-  public function resultsMerchant()
-  {
+        return view('merchant-find');
 
-    return view('merchant-find');
+    }
 
-  }
+    public function showMerchant(Request $request, AccessCheckInterface $accessCheck)
+    {
 
-  public function showMerchant(Request $request, AccessCheckInterface $accessCheck)
-  {
-
-      $search = $request->get('search');
+        $search = $request->get('search');
 
 
-          if ($search != "") {
+        if ($search != "") {
             $merchants = DB::table('merchants')
-            ->where('merchantName','LIKE',"%$search%")
-            ->orwhere('merchantId','LIKE',"%$search%")
-            ->orwhere('merchantAddress1','LIKE',"%$search%")
-            ->orwhere('merchantAddress2','LIKE',"%$search%")
-            ->orwhere('merchantPostcode','LIKE',"%$search%")
-            ->orwhere('merchantEmail','LIKE',"%$search%")
-            ->orderBy('merchantName', 'asc')
-            ->paginate(1000);
-          } else {
+                ->where('merchantName', 'LIKE', "%$search%")
+                ->orwhere('merchantId', 'LIKE', "%$search%")
+                ->orwhere('merchantAddress1', 'LIKE', "%$search%")
+                ->orwhere('merchantAddress2', 'LIKE', "%$search%")
+                ->orwhere('merchantPostcode', 'LIKE', "%$search%")
+                ->orwhere('merchantEmail', 'LIKE', "%$search%")
+                ->orderBy('merchantName', 'asc')
+                ->paginate(1000);
+        } else {
             $merchants = DB::table('merchants')->paginate(25);
-          }
+        }
 
 
+        // Merchant::all()->paginate(25);
 
-      // Merchant::all()->paginate(25);
-
-      if (!$accessCheck->check(Permission::MERCHANT_MANAGE_ALL)) {
-        return Redirect::to('/');
-      } else {
-        return view('merchant-list', compact('merchants', 'search'));
-      }
-
-
-  }
-
-  public function detailsMerchant($id)
-  {
-
-    $merchants = Merchant::where('id','=',$id)->firstOrFail();
+        if (!$accessCheck->check(Permission::MERCHANT_MANAGE_ALL)) {
+            return Redirect::to('/');
+        } else {
+            return view('merchant-list', compact('merchants', 'search'));
+        }
 
 
-      return view('merchant-edit', compact('merchants'));
+    }
 
-  }
+    public function detailsMerchant($id)
+    {
 
-  public function editMerchant($id, Request $request)
-  {
+        $merchants = Merchant::where('id', '=', $id)->firstOrFail();
 
-    $this->validate($request, [
-        'merchantName' => 'required|max:255',
-        'merchantId' => 'required|max:255',
-        'merchantAddress1' => 'required|max:255',
-        'merchantAddress2' => 'required|max:255',
-        'merchantCounty' => 'required|max:255',
-        'merchantPostcode' => 'required|max:10',
-        'merchantPhone' => 'required|max:22',
-        'merchantEmail' => 'required|max:255',
-        'lng' => 'required|max:12',
-        'lat' => 'required|max:12',
-        ]);
 
-    $editMerchant = Merchant::findOrFail($id);
-      $input = $request->all();
-      $input['green_supplier'] = $request->input('green_supplier', false);
+        return view('merchant-edit', compact('merchants'));
 
-      $editMerchant->fill($input)->save();
+    }
 
-    return Redirect::to("/merchant-edit/$id")
-    ->with('message', 'Merchant successfully edited');
+    public function editMerchant($id, Request $request)
+    {
 
-  }
+        $this->update($id, $request);
 
-  public function removeMerchant($id)
-  {
+        return Redirect::to("/merchant-edit/$id")
+            ->with('message', 'Merchant successfully edited');
 
-      $merchants = Merchant::find($id);
+    }
 
-      $merchants->delete();
+    public function removeMerchant($id)
+    {
 
-      return Redirect::to('merchant-list')->with('message', 'Merchant removed');
-  }
+        $merchants = Merchant::find($id);
+
+        $merchants->delete();
+
+        return Redirect::to('merchant-list')->with('message', 'Merchant removed');
+    }
 
 }

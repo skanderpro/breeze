@@ -368,48 +368,54 @@ trait PoControllerTrait
     }
 
 
-	public function getList4Role($user, $filter){
+    public function getList4Role($user, $filter)
+    {
 
-		$pos = Po::select("pos.*")
+        $pos = Po::select("pos.*")
             ->whereNot('pos.is_request', '1')
-			->join('companies','companies.id','=','pos.companyId' )
-			->join('merchants','merchants.id','=','pos.selectMerchant')
-			->where('companies.parent_id', $user->companyId)
-			->whereBetween('pos.created_at',[ date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])),  date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))])
-			->orderBy('pos.id','desc');
-		if($filter['filter']['search']){
-			$pos = $pos->where('merchants.merchantName','like','%' . $filter['filter']['search'] . '%');
-		}
-		$pos = $pos->get();
-		return $pos;
+            ->join('companies', 'companies.id', '=', 'pos.companyId')
+            ->join('merchants', 'merchants.id', '=', 'pos.selectMerchant')
+            ->where('companies.parent_id', $user->companyId)
+        ;
+        if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
+            $pos = $pos->whereBetween('pos.created_at', [date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])), date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))]);
+        }
 
-	}
+        if (!empty($filter['filter']['search'])) {
+            $pos = $pos->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%');
+        }
+        $pos = $pos->orderBy('pos.id', 'desc')->get();
+        return $pos;
 
-    public function getRequestList4Role($user){
+    }
 
-        $pos = Po::select("pos.*")->where('pos.is_request', '1')->join('companies','companies.id','=','pos.companyId' )->where('companies.parent_id', $user->companyId)->orderBy('pos.id','desc')->get();
+    public function getRequestList4Role($user)
+    {
+
+        $pos = Po::select("pos.*")->where('pos.is_request', '1')->join('companies', 'companies.id', '=', 'pos.companyId')->where('companies.parent_id', $user->companyId)->orderBy('pos.id', 'desc')->get();
 
         return $pos;
 
     }
 
 
-	public function cancelPo($id,$status){
-		$editPo = Po::findOrFail($id);
-		$editPo->poCancelled = 1;
-		$editPo->poCancelledBy = Auth::user()->name;
-		$editPo->poCompletedStatus = $status;
-		$editPo->update();
-		return $editPo;
-	}
+    public function cancelPo($id, $status)
+    {
+        $editPo = Po::findOrFail($id);
+        $editPo->poCancelled = 1;
+        $editPo->poCancelledBy = Auth::user()->name;
+        $editPo->poCompletedStatus = $status;
+        $editPo->update();
+        return $editPo;
+    }
 
 
-
-	public function visitPo($id){
-		$editPo = Po::findOrFail($id);
-		$editPo->poVisitStatus = 1;
-		return $editPo;
-	}
+    public function visitPo($id)
+    {
+        $editPo = Po::findOrFail($id);
+        $editPo->poVisitStatus = 1;
+        return $editPo;
+    }
 
 
 }

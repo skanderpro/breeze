@@ -34,6 +34,7 @@ class Merchant extends Model
         'green_supplier',
         'lng',
         'lat',
+        'disabled',
         'merchantContactName',
         'merchantContactEmail',
         'merchantContactPhone'
