@@ -83,18 +83,30 @@ class Po extends Model
 
 	public function getStatusAttribute(){
 		$statuses = [];
-		if(Auth::user()->id != $this->u_id && !$this->poVisitStatus){
-			$statuses[] = 'Unused';
+		if($this->is_request){
+			if(static::getApprovedRequestsCount($this->poNumber)){
+				$statuses[] = "Pending";
+			} else {
+				$statuses[] = "Awaiting";
+			}
+					
+		} else {
+			if(Auth::user()->id != $this->u_id && !$this->poVisitStatus){
+				$statuses[] = 'Unused';
+			}
+			if(Auth::user()->id == $this->u_id || $this->poVisitStatus){
+				$statuses[] = 'POD Required';
+			}
+			if(!!$this->poPod){
+				$statuses[] = 'Completed';
+			}
+			if($this->poCancelled){
+				$statuses[] = 'Cancelled';
+			}			
 		}
-		if(Auth::user()->id == $this->u_id || $this->poVisitStatus){
-			$statuses[] = 'POD Required';
-		}
-		if(!!$this->poPod){
-			$statuses[] = 'Completed';
-		}
-		if($this->poCancelled){
-			$statuses[] = 'Cancelled';
-		}
+		
+		
+
 		return end($statuses);
 	}
 
