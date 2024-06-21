@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'phone' => $this->resource->phone,
             'email' => $this->resource->email,
             'created_at' => $this->resource->created_at,
+			'company' => CompanyResource::make($this->company)
         ] + (
             $this->resource->id === Auth::id()
                 ? [
