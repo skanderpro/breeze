@@ -13,6 +13,7 @@ use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 
 trait PoControllerTrait
@@ -367,6 +368,46 @@ trait PoControllerTrait
         return $editPo;
     }
 
+    public function uploadPoPod($id, Request $request)
+    {
+        $this->validate($request, [
+            'poPod' => 'file|max:6000',
+        ]);
+
+        $destinationPath = 'uploads/'; // upload path
+
+        $filename = $_FILES['poPod']['name'];
+
+        $editPo = Po::findOrFail($id);
+        if ($request->hasFile('poPod')) {
+            $request->file('poPod')->move(Storage::disk('public')->path($destinationPath), $filename);
+            $editPo->poPod = $filename;
+            $editPo->save();
+
+        }
+
+        return $editPo;
+    }
+
+    public function removePod($id, Request $request)
+    {
+        $this->validate($request, [
+            'poPod' => 'file|max:6000',
+        ]);
+
+        $editPo = Po::findOrFail($id);
+        $destinationPath = 'uploads/' . $editPo->poPod; // upload path
+
+        if (Storage::disk('public')->exists($destinationPath)) {
+
+            Storage::disk('public')->delete($destinationPath);
+            $editPo->poPod = '';
+            $editPo->save();
+
+        }
+
+        return $editPo;
+    }
 
     public function getList4Role($user, $filter)
     {
