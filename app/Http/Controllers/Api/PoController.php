@@ -50,11 +50,25 @@ class PoController extends Controller
 
         return PoResource::make($po);
     }
-	
+
+    public function podUpload($id, Request $request)
+    {
+        $po = $this->uploadPoPod($id, $request);
+
+        return PoResource::make($po);
+    }
+
+    public function podDelete($id, Request $request)
+    {
+        $po = $this->removePod($id, $request);
+
+        return PoResource::make($po);
+    }
+
 	public function uploadPOD($id, Request $request){
-		
+
 		$po = $this->getSingle($id);
-		
+
 		$data = $request->data;
 
 		// Вкажіть шлях до файлу, де ви хочете його зберегти.
@@ -71,21 +85,21 @@ class PoController extends Controller
 		$po->poPod = ($url);
 		$po->poCompleted = 1;
 		$po->update();
-	
+
 		return response( url($url), 200);
-		
-		
+
+
 	}
-	
+
 	public function cancel($id, Request $request)
 	{
 		$input = $request->all();
-		
+
 		$po = $this->cancelPo($id, $input['status']);
 
         return PoResource::make($po);
 	}
-	
+
 	public function visit($id){
 		$po = $this->visitPo($id);
 
