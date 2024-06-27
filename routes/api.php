@@ -74,6 +74,8 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('/', [PoController::class, 'storePo'])->name('storePo');
 		Route::post('/visit/{id}', [PoController::class, 'visit'])->name('visitPo');
 		Route::post('/upload-pod/{id}', [PoController::class, 'uploadPOD'])->name('uploadPOD');
+		Route::post('/{id}/upload-pod', [PoController::class, 'podUpload'])->name('podUpload');
+		Route::post('/{id}/delete-pod', [PoController::class, 'podDelete'])->name('podDelete');
         Route::patch('/{id}', [PoController::class, 'update'])->name('update');
 		Route::patch('/{id}/cancel',[PoController::class, 'cancel'])->name('cancel');
     });
