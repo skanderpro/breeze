@@ -439,7 +439,9 @@ trait PoControllerTrait
         $editPo = Po::findOrFail($id);
         $destinationPath = 'uploads/' . $editPo->poPod; // upload path
 
+
         $fileWasDeleted = false;
+
 
         if (Storage::disk('public')->exists($destinationPath)) {
             Storage::disk('public')->delete($destinationPath);
