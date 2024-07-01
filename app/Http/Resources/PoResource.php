@@ -47,7 +47,8 @@ class PoResource extends JsonResource
 			'poVisitStatus' => !!$this->resource->poVisitStatus,
             'request_file' => !empty($this->request_file) ? asset(Storage::url($this->request_file)) : null,
             'billable_value' => $this->billable_value,
-
+            'alt_merchant_name' => $this->resource->alt_merchant_name ?? null,
+            'alt_merchant_contact' => $this->resource->alt_merchant_contact ?? null,
         ];
     }
 }

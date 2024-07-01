@@ -28,7 +28,10 @@ class UserResource extends JsonResource
         ] + (
             $this->resource->id === Auth::id()
                 ? [
-                    'settings' => UserSettingResource::collection($this->settings)
+                    'settings' => [
+                        'push_notification' => (boolean)$this->resource->setting_push_notification,
+                        'email_notification' => (boolean)$this->resource->setting_email_notification,
+                    ]
             ]
                 : []
         );
