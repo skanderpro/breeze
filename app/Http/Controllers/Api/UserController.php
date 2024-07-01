@@ -65,24 +65,13 @@ class UserController extends Controller
     public function updateUserSettings(User $user, Request $request)
     {
         $request->validate([
-            'settings.*.key' => 'required|string',
-            'settings.*.value' => 'nullable|string',
+            'setting_email_notification' => 'required',
+            'setting_push_notification' => 'required',
         ]);
 
-        $payload = [];
-        foreach ($request->input('settings') as $item) {
-            $payload[] = [
-                'key' => $item['key'],
-                'value' => $item['value'],
-                'user_id' => $user->id,
-            ];
-        }
+        $user->fill($request->only(['setting_email_notification', 'setting_push_notification']));
+        $user->save();
 
-        DB::transaction(function () use ($user, $payload) {
-            UserSetting::removeUserSettings($user->id);
-            UserSetting::insert($payload);
-        });
-
-        return UserSettingResource::collection($user->settings);
+        return UserResource::make($user);
     }
 }

@@ -47,7 +47,7 @@ trait PoControllerTrait
 
         throw new \Exception('poType validation failed');
     }
-	
+
     protected function validateStore(Request $request)
     {
         if ($request->input('poType') == "alternate") {
@@ -425,12 +425,19 @@ trait PoControllerTrait
         $editPo = Po::findOrFail($id);
         $destinationPath = 'uploads/' . $editPo->poPod; // upload path
 
-        if (Storage::disk('public')->exists($destinationPath)) {
+        $fileWasDeleted = false;
 
+        if (Storage::disk('public')->exists($destinationPath)) {
             Storage::disk('public')->delete($destinationPath);
+            $fileWasDeleted = true;
+        } elseif (Storage::disk('local')->exists($editPo->poPod)) {
+            Storage::disk('local')->delete($editPo->poPod);
+            $fileWasDeleted = true;
+        }
+
+        if ($fileWasDeleted) {
             $editPo->poPod = '';
             $editPo->save();
-
         }
 
         return $editPo;
@@ -461,7 +468,7 @@ trait PoControllerTrait
     {
 
         $pos = Po::select("pos.*")->where('pos.is_request', '1')->join('companies', 'companies.id', '=', 'pos.companyId')->where('companies.parent_id', $user->companyId);
-		
+
         if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
             $pos = $pos->whereBetween('pos.created_at', [date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])), date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))]);
         }
@@ -469,7 +476,7 @@ trait PoControllerTrait
         if (!empty($filter['filter']['search'])) {
             $pos = $pos->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%');
         }
-		
+
 		$pos = $pos->orderBy('pos.id', 'desc')->get();
         return $pos;
 
@@ -495,7 +502,7 @@ trait PoControllerTrait
     }
 
 
-	
+
 	public function getRequestsByNumber($number){
 		$pos = PO::where('poNumber', $number)->get();
 		return $pos;
