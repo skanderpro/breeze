@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 trait PoControllerTrait
@@ -432,6 +433,12 @@ trait PoControllerTrait
             $fileWasDeleted = true;
         } elseif (Storage::disk('local')->exists($editPo->poPod)) {
             Storage::disk('local')->delete($editPo->poPod);
+            $fileWasDeleted = true;
+        } elseif (Storage::exists($editPo->poPod)) {
+            Storage::delete($editPo->poPod);
+            $fileWasDeleted = true;
+        } elseif (file_exists(base_path($editPo->poPod))) {
+            unlink(base_path($editPo->poPod));
             $fileWasDeleted = true;
         }
 
