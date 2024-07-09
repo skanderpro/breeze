@@ -41,7 +41,7 @@ class Po extends Model
         'billable_value',
     ];
 
-    public static function getRequestCount($number = null)
+    public static function getRequestCount($number = null, $user = null)
     {
         $qb = static::query()
             ->where('is_request', 1);
@@ -50,16 +50,41 @@ class Po extends Model
             $qb = $qb->where('poNumber', $number);
         }
 
+        if (!empty($user)) {
+            $qb = $qb->where('u_id', $user->id);
+        }
+
         return $qb->count();
     }
 
-    public static function getApprovedRequestsCount($number = null)
+    public static function getCompletedCount($number = null, $user = null)
+    {
+        $qb = static::query();
+
+        if (!empty($number)) {
+            $qb = $qb->where('poNumber', $number);
+        }
+
+        if (!empty($user)) {
+            $qb = $qb->where('u_id', $user->id);
+        }
+
+        $qb = $qb->where('poCompleted', 1);
+
+        return $qb->count();
+    }
+
+    public static function getApprovedRequestsCount($number = null, $user = null)
     {
         $qb = static::query()
             ->where('is_request', 1);
 
         if (!empty($number)) {
             $qb = $qb->where('poNumber', $number);
+        }
+
+        if (!empty($user)) {
+            $qb = $qb->where('u_id', $user->id);
         }
 
         return $qb
@@ -89,7 +114,7 @@ class Po extends Model
 			} else {
 				$statuses[] = "Awaiting";
 			}
-					
+
 		} else {
 			if(Auth::user()->id != $this->u_id && !$this->poVisitStatus){
 				$statuses[] = 'Unused';
@@ -102,10 +127,10 @@ class Po extends Model
 			}
 			if($this->poCancelled){
 				$statuses[] = 'Cancelled';
-			}			
+			}
 		}
-		
-		
+
+
 
 		return end($statuses);
 	}
