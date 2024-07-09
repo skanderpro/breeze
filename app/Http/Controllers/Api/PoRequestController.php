@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Http\Resources\PoResource;
 use App\Models\Po;
+use App\Models\User;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -119,6 +120,17 @@ class PoRequestController extends Controller
         return PoResource::make($po);
     }
 
+    public function getUserCounters(User $user)
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'requests' => Po::getRequestCount(null, $user),
+            'completed' => Po::getCompletedCount(null, $user),
+            'approved' => Po::getApprovedRequestsCount(null, $user),
+        ]);
+    }
+
 	public function cancel($id, Request $request)
 	{
 		$input = $request->all();
@@ -127,7 +139,7 @@ class PoRequestController extends Controller
 
         return PoResource::make($po);
 	}
-	
+
 	public function getByNumber($number){
 		$pos = $this->getRequestsByNumber($number);
 		return PoResource::collection($pos);
