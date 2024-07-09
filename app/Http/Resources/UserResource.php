@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'companyLimit' => $this->order_limit,
             'accessLevel' => $this->resource->accessLevel,
             'phone' => $this->resource->phone,
+            'disabled' => $this->resource->disabled,
             'email' => $this->resource->email,
             'created_at' => $this->resource->created_at,
 			'company' => CompanyResource::make($this->company)
