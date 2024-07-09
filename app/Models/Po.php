@@ -51,10 +51,14 @@ class Po extends Model
         }
 
         if (!empty($user)) {
-            $qb = $qb->where('u_id', $user->id);
+            $qb = $qb->where('u_id', $user->id)
+                ->whereNot('poCompleted', 1)
+            ->groupBy('poNumber')
+                ->select(['poNumber'])
+            ;
         }
 
-        return $qb->count();
+        return $qb->get()->count();
     }
 
     public static function getCompletedCount($number = null, $user = null)
@@ -66,12 +70,14 @@ class Po extends Model
         }
 
         if (!empty($user)) {
-            $qb = $qb->where('u_id', $user->id);
+            $qb = $qb->where('u_id', $user->id)
+                ->groupBy('poNumber')
+            ->select(['poNumber']);
         }
 
         $qb = $qb->where('poCompleted', 1);
 
-        return $qb->count();
+        return $qb->get()->count();
     }
 
     public static function getApprovedRequestsCount($number = null, $user = null)
@@ -84,13 +90,16 @@ class Po extends Model
         }
 
         if (!empty($user)) {
-            $qb = $qb->where('u_id', $user->id);
+            $qb = $qb->where('u_id', $user->id)
+                ->select(['poNumber'])
+                ->groupBy('poNumber');
         }
 
         return $qb
             ->whereNotNull('poValue')
             ->whereNotNull('billable_value')
             ->whereNotNull('request_file')
+            ->get()
             ->count();
     }
 
