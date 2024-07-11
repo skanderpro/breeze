@@ -66,7 +66,7 @@ trait UserControllerTrait
             'name' => 'required',
             'email' => 'required|email',
             'accessLevel' => 'required',
-            'permissions' => 'required'
+            'permissions' => 'nullable'
             // 'password' => 'required|min:6|confirmed'
         ]);
 
@@ -78,10 +78,16 @@ trait UserControllerTrait
             $input['password'] = Hash::make($request['password']);
         }
 
+        if (empty($input['permissions'])) {
+            unset($input['permissions']);
+        }
+
 
         $editUser->fill($input);
         $editUser->save();
 
         return $editUser;
     }
+
+
 }

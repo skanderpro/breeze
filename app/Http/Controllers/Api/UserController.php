@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\UserControllerTrait;
+use App\Http\Resources\CompanyResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserSettingResource;
+use App\Models\Company;
 use App\Models\User;
 use App\Models\UserSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
@@ -71,6 +74,42 @@ class UserController extends Controller
 
         $user->fill($request->only(['setting_email_notification', 'setting_push_notification']));
         $user->save();
+
+        return UserResource::make($user);
+    }
+
+    public function toggle(User $user)
+    {
+        $user->disabled = (int)$user->disabled ? '' : '1';
+        $user->save();
+
+        return UserResource::make($user);
+    }
+
+    public function storeUser(Request $request)
+    {
+        $input = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'accessLevel' => 'required',
+            'permissions' => 'nullable'
+            // 'password' => 'required|min:6|confirmed'
+        ]);
+
+        $newPassword = $request->get('password');
+
+        if (!empty($newPassword)) {
+            $input['password'] = Hash::make($request['password']);
+        } else {
+            unset($input['password']);
+        }
+
+        if (empty($input['permissions'])) {
+            unset($input['permissions']);
+        }
+
+
+        $user = User::create($input);
 
         return UserResource::make($user);
     }
