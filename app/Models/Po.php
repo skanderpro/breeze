@@ -53,6 +53,7 @@ class Po extends Model
         if (!empty($user)) {
             $qb = $qb->where('u_id', $user->id)
                 ->whereNot('poCompleted', 1)
+                ->whereNot('poCancelled', 1)
             ->groupBy('poNumber')
                 ->select(['poNumber'])
             ;
