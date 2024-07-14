@@ -18,12 +18,15 @@ class MerchantController extends Controller
 
         $search = $request->get('search');
         if (!empty($search)) {
-            $qb = $qb->where('merchantName','LIKE',"%$search%")
-                ->orwhere('merchantId','LIKE',"%$search%")
-                ->orwhere('merchantAddress1','LIKE',"%$search%")
-                ->orwhere('merchantAddress2','LIKE',"%$search%")
-                ->orwhere('merchantPostcode','LIKE',"%$search%")
-                ->orwhere('merchantEmail','LIKE',"%$search%")
+            $qb = $qb
+                ->where(function ($query) use ($search) {
+                      $query->where('merchantName','LIKE',"%$search%")
+                      ->orwhere('merchantId','LIKE',"%$search%")
+                      ->orwhere('merchantAddress1','LIKE',"%$search%")
+                      ->orwhere('merchantAddress2','LIKE',"%$search%")
+                      ->orwhere('merchantPostcode','LIKE',"%$search%")
+                      ->orwhere('merchantEmail','LIKE',"%$search%");
+                })
                 ->orderBy('merchantName', 'asc');
         }
 
@@ -39,7 +42,7 @@ class MerchantController extends Controller
 
         $greenSupplier = $request->get('green_supplier');
         if (!empty($greenSupplier)) {
-            $qb = $qb->where('green_supplier', $greenSupplier);
+            $qb = $qb->where('green_supplier', '1');
         }
 
         $merchantPlumbing = $request->get('merchantPlumbing');

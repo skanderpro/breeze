@@ -13,10 +13,6 @@ trait UserControllerTrait
     public function userList(Request $request)
     {
         $accessLevel = Auth::user()->accessLevel;
-        if (!in_array($accessLevel, ['1', '2'])) {
-            throw new AccessDeniedException('');
-        }
-
 
         $search = $request->get('search');
 
