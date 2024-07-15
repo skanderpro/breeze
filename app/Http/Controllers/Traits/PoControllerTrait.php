@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,20 +26,24 @@ trait PoControllerTrait
 
     protected function validateStoreRequest(Request $request)
     {
-        if ($request->input('poType') == "alternate") {
+        $poType = $request->input('poType', $request->input('items.0.poType'));
+
+        if ($poType == "alternate") {
             return $this->validate($request, [
                 'items.*.companyId' => 'required',
                 'items.*.u_id' => 'required',
                 'items.*.poType' => 'required|max:255',
                 'items.*.poPurpose' => 'required|max:255',
+                'items.*.poNotes' => 'nullable',
                 'items.*.alt_merchant_name' => 'required',
                 'items.*.alt_merchant_contact' => 'required',
                 'items.*.poProjectLocation' => 'required|max:255',
             ]);
-        } else if ($request->input('poType') == "Pre Approved") {
+        } else if ($poType == "Pre Approved") {
             return $this->validate($request, [
                 'items.*.companyId' => 'required',
                 'items.*.u_id' => 'required',
+                'items.*.poNotes' => 'nullable',
                 'items.*.poType' => 'required|max:255',
                 'items.*.poPurpose' => 'required|max:255',
                 'items.*.selectMerchant' => 'required',
@@ -56,6 +61,7 @@ trait PoControllerTrait
                 'companyId' => 'required',
                 'u_id' => 'required',
                 'poType' => 'required|max:255',
+                'poNotes' => 'nullable',
                 'poPurpose' => 'required|max:255',
                 'alt_merchant_name' => 'required',
                 'alt_merchant_contact' => 'required',
@@ -65,6 +71,7 @@ trait PoControllerTrait
             return $this->validate($request, [
                 'companyId' => 'required',
                 'u_id' => 'required',
+                'poNotes' => 'nullable',
                 'poType' => 'required|max:255',
                 'poPurpose' => 'required|max:255',
                 'selectMerchant' => 'required',
@@ -114,47 +121,53 @@ trait PoControllerTrait
 
         $creatPOinputmechant = $request->input('inputMerchant');
 
+        try {
+            // email function to come, if validation above it met
+            Mail::send('emails.po', compact('creatPO', 'creatPOmechant', 'creatPOinputmechant', 'poUser', 'poCompany', 'poAdminCompany'), function ($message) use ($request, $poAdminCompany, $poCompany) {
 
-        // email function to come, if validation above it met
-        Mail::send('emails.po', compact('creatPO', 'creatPOmechant', 'creatPOinputmechant', 'poUser', 'poCompany', 'poAdminCompany'), function ($message) use ($request, $poAdminCompany, $poCompany) {
+                if ($_SERVER["REMOTE_ADDR"] == '127.0.0.1') {
 
-            if ($_SERVER["REMOTE_ADDR"] == '127.0.0.1') {
+                    $message->from('webtools@cornellstudios.com', $name = 'Express Merchants | Local');
 
-                $message->from('webtools@cornellstudios.com', $name = 'Express Merchants | Local');
+                } else {
 
-            } else {
+                    $message->from('helpdesk@express-merchants.co.uk', $name = 'Express Merchants Helpdesk');
 
-                $message->from('helpdesk@express-merchants.co.uk', $name = 'Express Merchants Helpdesk');
-
-            }
-
-            if ($_SERVER["REMOTE_ADDR"] == '127.0.0.1') {
-
-                $message->to('webtools@cornellstudios.com')->subject('A Purchase Order has been created | Local');
-
-            } else {
-
-                $message->to('helpdesk@express-merchants.co.uk')->subject('A Purchase Order has been created');
-
-            }
-
-            if ($poAdminCompany) {
-
-                foreach ($poAdminCompany as $poAdminComp) {
-                    $message->cc($poAdminComp->email)->subject('A Purchase Order has been created');
                 }
 
-            }
+                if ($_SERVER["REMOTE_ADDR"] == '127.0.0.1') {
 
-            if ($poCompany) {
+                    $message->to('webtools@cornellstudios.com')->subject('A Purchase Order has been created | Local');
 
-                $message->cc($poCompany->companyContactEmail)->subject('A Purchase Order has been created');
+                } else {
 
-            }
+                    $message->to('helpdesk@express-merchants.co.uk')->subject('A Purchase Order has been created');
 
-            // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
+                }
 
-        });
+                if ($poAdminCompany) {
+
+                    foreach ($poAdminCompany as $poAdminComp) {
+                        $message->cc($poAdminComp->email)->subject('A Purchase Order has been created');
+                    }
+
+                }
+
+                if ($poCompany) {
+
+                    $message->cc($poCompany->companyContactEmail)->subject('A Purchase Order has been created');
+
+                }
+
+                // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
+
+            });
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                'error' => $e,
+            ]);
+        }
+
 
         return $creatPO;
     }
