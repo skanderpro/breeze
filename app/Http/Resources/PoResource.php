@@ -31,6 +31,7 @@ class PoResource extends JsonResource
             'em_invoice' => $this->resource->poEMInvoice,
             'cost_sheet' => $this->resource->poCostSheet,
             'pod' => $this->resource->poPod,
+            'pod_url' => !empty($this->poPod) ? asset(Storage::url($this->poPod)) : null,
             'job_status' => $this->resource->poJobStatus,
             'finance_status' => $this->resource->poFinanceStatus,
             'cancelled' => $this->resource->poCancelled,
