@@ -19,6 +19,9 @@ trait MerchantControllerTrait
             'merchantPhone' => 'required|max:22',
             'merchantEmail' => 'required|max:255',
 
+            'alt_merchant_name' => 'nullable',
+            'alt_merchant_contact' => 'nullable',
+
             'lng' => 'required|max:12',
             'lat' => 'required|max:12',
         ]);
