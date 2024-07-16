@@ -502,6 +502,24 @@ trait PoControllerTrait
 
     }
 
+    public function getAdminRequestList($filter)
+    {
+
+        $pos = Po::select("pos.*")->where('pos.is_request', '1');
+
+        if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
+            $pos = $pos->whereBetween('pos.created_at', [date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])), date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))]);
+        }
+
+        if (!empty($filter['filter']['search'])) {
+            $pos = $pos->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%');
+        }
+
+        $pos = $pos->orderBy('pos.id', 'desc')->get();
+        return $pos;
+
+    }
+
 
     public function cancelPo($id, $status)
     {

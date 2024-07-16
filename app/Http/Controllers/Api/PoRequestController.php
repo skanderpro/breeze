@@ -71,8 +71,7 @@ class PoRequestController extends Controller
     public function index(Request $request)
     {
 		$input = $request->all();
-		$user = Auth::user();
-        $data = $this->getRequestList4Role($user, $input);
+        $data = $this->getAdminRequestList($input);
 
         return $this->groupRequests($data);
     }
