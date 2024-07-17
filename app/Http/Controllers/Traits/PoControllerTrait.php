@@ -473,12 +473,76 @@ trait PoControllerTrait
             ->where('companies.parent_id', $user->companyId)
         ;
         if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
-            $pos = $pos->whereBetween('pos.created_at', [date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])), date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))]);
+            $startDate = date('Y-m-d H:i:s', strtotime($filter['filter']['startDate']));
+            $endDate = date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']));
+
+            $pos = $pos->where(function ($q) use($startDate, $endDate) {
+                $q
+                    ->where('pos.created_at', '>=', $startDate)
+                    ->where('pos.created_at', '<=', $endDate);
+            });
         }
 
         if (!empty($filter['filter']['search'])) {
             $pos = $pos->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%');
         }
+
+        if (!empty($filter['filter']['green_supplier'])) {
+            $pos = $pos->where('merchants.green_supplier', '1');
+        }
+
+        if (!empty($filter['filter']['merchantPlumbing'])) {
+            $pos = $pos->where('merchants.merchantPlumbing', $filter['filter']['merchantPlumbing']);
+        }
+
+        if (!empty($filter['filter']['merchantElectrical'])) {
+            $pos = $pos->where('merchants.merchantElectrical', $filter['filter']['merchantElectrical']);
+        }
+
+        if (!empty($filter['filter']['merchantBuilders'])) {
+            $pos = $pos->where('merchants.merchantBuilders', $filter['filter']['merchantBuilders']);
+        }
+
+        if (!empty($filter['filter']['merchantHire'])) {
+            $pos = $pos->where('merchants.merchantHire', $filter['filter']['merchantHire']);
+        }
+
+        if (!empty($filter['filter']['merchantDecorating'])) {
+            $pos = $pos->where('merchants.merchantDecorating', $filter['filter']['merchantDecorating']);
+        }
+
+        if (!empty($filter['filter']['merchantFlooring'])) {
+            $pos = $pos->where('merchants.merchantFlooring', $filter['filter']['merchantFlooring']);
+        }
+
+        if (!empty($filter['filter']['merchantAuto'])) {
+            $pos = $pos->where('merchants.merchantAuto', $filter['filter']['merchantAuto']);
+        }
+
+        if (!empty($filter['filter']['merchantAggregate'])) {
+            $pos = $pos->where('merchants.merchantAggregate', $filter['filter']['merchantAggregate']);
+        }
+
+        if (!empty($filter['filter']['merchantRoofing'])) {
+            $pos = $pos->where('merchants.merchantRoofing', $filter['filter']['merchantRoofing']);
+        }
+
+        if (!empty($filter['filter']['merchantFixing'])) {
+            $pos = $pos->where('merchants.merchantFixing', $filter['filter']['merchantFixing']);
+        }
+
+        if (!empty($filter['filter']['merchantIronmongrey'])) {
+            $pos = $pos->where('merchants.merchantIronmongrey', $filter['filter']['merchantIronmongrey']);
+        }
+
+        if (!empty($filter['filter']['merchantTyres'])) {
+            $pos = $pos->where('merchants.merchantTyres', $filter['filter']['merchantTyres']);
+        }
+
+        if (!empty($filter['filter']['merchantHealth'])) {
+            $pos = $pos->where('merchants.merchantHealth', $filter['filter']['merchantHealth']);
+        }
+
         $pos = $pos->orderBy('pos.id', 'desc')->get();
         return $pos;
 
