@@ -48,7 +48,7 @@ class MerchantResource extends JsonResource
             // 'updated_at' => $this->resource->updated_at,
             'green_supplier' => $this->resource->green_supplier,
             'disabled' => $this->resource->disabled,
-
+            'parent_id' => $this->resource->parent_id
         ];
     }
 }
