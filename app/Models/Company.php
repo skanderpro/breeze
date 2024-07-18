@@ -16,6 +16,7 @@ class Company extends Model
         'disabled',
         'agreed_rebate',
         'agreed_markup',
+        'parent_id'
     ];
 
 
