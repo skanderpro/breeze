@@ -37,6 +37,7 @@ class Merchant extends Model
         'disabled',
         'merchantContactName',
         'merchantContactEmail',
-        'merchantContactPhone'
+        'merchantContactPhone',
+        'parent_id'
     ];
 }
