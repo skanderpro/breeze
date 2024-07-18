@@ -42,6 +42,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('/', [CompanyController::class, 'store'])->name('store');
         Route::put('/{company}/toggle', [CompanyController::class, 'toggle'])->name('toggle');
         Route::put('/{company}', [CompanyController::class, 'update'])->name('update');
+        Route::get('/{parent_id}/by-parent',[CompanyController::class, 'findByParent'])->name('find-by-parent');
     });
 
     Route::name('merchants.')->prefix('/merchants')->middleware(['auth:sanctum'])->group(function () {
