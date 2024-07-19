@@ -134,4 +134,8 @@ class MerchantController extends Controller
 
         return MerchantResource::make($merchant);
     }
+    
+    public function  findByParentMerchant($parent_id){
+        return $this->findByParent($parent_id);
+    }
 }

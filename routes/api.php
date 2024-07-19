@@ -50,6 +50,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('/', [MerchantController::class, 'createMerchant'])->name('store');
         Route::put('/{id}', [MerchantController::class, 'updateMerchant'])->name('update');
         Route::put('/{merchant}/toggle', [MerchantController::class, 'toggle'])->name('toggle');
+        Route::get('/{parent_id}/by-parent',[MerchantController::class, 'findByParentMerchant'])->name('find-by-parent');
     });
 
     Route::name('notifications.')->prefix('/notifications')->middleware(['auth:sanctum'])->group(function () {

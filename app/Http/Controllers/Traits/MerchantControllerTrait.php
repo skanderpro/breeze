@@ -54,4 +54,9 @@ trait MerchantControllerTrait
 
         return $editMerchant;
     }
+    
+    public function findByParent($parent_id){
+        $companies = Company::where('parent_id',$parent_id)->get();
+        return CompanyResource::collection($companies);
+    }
 }
