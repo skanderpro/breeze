@@ -36,6 +36,7 @@ trait PoControllerTrait
                 'items.*.poPurpose' => 'required|max:255',
                 'items.*.poNotes' => 'nullable',
                 'items.*.alt_merchant_name' => 'required',
+                'items.*.alt_merchant_email' => 'required',
                 'items.*.alt_merchant_contact' => 'required',
                 'items.*.poProjectLocation' => 'required|max:255',
             ]);
