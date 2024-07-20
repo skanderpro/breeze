@@ -423,8 +423,14 @@ trait PoControllerTrait
 
         $editPo = Po::findOrFail($id);
         if ($request->hasFile('poPod')) {
-            $request->file('poPod')->move(Storage::disk('public')->path($destinationPath), $filename);
-            $editPo->poPod = $filename;
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $tmpName = Uuid::uuid4();
+            $filename = "{$tmpName}.{$ext}";
+            $request->file('poPod')->move(
+                Storage::disk('public')->path($destinationPath),
+                $filename
+            );
+            $editPo->poPod = "{$destinationPath}{$filename}";
             $editPo->save();
 
         }
