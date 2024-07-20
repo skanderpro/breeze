@@ -66,6 +66,7 @@ trait PoControllerTrait
                 'poPurpose' => 'required|max:255',
                 'alt_merchant_name' => 'required',
                 'alt_merchant_contact' => 'required',
+                'alt_merchant_email' => 'required',
                 'poProjectLocation' => 'required|max:255',
             ]);
         } else if ($request->input('poType') == "Pre Approved") {
@@ -468,13 +469,17 @@ trait PoControllerTrait
 
     public function getList4Role($user, $filter)
     {
-
         $pos = Po::select("pos.*")
             ->whereNot('pos.is_request', '1')
             ->join('companies', 'companies.id', '=', 'pos.companyId')
-            ->join('merchants', 'merchants.id', '=', 'pos.selectMerchant')
-            ->where('companies.parent_id', $user->companyId)
+            ->leftJoin('merchants', 'merchants.id', '=', 'pos.selectMerchant')
+            ->where(function ($q) use ($user) {
+                $q
+                    ->where('companies.parent_id', $user->companyId)
+                    ->orWhere('companies.id', $user->companyId);
+            })
         ;
+
         if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
             $startDate = date('Y-m-d H:i:s', strtotime($filter['filter']['startDate']));
             $endDate = date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']));
@@ -487,7 +492,11 @@ trait PoControllerTrait
         }
 
         if (!empty($filter['filter']['search'])) {
-            $pos = $pos->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%');
+            $pos = $pos->where(function ($q) use ($filter) {
+                $q
+                    ->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%')
+                    ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%');
+            });
         }
 
         if (!empty($filter['filter']['green_supplier'])) {
