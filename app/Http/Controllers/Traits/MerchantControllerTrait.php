@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Traits;
 
+use App\Http\Resources\CompanyResource;
+use App\Http\Resources\MerchantResource;
+use App\Models\Company;
 use App\Models\Merchant;
 use Illuminate\Http\Request;
 
@@ -54,9 +57,9 @@ trait MerchantControllerTrait
 
         return $editMerchant;
     }
-    
+
     public function findByParent($parent_id){
-        $companies = Company::where('parent_id',$parent_id)->get();
-        return CompanyResource::collection($companies);
+        $branches = Merchant::where('parent_id',$parent_id)->get();
+        return MerchantResource::collection($branches);
     }
 }
