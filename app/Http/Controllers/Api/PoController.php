@@ -37,6 +37,22 @@ class PoController extends Controller
         return PoResource::collection($data);
     }
 
+    public function myPos(Request $request)
+    {
+        $input = $request->all();
+        $user = Auth::user();
+
+        if (empty($input['filter'])) {
+            $input['filter'] = [];
+        }
+
+        $input['filter']['u_id'] = Auth::id();
+
+        $data = $this->getList4Role($user,$input);
+
+        return PoResource::collection($data);
+    }
+
     public function show($id)
     {
         $po = $this->getSingle($id);
