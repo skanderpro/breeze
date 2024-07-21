@@ -62,6 +62,27 @@ class Po extends Model
         return $qb->get()->count();
     }
 
+    public static function getOrdersCount($number = null, $user = null)
+    {
+        $qb = static::query()
+            ->whereNot('is_request', 1);
+
+        if (!empty($number)) {
+            $qb = $qb->where('poNumber', $number);
+        }
+
+        if (!empty($user)) {
+            $qb = $qb->where('u_id', $user->id)
+                ->whereNot('poCompleted', 1)
+                ->whereNot('poCancelled', 1)
+                ->groupBy('poNumber')
+                ->select(['poNumber'])
+            ;
+        }
+
+        return $qb->get()->count();
+    }
+
     public static function getCompletedCount($number = null, $user = null)
     {
         $qb = static::query();

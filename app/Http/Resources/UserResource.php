@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Po;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,7 @@ class UserResource extends JsonResource
             'disabled' => $this->resource->disabled,
             'email' => $this->resource->email,
             'created_at' => $this->resource->created_at,
+            'orders_count' => Po::getOrdersCount(null, $this->resource),
 			'company' => CompanyResource::make($this->company)
         ] + (
             $this->resource->id === Auth::id()
