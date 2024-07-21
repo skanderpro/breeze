@@ -74,6 +74,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
 
     Route::name('po.')->prefix('/po')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [PoController::class, 'index'])->name('index');
+        Route::get('/my-pos', [PoController::class, 'myPos'])->name('myPos');
         Route::get('/{id}', [PoController::class, 'show'])->name('show');
         Route::post('/', [PoController::class, 'storePo'])->name('storePo');
 		Route::post('/visit/{id}', [PoController::class, 'visit'])->name('visitPo');
