@@ -62,7 +62,8 @@ trait UserControllerTrait
             'name' => 'required',
             'email' => 'required|email',
             'accessLevel' => 'required',
-            'permissions' => 'nullable'
+            'permissions' => 'nullable',
+            'companyId' => 'nullable',
             // 'password' => 'required|min:6|confirmed'
         ]);
 
@@ -77,8 +78,12 @@ trait UserControllerTrait
         if (empty($input['permissions'])) {
             unset($input['permissions']);
         }
-
-
+        $contracts = $request->get('contracts');
+        $ids = [];
+        for($i = 0;$i < count($contracts);$i++){
+            $ids[] = $contracts[$i]['id'];
+        }
+        $editUser->companies()->sync($ids);
         $editUser->fill($input);
         $editUser->save();
 
