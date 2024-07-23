@@ -82,7 +82,6 @@ Route::prefix('v1')->name('v1.')->group(function () {
 		Route::post('/{id}/upload-pod', [PoController::class, 'podUpload'])->name('podUpload');
 		Route::post('/{id}/delete-pod', [PoController::class, 'podDelete'])->name('podDelete');
         Route::patch('/{id}', [PoController::class, 'update'])->name('update');
-        Route::patch('/{po}/update', [PoController::class, 'updatePo'])->name('update');
 		Route::patch('/{id}/cancel',[PoController::class, 'cancel'])->name('cancel');
     });
 
@@ -99,6 +98,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('/upload-file', [PoRequestController::class, 'uploadFile'])->name('uploadFile');
         Route::patch('/{id}/cancel',[PoRequestController::class, 'cancel'])->name('cancel');
         Route::patch('/{po}/set-status',[PoRequestController::class, 'setStatus'])->name('setStatus');
+        Route::patch('/{po}/upload',[PoRequestController::class, 'uploadRequest'])->name('uploadRequest');
     });
 
     Route::name('setting.')->prefix('/setting')->middleware(['auth:sanctum'])->group(function () {
