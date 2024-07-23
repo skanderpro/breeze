@@ -151,7 +151,20 @@ class PoRequestController extends Controller
         } catch (\Exception $exception) {
             return $exception;
         }
-        
 
+    }
+    
+    
+    public function uploadRequest(Po $po, Request $request){
+        $request->validate([
+            'poValue' => 'required',
+            'billable_value' => 'required',
+            'request_file' => 'required'
+        ]);
+        
+        $po->fill($request->all());
+        $po->update();
+        
+        return PoResource::make($po);
     }
 }
