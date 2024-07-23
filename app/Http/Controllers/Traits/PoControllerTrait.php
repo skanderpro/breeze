@@ -505,7 +505,9 @@ trait PoControllerTrait
             $pos = $pos->where(function ($q) use ($filter) {
                 $q
                     ->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%')
-                    ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%');
+                    ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%')
+                    ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%')
+                ;
             });
         }
 
@@ -572,15 +574,23 @@ trait PoControllerTrait
 
     public function getRequestList4Role($user, $filter)
     {
-
-        $pos = Po::select("pos.*")->where('pos.is_request', '1')->join('companies', 'companies.id', '=', 'pos.companyId')->where('companies.parent_id', $user->companyId);
+        $pos = Po::select("pos.*")
+            ->where('pos.is_request', '1')
+            ->join('companies', 'companies.id', '=', 'pos.companyId')
+            ->where('companies.parent_id', $user->companyId);
 
         if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
             $pos = $pos->whereBetween('pos.created_at', [date('Y-m-d H:i:s', strtotime($filter['filter']['startDate'])), date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']))]);
         }
 
         if (!empty($filter['filter']['search'])) {
-            $pos = $pos->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%');
+            $pos = $pos->where(function ($q) use ($filter) {
+                $q
+                    ->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%')
+                    ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%')
+                    ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%')
+                ;
+            });
         }
 
 		$pos = $pos->orderBy('pos.id', 'desc')->get();

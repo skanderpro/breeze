@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Http\Resources\PoResource;
+use App\Models\Po;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +31,9 @@ class PoController extends Controller
 
     public function index(Request $request)
     {
-		$input = $request->all();
-		$user = Auth::user();
-        $data = $this->getList4Role($user,$input);
+        $input = $request->all();
+        $user = Auth::user();
+        $data = $this->getList4Role($user, $input);
 
         return PoResource::collection($data);
     }
@@ -48,7 +49,7 @@ class PoController extends Controller
 
         $input['filter']['u_id'] = Auth::id();
 
-        $data = $this->getList4Role($user,$input);
+        $data = $this->getList4Role($user, $input);
 
         return PoResource::collection($data);
     }
@@ -67,6 +68,25 @@ class PoController extends Controller
         return PoResource::make($po);
     }
 
+    public function updatePo(Po $po, Request $request)
+    {
+        $payload = $request->validate([
+            'poNumber' => 'required',
+            'billable_value' => 'nullable',
+            'poInvoice' => 'nullable',
+            'poEMInvoice' => 'nullable',
+            'contractName' => 'nullable',
+            'status' => 'required',
+            'poMaterials' => 'required',
+            'poNotes' => 'required',
+        ]);
+
+        $po->fill($payload);
+        $po->save();
+
+        return PoResource::make($po);
+    }
+
     public function podUpload($id, Request $request)
     {
         $po = $this->uploadPoPod($id, $request);
@@ -81,44 +101,46 @@ class PoController extends Controller
         return PoResource::make($po);
     }
 
-	public function uploadPOD($id, Request $request){
+    public function uploadPOD($id, Request $request)
+    {
 
-		$po = $this->getSingle($id);
+        $po = $this->getSingle($id);
 
-		$data = $request->data;
+        $data = $request->data;
 
-		// Вкажіть шлях до файлу, де ви хочете його зберегти.
-		$path = 'public/';
+        // Вкажіть шлях до файлу, де ви хочете його зберегти.
+        $path = 'public/';
 
-		// Генеруємо унікальне ім'я файлу.
-		$filename = Str::random(20) . $request->name;
+        // Генеруємо унікальне ім'я файлу.
+        $filename = Str::random(20) . $request->name;
 
-		// Використовуйте метод put для збереження файлу на диск. В даному випадку ми використовуємо локальний диск.
-		Storage::disk('local')->put($path . $filename, base64_decode ($data));
+        // Використовуйте метод put для збереження файлу на диск. В даному випадку ми використовуємо локальний диск.
+        Storage::disk('local')->put($path . $filename, base64_decode($data));
 
-		// Отримуємо URL збереженого файлу.
-		$url = Storage::disk('local')->url($path . $filename);
-		$po->poPod = ($url);
-		$po->poCompleted = 1;
-		$po->update();
+        // Отримуємо URL збереженого файлу.
+        $url = Storage::disk('local')->url($path . $filename);
+        $po->poPod = ($url);
+        $po->poCompleted = 1;
+        $po->update();
 
-		return response( url($url), 200);
+        return response(url($url), 200);
 
 
-	}
+    }
 
-	public function cancel($id, Request $request)
-	{
-		$input = $request->all();
+    public function cancel($id, Request $request)
+    {
+        $input = $request->all();
 
-		$po = $this->cancelPo($id, $input['status']);
-
-        return PoResource::make($po);
-	}
-
-	public function visit($id){
-		$po = $this->visitPo($id);
+        $po = $this->cancelPo($id, $input['status']);
 
         return PoResource::make($po);
-	}
+    }
+
+    public function visit($id)
+    {
+        $po = $this->visitPo($id);
+
+        return PoResource::make($po);
+    }
 }
