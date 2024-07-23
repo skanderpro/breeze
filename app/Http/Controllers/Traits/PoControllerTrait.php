@@ -511,61 +511,65 @@ trait PoControllerTrait
             });
         }
 
-        if (!empty($filter['filter']['green_supplier'])) {
-            $pos = $pos->where('merchants.green_supplier', '1');
-        }
+        $pos = $pos->where(function ($q) use ($filter) {
+            $q->where('pos.id', '>', '0');
 
-        if (!empty($filter['filter']['merchantPlumbing'])) {
-            $pos = $pos->where('merchants.merchantPlumbing', $filter['filter']['merchantPlumbing']);
-        }
+            if (!empty($filter['filter']['green_supplier'])) {
+                $q = $q->orWhere('merchants.green_supplier', '1');
+            }
 
-        if (!empty($filter['filter']['merchantElectrical'])) {
-            $pos = $pos->where('merchants.merchantElectrical', $filter['filter']['merchantElectrical']);
-        }
+            if (!empty($filter['filter']['merchantPlumbing'])) {
+                $q = $q->orWere('merchants.merchantPlumbing', $filter['filter']['merchantPlumbing']);
+            }
 
-        if (!empty($filter['filter']['merchantBuilders'])) {
-            $pos = $pos->where('merchants.merchantBuilders', $filter['filter']['merchantBuilders']);
-        }
+            if (!empty($filter['filter']['merchantElectrical'])) {
+                $q = $q->orWere('merchants.merchantElectrical', $filter['filter']['merchantElectrical']);
+            }
 
-        if (!empty($filter['filter']['merchantHire'])) {
-            $pos = $pos->where('merchants.merchantHire', $filter['filter']['merchantHire']);
-        }
+            if (!empty($filter['filter']['merchantBuilders'])) {
+                $q = $q->orWere('merchants.merchantBuilders', $filter['filter']['merchantBuilders']);
+            }
 
-        if (!empty($filter['filter']['merchantDecorating'])) {
-            $pos = $pos->where('merchants.merchantDecorating', $filter['filter']['merchantDecorating']);
-        }
+            if (!empty($filter['filter']['merchantHire'])) {
+                $q = $q->orWere('merchants.merchantHire', $filter['filter']['merchantHire']);
+            }
 
-        if (!empty($filter['filter']['merchantFlooring'])) {
-            $pos = $pos->where('merchants.merchantFlooring', $filter['filter']['merchantFlooring']);
-        }
+            if (!empty($filter['filter']['merchantDecorating'])) {
+                $q = $q->orWere('merchants.merchantDecorating', $filter['filter']['merchantDecorating']);
+            }
 
-        if (!empty($filter['filter']['merchantAuto'])) {
-            $pos = $pos->where('merchants.merchantAuto', $filter['filter']['merchantAuto']);
-        }
+            if (!empty($filter['filter']['merchantFlooring'])) {
+                $q = $q->orWere('merchants.merchantFlooring', $filter['filter']['merchantFlooring']);
+            }
 
-        if (!empty($filter['filter']['merchantAggregate'])) {
-            $pos = $pos->where('merchants.merchantAggregate', $filter['filter']['merchantAggregate']);
-        }
+            if (!empty($filter['filter']['merchantAuto'])) {
+                $q = $q->orWere('merchants.merchantAuto', $filter['filter']['merchantAuto']);
+            }
 
-        if (!empty($filter['filter']['merchantRoofing'])) {
-            $pos = $pos->where('merchants.merchantRoofing', $filter['filter']['merchantRoofing']);
-        }
+            if (!empty($filter['filter']['merchantAggregate'])) {
+                $q = $q->orWere('merchants.merchantAggregate', $filter['filter']['merchantAggregate']);
+            }
 
-        if (!empty($filter['filter']['merchantFixing'])) {
-            $pos = $pos->where('merchants.merchantFixing', $filter['filter']['merchantFixing']);
-        }
+            if (!empty($filter['filter']['merchantRoofing'])) {
+                $q = $q->orWere('merchants.merchantRoofing', $filter['filter']['merchantRoofing']);
+            }
 
-        if (!empty($filter['filter']['merchantIronmongrey'])) {
-            $pos = $pos->where('merchants.merchantIronmongrey', $filter['filter']['merchantIronmongrey']);
-        }
+            if (!empty($filter['filter']['merchantFixing'])) {
+                $q = $q->orWere('merchants.merchantFixing', $filter['filter']['merchantFixing']);
+            }
 
-        if (!empty($filter['filter']['merchantTyres'])) {
-            $pos = $pos->where('merchants.merchantTyres', $filter['filter']['merchantTyres']);
-        }
+            if (!empty($filter['filter']['merchantIronmongrey'])) {
+                $q = $q->orWere('merchants.merchantIronmongrey', $filter['filter']['merchantIronmongrey']);
+            }
 
-        if (!empty($filter['filter']['merchantHealth'])) {
-            $pos = $pos->where('merchants.merchantHealth', $filter['filter']['merchantHealth']);
-        }
+            if (!empty($filter['filter']['merchantTyres'])) {
+                $q = $q->orWere('merchants.merchantTyres', $filter['filter']['merchantTyres']);
+            }
+
+            if (!empty($filter['filter']['merchantHealth'])) {
+                $q = $q->orWere('merchants.merchantHealth', $filter['filter']['merchantHealth']);
+            }
+        });
 
         $pos = $pos->orderBy('pos.id', 'desc')->get();
         return $pos;
