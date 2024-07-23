@@ -642,6 +642,26 @@ trait PoControllerTrait
 		return $pos;
 	}
 
-
+    public function uploadRequestFileMethod($request){
+        $this->validate($request, [
+            'file' => 'file|max:6000',
+        ]);
+        
+        $destinationPath = 'uploads/'; // upload path     
+        $filename = '';      
+        $path = '';
+        
+        if ($request->hasFile('file')) {
+            $ext = $request->file('file')->extension();
+            $tmpName = Uuid::uuid4();
+            $filename = "{$tmpName}.{$ext}";
+            $request->file('file')->move(
+                Storage::disk('public')->path($destinationPath),
+                $filename
+            );
+            $path = "{$destinationPath}{$filename}";        
+        }  
+        return ['file' => $path];
+    }
 
 }
