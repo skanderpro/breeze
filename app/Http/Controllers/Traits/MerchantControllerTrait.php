@@ -47,6 +47,20 @@ trait MerchantControllerTrait
             'merchantEmail' => 'required|max:255',
             'lng' => 'required|max:12',
             'lat' => 'required|max:12',
+
+            'merchantPlumbing' => 'nullable',
+            'merchantElectrical' => 'nullable',
+            'merchantBuilders' => 'nullable',
+            'merchantHire' => 'nullable',
+            'merchantDecorating' => 'nullable',
+            'merchantFlooring' => 'nullable',
+            'merchantAuto' => 'nullable',
+            'merchantAggregate' => 'nullable',
+            'merchantRoofing' => 'nullable',
+            'merchantFixing' => 'nullable',
+            'merchantIronmongrey' => 'nullable',
+            'merchantTyres' => 'nullable',
+            'merchantHealth' => 'nullable',
         ]);
 
         $editMerchant = Merchant::findOrFail($id);
@@ -58,8 +72,9 @@ trait MerchantControllerTrait
         return $editMerchant;
     }
 
-    public function findByParent($parent_id){
-        $branches = Merchant::where('parent_id',$parent_id)->get();
+    public function findByParent($parent_id)
+    {
+        $branches = Merchant::where('parent_id', $parent_id)->get();
         return MerchantResource::collection($branches);
     }
 }
