@@ -143,4 +143,15 @@ class PoRequestController extends Controller
 		$pos = $this->getRequestsByNumber($number);
 		return PoResource::collection($pos);
 	}
+    
+    public function uploadFile(Request $request){
+        try{
+            $file = $this->uploadRequestFileMethod($request);
+            return $file;            
+        } catch (\Exception $exception) {
+            return $exception;
+        }
+        
+
+    }
 }

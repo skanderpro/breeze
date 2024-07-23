@@ -96,6 +96,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::patch('/{id}/approve', [PoRequestController::class, 'approve'])->name('approve');
         Route::post('/', [PoRequestController::class, 'storePo'])->name('storePo');
         Route::post('/{poNumber}/upload-file', [PoRequestController::class, 'uploadRequestFile'])->name('up');
+        Route::post('/upload-file', [PoRequestController::class, 'uploadFile'])->name('uploadFile');
         Route::patch('/{id}/cancel',[PoRequestController::class, 'cancel'])->name('cancel');
         Route::patch('/{po}/set-status',[PoRequestController::class, 'setStatus'])->name('setStatus');
     });
