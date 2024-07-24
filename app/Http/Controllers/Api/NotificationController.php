@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
+use App\Models\Setting;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,5 +43,32 @@ class NotificationController extends Controller
             ->delete();
 
         return response()->json([]);
+    }
+
+    public function getBanner()
+    {
+        $banner = Setting::get('site_banner', '');
+
+        return response()->json([
+            'data' => [
+                'banner' => $banner,
+            ],
+        ]);
+    }
+
+    public function setBanner(Request $request)
+    {
+        $request->validate([
+            'banner' => 'required',
+        ]);
+
+        $banner = $request->input('banner');
+        Setting::set('site_banner', $banner);
+
+        return response()->json([
+            'data' => [
+                'banner' => $banner,
+            ]
+        ]);
     }
 }
