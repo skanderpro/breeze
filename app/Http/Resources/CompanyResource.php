@@ -29,8 +29,8 @@ class CompanyResource extends JsonResource
             'agreed_rebate' => $this->agreed_rebate,
             'agreed_markup' => $this->agreed_markup,
 			'company' => !!$this->root_company ? ['id' => $this->root_company->id, 'name' => $this->root_company->companyName ] : null,
-            'parent_id' => $this->resource->parent_id
-
+            'parent_id' => $this->resource->parent_id,
+            'mark_up' => $this->resource->mark_up
         ];
     }
 }
