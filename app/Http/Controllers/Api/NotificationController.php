@@ -94,7 +94,7 @@ class NotificationController extends Controller
             'updated_at' => now(),
         ];
 
-        $userIds = User::getActiveIds();
+        $userIds = User::getUsersForNotification();
         $notificationPayload = [];
 
         foreach ($userIds as $userId) {
