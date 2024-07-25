@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Traits;
 
 
 use App\Enums\Permission;
+use App\Mail\PoRequestMerchant;
 use App\Models\Company;
 use App\Models\Merchant;
 use App\Models\Po;
@@ -95,10 +96,37 @@ trait PoControllerTrait
 
         $payload = $request->toArray();
         $pos = [];
+        $notify = [];
         foreach ($payload['items'] as $item) {
             $item['is_request'] = '1';
             $item['poNumber'] = $poNumber;
             $pos[] = Po::create($item);
+
+            $user = !empty($item['selectMerchant']) ? User::find($item['selectMerchant']) : null;
+
+            if (!$user && !empty($item['alt_merchant_email'])) {
+                $notify[] = [
+                    'email' => $item['alt_merchant_email'],
+                    'name' => $item['alt_merchant_name'],
+                    'contact' => $item['alt_merchant_contact'],
+                ];
+            } elseif ($user && $user->setting_email_notification) {
+                $notify[] = [
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'contact' => $user->phone,
+                ];
+            }
+        }
+
+        foreach ($notify as $item) {
+            try {
+                 Mail::to($item['email'])->send(new PoRequestMerchant());
+            } catch(\Exception $e) {
+                Log::error('email send error', [
+                    'error' => $e,
+                ]);
+            }
         }
 
         return $pos;
@@ -650,11 +678,11 @@ trait PoControllerTrait
         $this->validate($request, [
             'file' => 'file|max:6000',
         ]);
-        
-        $destinationPath = 'uploads/'; // upload path     
-        $filename = '';      
+
+        $destinationPath = 'uploads/'; // upload path
+        $filename = '';
         $path = '';
-        
+
         if ($request->hasFile('file')) {
             $ext = $request->file('file')->extension();
             $tmpName = Uuid::uuid4();
@@ -663,8 +691,8 @@ trait PoControllerTrait
                 Storage::disk('public')->path($destinationPath),
                 $filename
             );
-            $path = "{$destinationPath}{$filename}";        
-        }  
+            $path = "{$destinationPath}{$filename}";
+        }
         return ['file' => $path];
     }
 
