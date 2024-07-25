@@ -19,6 +19,8 @@ class NotificationResource extends JsonResource
             'title' => $this->resource->title,
             'content' => $this->resource->content,
             'read' => $this->resource->read,
+            'type' => $this->resource->type,
+            'data' => json_decode($this->resource->data || '{}', true),
             'created_at' => $this->resource->created_at,
         ];
     }
