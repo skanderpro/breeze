@@ -59,6 +59,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::delete('/', [NotificationController::class, 'removeRead'])->name('removeRead');
         Route::get('/banner', [NotificationController::class, 'getBanner'])->name('getBanner');
         Route::post('/banner', [NotificationController::class, 'setBanner'])->name('setBanner');
+        Route::post('/send-to-all', [NotificationController::class, 'sendToAll'])->name('sendToAll');
     });
 
 	Route::name('users.')->prefix('/users')->middleware(['auth:sanctum'])->group(function () {

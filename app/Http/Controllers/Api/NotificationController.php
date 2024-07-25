@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -70,5 +71,32 @@ class NotificationController extends Controller
                 'banner' => $banner,
             ]
         ]);
+    }
+
+    public function sendToAll(Request $request)
+    {
+        $payload = $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+        ]);
+
+        $payload += [
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        $userIds = User::getActiveIds();
+        $notificationPayload = [];
+
+        foreach ($userIds as $userId) {
+            $notificationPayload[] = $payload + [
+                    'user_id' => $userId,
+                    'active' => 1,
+                ];
+        }
+
+        Notification::query()->insert($notificationPayload);
+
+        return response()->json([]);
     }
 }
