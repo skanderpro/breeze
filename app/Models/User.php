@@ -113,10 +113,16 @@ class User extends Authenticatable
 
     }
 
-    public static function getActiveIds()
+    public static function getActiveUsersQB()
     {
         return static::query()
-            ->whereNot('disabled', '1')
+            ->whereNot('disabled', '1');
+    }
+
+    public static function getUsersForNotification()
+    {
+        return static::getActiveUsersQB()
+            ->where('setting_push_notification', 1)
             ->select('users.id')
             ->get()
             ->pluck('id');
