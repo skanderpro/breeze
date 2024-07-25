@@ -13,11 +13,20 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notifications = Notification::query()
-            ->where('user_id', Auth::id())
-            ->paginate();
+         $query = Notification::query()
+            ->where('user_id', Auth::id());
+
+         $search = $request->input('search');
+         if (!empty($search)) {
+             $query = $query->where(function ($q) use ($search) {
+                 $q->where('title', 'like', '%' . $search . '%')
+                     ->orWhere('content', 'like', '%' . $search . '%');
+             });
+         }
+
+         $notifications = $query->orderBy('id', 'desc')->get();
 
         return NotificationResource::collection($notifications);
     }
