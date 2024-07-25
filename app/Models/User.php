@@ -78,13 +78,15 @@ class User extends Authenticatable
         return !empty($this->permissions[$permission->value]) && $this->permissions[$permission->value];
     }
 
-    public function company(){
+    public function company()
+    {
         return $this->belongsTo(Company::class, 'companyId');
 
     }
 
-    public function companies(){
-        return $this->belongsToMany(Company::class,'companies_users');
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class, 'companies_users');
     }
 
     public function settings()
@@ -92,9 +94,10 @@ class User extends Authenticatable
         return $this->hasMany(UserSetting::class);
     }
 
-    public function getOrderLimitAttribute(){
+    public function getOrderLimitAttribute()
+    {
 
-        if(!!$this->price_limit){
+        if (!!$this->price_limit) {
             return $this->price_limit;
         } elseif ($this->accessLevel == 4) {
             return $this->company->limit_4_role;
@@ -108,5 +111,14 @@ class User extends Authenticatable
             return null;
         }
 
+    }
+
+    public static function getActiveIds()
+    {
+        return static::query()
+            ->whereNot('disabled', '1')
+            ->select('users.id')
+            ->get()
+            ->pluck('id');
     }
 }
