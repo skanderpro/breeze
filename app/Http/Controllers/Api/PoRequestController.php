@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Http\Resources\PoResource;
+use App\Mail\PoRequestUser;
 use App\Models\Po;
 use App\Models\User;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -143,28 +146,39 @@ class PoRequestController extends Controller
 		$pos = $this->getRequestsByNumber($number);
 		return PoResource::collection($pos);
 	}
-    
+
     public function uploadFile(Request $request){
         try{
             $file = $this->uploadRequestFileMethod($request);
-            return $file;            
+            return $file;
         } catch (\Exception $exception) {
             return $exception;
         }
 
     }
-    
-    
+
+
     public function uploadRequest(Po $po, Request $request){
         $request->validate([
             'poValue' => 'required',
             'billable_value' => 'required',
             'request_file' => 'required'
         ]);
-        
+
         $po->fill($request->all());
         $po->update();
-        
+
+        try {
+            if ($po->user->setting_email_notification) {
+                Mail::to($po->user->email)->send(new PoRequestUser($po));
+            }
+        } catch (\Exception $e) {
+            Log::error('email send error', [
+                'e' => $e,
+                'payload' => $request->all(),
+            ]);
+        }
+
         return PoResource::make($po);
     }
 }
