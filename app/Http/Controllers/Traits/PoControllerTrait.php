@@ -100,29 +100,32 @@ trait PoControllerTrait
         foreach ($payload['items'] as $item) {
             $item['is_request'] = '1';
             $item['poNumber'] = $poNumber;
-            $pos[] = Po::create($item);
+            $po = Po::create($item);
+            $pos[] = $po;
 
-            $user = !empty($item['selectMerchant']) ? User::find($item['selectMerchant']) : null;
+            $merchant = !empty($item['selectMerchant']) ? Merchant::find($item['selectMerchant']) : null;
 
-            if (!$user && !empty($item['alt_merchant_email'])) {
+            if (!$merchant && !empty($item['alt_merchant_email'])) {
                 $notify[] = [
                     'email' => $item['alt_merchant_email'],
                     'name' => $item['alt_merchant_name'],
                     'contact' => $item['alt_merchant_contact'],
+                    'po' => $po,
                 ];
-            } elseif ($user && $user->setting_email_notification) {
+            } elseif ($merchant) {
                 $notify[] = [
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'contact' => $user->phone,
+                    'email' => empty($merchant->merchantEmail) ? $merchant->merchantContactEmail : $merchant->merchantEmail,
+                    'name' => empty($merchant->merchantName) ? $merchant->merchantContactName : $merchant->merchantName,
+                    'contact' => empty($merchant->merchantPhone) ? $merchant->merchantContactPhone : $merchant->merchantPhone,
+                    'po' => $po,
                 ];
             }
         }
 
         foreach ($notify as $item) {
             try {
-                 Mail::to($item['email'])->send(new PoRequestMerchant());
-            } catch(\Exception $e) {
+                Mail::to($item['email'])->send(new PoRequestMerchant($item['po']));
+            } catch (\Exception $e) {
                 Log::error('email send error', [
                     'error' => $e,
                 ]);
@@ -511,8 +514,7 @@ trait PoControllerTrait
                 $q
                     ->where('companies.parent_id', $user->companyId)
                     ->orWhere('companies.id', $user->companyId);
-            })
-        ;
+            });
 
         if (!empty($filter['filter']['u_id'])) {
             $pos = $pos->where('pos.u_id', $filter['filter']['u_id']);
@@ -522,7 +524,7 @@ trait PoControllerTrait
             $startDate = date('Y-m-d H:i:s', strtotime($filter['filter']['startDate']));
             $endDate = date('Y-m-d H:i:s', strtotime($filter['filter']['endDate']));
 
-            $pos = $pos->where(function ($q) use($startDate, $endDate) {
+            $pos = $pos->where(function ($q) use ($startDate, $endDate) {
                 $q
                     ->where('pos.created_at', '>=', $startDate)
                     ->where('pos.created_at', '<=', $endDate);
@@ -534,8 +536,7 @@ trait PoControllerTrait
                 $q
                     ->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%')
                     ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%')
-                    ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%')
-                ;
+                    ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%');
             });
         }
 
@@ -620,12 +621,11 @@ trait PoControllerTrait
                 $q
                     ->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%')
                     ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%')
-                    ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%')
-                ;
+                    ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%');
             });
         }
 
-		$pos = $pos->orderBy('pos.id', 'desc')->get();
+        $pos = $pos->orderBy('pos.id', 'desc')->get();
         return $pos;
 
     }
@@ -668,13 +668,14 @@ trait PoControllerTrait
     }
 
 
+    public function getRequestsByNumber($number)
+    {
+        $pos = PO::where('poNumber', $number)->get();
+        return $pos;
+    }
 
-	public function getRequestsByNumber($number){
-		$pos = PO::where('poNumber', $number)->get();
-		return $pos;
-	}
-
-    public function uploadRequestFileMethod($request){
+    public function uploadRequestFileMethod($request)
+    {
         $this->validate($request, [
             'file' => 'file|max:6000',
         ]);
