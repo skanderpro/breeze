@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PoControllerTrait;
 use App\Http\Resources\PoResource;
 use App\Mail\PoRequestUser;
+use App\Models\Notification;
 use App\Models\Po;
 use App\Models\User;
 use App\Services\AccessCheckInterface;
@@ -169,6 +170,16 @@ class PoRequestController extends Controller
         $po->update();
 
         try {
+            if ($po->user->setting_push_notification) {
+                Notification::create([
+                    'type' => 'po_request',
+                    'title' => "Breeze Quotations - #{$po->poNumber}",
+                    'content' => 'Order request was updated',
+                    'active' => true,
+                    'data' => json_encode(['po' => PoResource::make($po)]),
+                    'user_id' => $po->user->id,
+                ]);
+            }
             if ($po->user->setting_email_notification) {
                 Mail::to($po->user->email)->send(new PoRequestUser($po));
             }
