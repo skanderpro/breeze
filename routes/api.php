@@ -55,6 +55,7 @@ Route::prefix('v1')->name('v1.')->group(function () {
 
     Route::name('notifications.')->prefix('/notifications')->middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/count-unread', [NotificationController::class, 'countUnread'])->name('count-unread');
         Route::patch('/{notification}', [NotificationController::class, 'markAsRead'])->name('markAsRead');
         Route::delete('/', [NotificationController::class, 'removeRead'])->name('removeRead');
         Route::get('/banner', [NotificationController::class, 'getBanner'])->name('getBanner');
