@@ -25,10 +25,23 @@ class NotificationController extends Controller
                      ->orWhere('content', 'like', '%' . $search . '%');
              });
          }
+         
+         if(!empty($request->input('filter'))){
+             $query = $query->whereIn('type',$request->input('filter'));
+         }
 
          $notifications = $query->orderBy('id', 'desc')->get();
 
         return NotificationResource::collection($notifications);
+    }
+    
+    public function countUnread(){
+        $query = Notification::query()
+            ->where('read',0)
+            ->where('user_id', Auth::id())
+            ->count();
+                
+        return response()->json(['numbers' => $query]);    
     }
 
     public function markAsRead(Notification $notification)
