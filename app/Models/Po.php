@@ -143,7 +143,7 @@ class Po extends Model
 			if(static::getApprovedRequestsCount($this->poNumber)){
 				$statuses[] = "Pending";
 			} else {
-				$statuses[] = "Awaiting";
+				$statuses[] = "Awaiting Quote(s)";
 			}
 
 		} else {
