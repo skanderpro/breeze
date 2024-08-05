@@ -485,6 +485,7 @@ trait PoControllerTrait
         if (Storage::disk('public')->exists($destinationPath)) {
             Storage::disk('public')->delete($destinationPath);
             $fileWasDeleted = true;
+            
         } elseif (Storage::disk('local')->exists($editPo->poPod)) {
             Storage::disk('local')->delete($editPo->poPod);
             $fileWasDeleted = true;
@@ -494,6 +495,9 @@ trait PoControllerTrait
         } elseif (file_exists(base_path($editPo->poPod))) {
             unlink(base_path($editPo->poPod));
             $fileWasDeleted = true;
+        } elseif(Storage::disk('public')->exists(str_replace('/storage/', '', $editPo->poPod))) {
+            Storage::disk('public')->delete(str_replace('/storage/', '', $editPo->poPod));
+            $fileWasDeleted = true;
         }
 
         if ($fileWasDeleted) {
@@ -501,7 +505,7 @@ trait PoControllerTrait
             $editPo->save();
         }
 
-        return $editPo;
+        return  $editPo;
     }
 
     public function getList4Role($user, $filter)
