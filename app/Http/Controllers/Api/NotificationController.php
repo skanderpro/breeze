@@ -25,10 +25,15 @@ class NotificationController extends Controller
                      ->orWhere('content', 'like', '%' . $search . '%');
              });
          }
-         
-         if(!empty($request->input('filter'))){
-             $query = $query->whereIn('type',$request->input('filter'));
+         $filter = $request->input('filter');
+         if(!empty($filter['types'])){
+             
+             $query = $query->whereIn('type',$filter['types']);
          }
+         if(!empty($filter['read'])){
+              
+              $query = $query->whereIn('read',$filter['read']);
+          }
 
          $notifications = $query->orderBy('id', 'desc')->get();
 

@@ -510,11 +510,12 @@ trait PoControllerTrait
             ->whereNot('pos.is_request', '1')
             ->join('companies', 'companies.id', '=', 'pos.companyId')
             ->leftJoin('merchants', 'merchants.id', '=', 'pos.selectMerchant')
-            ->where(function ($q) use ($user) {
-                $q
-                    ->where('companies.parent_id', $user->companyId)
-                    ->orWhere('companies.id', $user->companyId);
-            });
+            // ->where(function ($q) use ($user) {
+            //     $q
+            //         ->where('companies.parent_id', $user->companyId)
+            //         ->orWhere('companies.id', $user->companyId);
+            // })
+            ;
 
         if (!empty($filter['filter']['u_id'])) {
             $pos = $pos->where('pos.u_id', $filter['filter']['u_id']);
