@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +112,10 @@ Route::prefix('v1')->name('v1.')->group(function () {
         Route::post('/', [SettingController::class, 'store'])->name('store');
         Route::patch('/{setting}',[SettingController::class, 'update'])->name('update');
         Route::delete('/{setting}',[SettingController::class, 'delete'])->name('delete');
+    });
+    
+   Route::name('permission.')->prefix('/permission')->middleware(['auth:sanctum'])->group(function () {
+      Route::post('/check', [PermissionController::class,'check'])->name('check');
     });
 
 });

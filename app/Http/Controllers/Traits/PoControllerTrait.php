@@ -521,9 +521,9 @@ trait PoControllerTrait
             // })
             ;
 
-        if (!empty($filter['filter']['u_id'])) {
-            $pos = $pos->where('pos.u_id', $filter['filter']['u_id']);
-        }
+        // if (!empty($filter['filter']['u_id'])) {
+        //     $pos = $pos->where('pos.u_id', $filter['filter']['u_id']);
+        // }
 
         if (!empty($filter['filter']['startDate']) && !empty($filter['filter']['endDate'])) {
             $startDate = date('Y-m-d H:i:s', strtotime($filter['filter']['startDate']));
