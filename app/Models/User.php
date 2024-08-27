@@ -31,6 +31,8 @@ class User extends Authenticatable
         'permissions',
         'setting_push_notification',
         'setting_email_notification',
+        'merchant_id',
+        'merchant_parent_id'
     ];
 
     /**

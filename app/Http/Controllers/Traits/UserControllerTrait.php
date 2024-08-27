@@ -18,6 +18,7 @@ trait UserControllerTrait
 
         $query = User::query();
         switch ($accessLevel) {
+            case '2':
             case '1':
                 if (!empty($search)) {
                     $query = $query->select('users.*', 'companies.companyName')
@@ -27,7 +28,7 @@ trait UserControllerTrait
                         ->orwhere('email','LIKE',"%$search%");
                 }
                 break;
-            case '2':
+            case '3':
                 $query = $query->where('companyId','=', Auth::user()->companyId);
                 if (!empty($search)) {
                     $query = $query->where('name','LIKE',"%$search%")
@@ -64,6 +65,8 @@ trait UserControllerTrait
             'accessLevel' => 'required',
             'permissions' => 'nullable',
             'companyId' => 'nullable',
+            'merchant_id' => 'nullable',
+            'merchant_parent_id' => 'nullable'
             // 'password' => 'required|min:6|confirmed'
         ]);
 

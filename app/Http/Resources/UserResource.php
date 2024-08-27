@@ -27,6 +27,8 @@ class UserResource extends JsonResource
             'email' => $this->resource->email,
             'created_at' => $this->resource->created_at,
             'orders_count' => Po::getOrdersCount(null, $this->resource),
+            'merchant_id' => $this->resource->merchant_id,
+            'merchant_parent_id' => $this->resource->merchant_parent_id,    
 			'company' => CompanyResource::make($this->company)
         ] + (
             $this->resource->id === Auth::id()
