@@ -21,32 +21,32 @@ enum Permission: string
     
     case PO_CREATE = 'PO:CREATE';
     case PO_UPDATE = 'PO:UPDATE';
-    case PO_UPDATE_ALL = 'PO:UPDATE:ALL';
-    case PO_UPDATE_BY_COMPANY = 'PO:UPDATE:BY-COMPANY';
-    case PO_UPDATE_BY_CONTRACT = 'PO:UPDATE:BY_CONTRACT';
-    case PO_UPDATE_BY_OWN = 'PO:UPDATE:BY-OWN';
-    case PO_UPDATE_BY_OWN_MERCHANT = 'PO:UPDATE:BY-OWN-MERCHANT';
-    case PO_UPDATE_BY_OWN_BRANCH = 'PO:UPDATE:BY-OWN-BRANCH';
+    case POS_ALL = 'POS:ALL';
+    case POS_BY_COMPANY = 'POS:BY-COMPANY';
+    case POS_BY_CONTRACT = 'PO:UPDATE:BY_CONTRACT';
+    case POS_BY_OWN = 'PO:UPDATE:BY-OWN';
+    case POS_BY_OWN_MERCHANT = 'POS:BY-OWN-MERCHANT';
+    case POS_BY_OWN_BRANCH = 'POS:BY-OWN-BRANCH';
     case PO_MANAGE_BY_COMPANY = 'PO:MANAGE:BY-COMPANY';
     case PO_VIEW_BY_SUPPLIER = 'PO:VIEW:BY-SUPPLIER';
     case REQUEST_CREATE = 'REQUEST:CREATE';
     case REQUEST_VIEW = 'REQUEST:VIEW';
-    case REQUEST_VIEW_ALL = 'REQUEST:VIEW:ALL';
-    case REQUEST_VIEW_BY_COMPANY = 'REQUEST:VIEW:BY-COMPANY';
-    case REQUEST_VIEW_BY_CONTRACT = 'REQUEST:VIEW:BY-CONTRACT';
-    case REQUEST_VIEW_BY_OWN = 'REQUEST:VIEW:BY-OWN';
+    case REQUESTS_ALL = 'REQUESTS:ALL';
+    case REQUESTS_BY_COMPANY = 'REQUESTS:BY-COMPANY';
+    case REQUESTS_BY_CONTRACT = 'REQUESTS:BY-CONTRACT';
+    case REQUESTS_BY_OWN = 'REQUESTS:BY-OWN';
     case REQUEST_MANAGE = 'REQUEST:MANAGE';
     case EV_CHARGING = 'EV:CHARGING';
     case USER_MANAGE = 'USER:MANAGE';
-    case USER_MANAGE_ALL = 'USER:MANAGE:ALL';
-    case USER_MANAGE_BY_COMPANY = 'USER:MANAGE:BY-COMPANY';
+    case USERS_ALL = 'USERS:ALL';
+    case USERS_BY_COMPANY = 'USERS:BY-COMPANY';
     case COMPANY_MANAGE = 'COMPANY:MANAGE';
-    case COMPANY_MANAGE_COMPANY_ADMIN = 'COMPANY:MANAGE:COMPANY-ADMIN';
-    case COMPANY_CONTRACTS_BY_OWN = 'COMPANY:CONTRACTS:BY-OWN';
-    case COMPANY_MANAGE_ADMIN = 'COMPANY:MANAGE:ADMIN';
+    case COMPANIES_COMPANY_ADMIN = 'COMPANIES:COMPANY-ADMIN';
+    case COMPANIES_BY_OWN = 'COMPANIES:BY-OWN';
+    case COMPANIES_ADMIN = 'COMPANIES:ADMIN';
     case COMPANY_REPORTS = 'COMPANY:REPORTS';
     case SUPPLIER_MANAGE = 'SUPPLIER:MANAGE';
-    case SUPPLIER_MANAGE_ADMIN = 'SUPPLIER:MANAGE:ADMIN';
+    case SUPPLIERS_ADMIN = 'SUPPLIERS:ADMIN';
     case SUPPLIERS_ALL = 'SUPPLIERS:ALL';
     case SUPPLIERS_BY_MERCHANT = 'SUPPLIERS:BY-MERCHANT';
     case SUPPLIER_REPORTS = 'SUPPLIER:REPORTS';
@@ -67,7 +67,7 @@ enum Permission: string
                 Permission::PO_MANAGE_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 Permission::REQUEST_MANAGE->value,
-                Permission::REQUEST_VIEW_ALL->value,
+                Permission::REQUESTS_ALL->value,
                 Permission::EV_CHARGING->value,
                 Permission::USER_MANAGE->value,
                 Permission::COMPANY_MANAGE->value,
@@ -78,10 +78,10 @@ enum Permission: string
                 Permission::ACCOUNT->value,
                 Permission::MANAGE_ALERT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_ALL->value,
-                Permission::COMPANY_MANAGE_ADMIN->value ,
-                Permission::USER_MANAGE_ALL->value,
-                Permission::SUPPLIER_MANAGE_ADMIN->value                                                    
+                Permission::POS_ALL->value,
+                Permission::COMPANIES_ADMIN->value ,
+                Permission::USERS_ALL->value,
+                Permission::SUPPLIERS_ADMIN->value                                                    
                 // Permission::PO_READ_LIST_ALL->value,
                 // Permission::MENU_READ_ADMIN->value,
                 // Permission::PO_READ_USERS_ALL->value,
@@ -97,7 +97,7 @@ enum Permission: string
                 Permission::PO_MANAGE_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 // Permission::REQUEST_VIEW->value,
-                Permission::REQUEST_VIEW_ALL->value,
+                Permission::REQUESTS_ALL->value,
                 Permission::REQUEST_MANAGE->value,
                 Permission::EV_CHARGING->value,
                 Permission::USER_MANAGE->value,
@@ -109,10 +109,10 @@ enum Permission: string
                 Permission::ACCOUNT->value,
                 Permission::MANAGE_ALERT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_ALL->value,
-                Permission::COMPANY_MANAGE_ADMIN->value  ,
-                Permission::USER_MANAGE_ALL->value,
-                Permission::SUPPLIER_MANAGE_ADMIN->value           
+                Permission::POS_ALL->value,
+                Permission::COMPANIES_ADMIN->value  ,
+                Permission::USERS_ALL->value,
+                Permission::SUPPLIERS_ADMIN->value           
                 // Permission::PO_READ_LIST_COMPANY_ALL->value,
                 // Permission::COMPANY_MANAGE->value,
                 // Permission::USERS_READ_COMPANY->value,
@@ -122,19 +122,19 @@ enum Permission: string
                 Permission::PO_CREATE->value,
                 Permission::PO_UPDATE->value ,
                 Permission::PO_MANAGE_BY_COMPANY->value,
-                Permission::REQUEST_VIEW_BY_COMPANY->value,
+                Permission::REQUESTS_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 Permission::REQUEST_VIEW->value,
                 Permission::EV_CHARGING->value,
-                Permission::USER_MANAGE_BY_COMPANY->value,
+                Permission::USERS_BY_COMPANY->value,
                 Permission::ADMIN_PANEL->value,
                 Permission::COMPANY_MANAGE->value,
-                Permission::COMPANY_MANAGE_COMPANY_ADMIN->value  ,
+                Permission::COMPANIES_COMPANY_ADMIN->value  ,
                 Permission::COMPANY_REPORTS->value,
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_BY_COMPANY->value,    
+                Permission::POS_BY_COMPANY->value,    
                 // Permission::PO_READ_LIST_COMPANY->value,
                 // Permission::PO_EXPORT_CLIENT->value,
             ],
@@ -144,7 +144,7 @@ enum Permission: string
                 Permission::PO_MANAGE_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 Permission::REQUEST_VIEW->value,
-                Permission::REQUEST_VIEW_BY_CONTRACT->value,
+                Permission::REQUESTS_BY_CONTRACT->value,
                 Permission::EV_CHARGING->value,
                 Permission::USER_MANAGE->value,
                 Permission::COMPANY_MANAGE->value,
@@ -152,8 +152,8 @@ enum Permission: string
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_BY_CONTRACT->value   ,
-                Permission::COMPANY_CONTRACTS_BY_OWN->value
+                Permission::POS_BY_CONTRACT->value   ,
+                Permission::COMPANIES_BY_OWN->value
             ],
             '5' => [
                 Permission::PO_CREATE->value,
@@ -161,7 +161,7 @@ enum Permission: string
                 Permission::PO_MANAGE_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 Permission::REQUEST_VIEW->value,
-                Permission::REQUEST_VIEW_BY_CONTRACT->value,
+                Permission::REQUESTS_BY_CONTRACT->value,
                 Permission::EV_CHARGING->value,
                 Permission::USER_MANAGE->value,
                 Permission::COMPANY_MANAGE->value,
@@ -169,8 +169,8 @@ enum Permission: string
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_BY_CONTRACT->value,
-                Permission::COMPANY_CONTRACTS_BY_OWN->value
+                Permission::POS_BY_CONTRACT->value,
+                Permission::COMPANIES_BY_OWN->value
             ],
             '6' => [
                 Permission::PO_CREATE->value,
@@ -178,14 +178,14 @@ enum Permission: string
                 Permission::PO_MANAGE_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 Permission::REQUEST_VIEW->value,
-                Permission::REQUEST_VIEW_BY_OWN->value,
+                Permission::REQUESTS_BY_OWN->value,
                 Permission::EV_CHARGING->value,
                 Permission::COMPANY_REPORTS->value,
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_BY_OWN->value,
-                Permission::COMPANY_CONTRACTS_BY_OWN->value
+                Permission::POS_BY_OWN->value,
+                Permission::COMPANIES_BY_OWN->value
             ],
             '7' => [
                 
@@ -193,13 +193,13 @@ enum Permission: string
                 Permission::PO_MANAGE_BY_COMPANY->value,
                 Permission::REQUEST_CREATE->value,
                 Permission::REQUEST_VIEW->value,
-                Permission::REQUEST_VIEW_BY_OWN->value,
+                Permission::REQUESTS_BY_OWN->value,
                 Permission::EV_CHARGING->value,
                 Permission::COMPANY_REPORTS->value,
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::COMPANY_CONTRACTS_BY_OWN->value
+                Permission::COMPANIES_BY_OWN->value
             ],
             '8' => [
                 Permission::PO_UPDATE->value ,
@@ -210,7 +210,7 @@ enum Permission: string
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,  
                 Permission::VIEW_NOTIFICATIION->value ,
-                Permission::PO_UPDATE_BY_OWN_MERCHANT->value,
+                Permission::POS_BY_OWN_MERCHANT->value,
                 Permission::ADMIN_PANEL->value,        
             ],
             '9' => [
@@ -221,7 +221,7 @@ enum Permission: string
                 Permission::SETTINGS->value,
                 Permission::ACCOUNT->value,  
                 Permission::VIEW_NOTIFICATIION->value,
-                Permission::PO_UPDATE_BY_OWN_BRANCH->value   
+                Permission::POS_BY_OWN_BRANCH->value   
             ]
         ];
     }
