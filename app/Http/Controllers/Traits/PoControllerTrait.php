@@ -669,6 +669,7 @@ trait PoControllerTrait
     {
         $editPo = Po::findOrFail($id);
         $editPo->poVisitStatus = 1;
+        $editPo->update();
         return $editPo;
     }
 
