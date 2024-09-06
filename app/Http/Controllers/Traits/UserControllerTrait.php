@@ -84,7 +84,7 @@ trait UserControllerTrait
         $contracts = $request->get('contracts');
         $ids = [];
         for($i = 0;$i < count($contracts);$i++){
-            $ids[] = $contracts[$i]['id'];
+            $ids[] = $contracts[$i]['value'];
         }
         $editUser->companies()->sync($ids);
         $editUser->fill($input);
