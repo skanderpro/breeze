@@ -23,7 +23,7 @@ enum Permission: string
     case PO_UPDATE = 'PO:UPDATE';
     case POS_ALL = 'POS:ALL';
     case POS_BY_COMPANY = 'POS:BY-COMPANY';
-    case POS_BY_CONTRACT = 'PO:UPDATE:BY_CONTRACT';
+    case POS_BY_CONTRACT = 'POS:BY_CONTRACT';
     case POS_BY_OWN = 'PO:UPDATE:BY-OWN';
     case POS_BY_OWN_MERCHANT = 'POS:BY-OWN-MERCHANT';
     case POS_BY_OWN_BRANCH = 'POS:BY-OWN-BRANCH';

@@ -50,6 +50,7 @@ class PoResource extends JsonResource
             'billable_value' => $this->billable_value,
             'alt_merchant_name' => $this->resource->alt_merchant_name ?? null,
             'alt_merchant_contact' => $this->resource->alt_merchant_contact ?? null,
+            'contract_id' => $this->contract_id
         ];
     }
 }
