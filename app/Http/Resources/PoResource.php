@@ -48,6 +48,7 @@ class PoResource extends JsonResource
 			'poVisitStatus' => !!$this->resource->poVisitStatus,
             'request_file' => !empty($this->request_file) ? asset(Storage::url($this->request_file)) : null,
             'billable_value' => $this->billable_value,
+            'billable_value_final' => $this->billable_value_final,
             'alt_merchant_name' => $this->resource->alt_merchant_name ?? null,
             'alt_merchant_contact' => $this->resource->alt_merchant_contact ?? null,
             'contract_id' => $this->contract_id
