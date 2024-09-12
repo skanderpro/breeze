@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services\Reports\Company;
 
 use App\Models\Po;
@@ -19,9 +18,32 @@ class RebateReport
 
   public function getStatistics($type, $id, $interval)
   {
-    $query = Po::query();
+    $query = $this->filterByType(Po::query(), $type, $id);
+    [
+      $startDate,
+      $endDate,
+      $interval,
+      $dateFormat,
+    ] = $this->getDateRangeAndFormat($interval);
+    $dateRange = DateRangeHelper::generateDateRange(
+      $startDate->copy(),
+      $endDate->copy(),
+      $interval
+    );
+    $rebatePercentage = $this->user->company->agreed_rebate;
+    $results = $this->calculateResults(
+      $query,
+      $dateRange,
+      $rebatePercentage,
+      $interval,
+      $endDate
+    );
 
-    // Фільтрація за типом
+    return $this->formatStatistics($dateRange, $results, $interval);
+  }
+
+  private function filterByType($query, $type, $id)
+  {
     switch ($type) {
       case "company":
         $query->where("companyId", $id);
@@ -30,8 +52,11 @@ class RebateReport
         $query->where("contract_id", $id);
         break;
     }
+    return $query;
+  }
 
-    // Фільтрація за проміжком часу
+  private function getDateRangeAndFormat($interval)
+  {
     $now = Carbon::now();
     switch ($interval) {
       case "Last Week":
@@ -39,8 +64,7 @@ class RebateReport
           ->subWeek()
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "day";
-        $dateFormat = "%d/%m";
+        $dateFormat = "d/m";
         $interval = "1 day";
         break;
       case "Last Month":
@@ -48,8 +72,7 @@ class RebateReport
           ->subMonth()
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "week";
-        $dateFormat = "%d/%m";
+        $dateFormat = "d/m";
         $interval = "1 week";
         break;
       case "Past 90 days":
@@ -57,8 +80,7 @@ class RebateReport
           ->subDays(90)
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "week";
-        $dateFormat = "%d/%m";
+        $dateFormat = "d/m";
         $interval = "1 week";
         break;
       case "Past 180 days":
@@ -66,45 +88,55 @@ class RebateReport
           ->subDays(180)
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "week";
-        $dateFormat = "%d/%m";
+        $dateFormat = "d/m";
         $interval = "1 week";
         break;
       default:
         throw new \InvalidArgumentException("Invalid interval");
     }
-
     $endDate = Carbon::now()->endOfDay();
-    $dateRange = DateRangeHelper::generateDateRange(
-      $startDate->copy(),
-      $endDate->copy(),
-      $interval
-    );
+    return [$startDate, $endDate, $interval, $dateFormat];
+  }
 
-    // Отримання відсотка з компанії користувача
-    $rebatePercentage = $this->user->company->agreed_rebate;
+  private function calculateResults(
+    $query,
+    $dateRange,
+    $rebatePercentage,
+    $interval,
+    $endDate
+  ) {
+    return $dateRange->mapWithKeys(function ($date) use (
+      $query,
+      $rebatePercentage,
+      $interval,
+      $endDate
+    ) {
+      $nextDate = $date->copy()->add($interval);
+      if ($nextDate->gt($endDate)) {
+        $nextDate = $endDate;
+      }
 
-    // Групування та підрахунок
-    $results = $query
-      ->selectRaw(
-        "DATE_FORMAT(billable_date, '$dateFormat') as date, SUM(billable_value_final * ?) as total_profit",
-        [$rebatePercentage / 100]
-      )
-      ->where("billable_date", ">=", $startDate)
-      ->groupBy(DB::raw("DATE_FORMAT(billable_date, '$dateFormat')"))
-      ->orderBy(DB::raw("MIN(billable_date)"))
-      ->get()
-      ->keyBy("date");
+      $clonedQuery = clone $query;
 
-    // Додавання відсутніх дат з total_profit 0
-    $statistics = $dateRange->map(function ($date) use ($results, $dateFormat) {
-      $formattedDate = $date->format("d/m");
+      $totalProfit = $clonedQuery
+        ->whereBetween("billable_date", [$date, $nextDate])
+        ->sum(DB::raw("billable_value_final * " . $rebatePercentage / 100));
+
       return [
-        "date" => $formattedDate,
-        "total_profit" => $results->get($formattedDate)->total_profit ?? 0,
+        $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,
       ];
     });
+  }
 
-    return $statistics;
+  private function formatStatistics($dateRange, $results, $interval)
+  {
+    return $dateRange->map(function ($date) use ($results, $interval) {
+      $formattedDate = $date->format($interval === "1 day" ? "d/m" : "Y-m-d");
+      $titleFormattedDate = $date->format("d/m");
+      return [
+        "date" => $titleFormattedDate,
+        "total_profit" => $results->get($formattedDate) ?? 0,
+      ];
+    });
   }
 }
