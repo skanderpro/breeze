@@ -11,9 +11,25 @@ class SpendAnalysis
 {
   public function getStatistics($type, $id, $interval)
   {
-    $query = Po::query();
+    $query = $this->filterByType(Po::query(), $type, $id);
+    [
+      $startDate,
+      $endDate,
+      $interval,
+      $dateFormat,
+    ] = $this->getDateRangeAndFormat($interval);
+    $dateRange = DateRangeHelper::generateDateRange(
+      $startDate->copy(),
+      $endDate,
+      $interval
+    );
+    $results = $this->calculateResults($query, $dateRange, $interval, $endDate);
 
-    // Фільтрація за типом
+    return $this->formatStatistics($dateRange, $results, $interval);
+  }
+
+  private function filterByType($query, $type, $id)
+  {
     switch ($type) {
       case "company":
         $query->where("companyId", $id);
@@ -28,8 +44,11 @@ class SpendAnalysis
         $query->where("selectMerchant", $id);
         break;
     }
+    return $query;
+  }
 
-    // Фільтрація за проміжком часу
+  private function getDateRangeAndFormat($interval)
+  {
     $now = Carbon::now();
     switch ($interval) {
       case "Last Week":
@@ -37,7 +56,6 @@ class SpendAnalysis
           ->subWeek()
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "day";
         $dateFormat = "%d/%m";
         $interval = "1 day";
         break;
@@ -46,7 +64,6 @@ class SpendAnalysis
           ->subMonth()
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "week";
         $dateFormat = "%d/%m";
         $interval = "1 week";
         break;
@@ -55,7 +72,6 @@ class SpendAnalysis
           ->subDays(90)
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "week";
         $dateFormat = "%d/%m";
         $interval = "1 week";
         break;
@@ -64,43 +80,49 @@ class SpendAnalysis
           ->subDays(180)
           ->addDays(1)
           ->startOfDay();
-        $groupBy = "week";
         $dateFormat = "%d/%m";
         $interval = "1 week";
         break;
       default:
         throw new \InvalidArgumentException("Invalid interval");
     }
-
     $endDate = Carbon::now();
+    return [$startDate, $endDate, $interval, $dateFormat];
+  }
 
-    $dateRange = DateRangeHelper::generateDateRange(
-      $startDate->copy(),
-      $endDate,
-      $interval
-    );
+  private function calculateResults($query, $dateRange, $interval, $endDate)
+  {
+    return $dateRange->mapWithKeys(function ($date) use (
+      $query,
+      $interval,
+      $endDate
+    ) {
+      $nextDate = $date->copy()->add($interval);
+      if ($nextDate->gt($endDate)) {
+        $nextDate = $endDate;
+      }
 
-    // Групування та підрахунок
-    $results = $query
-      ->select(
-        DB::raw("DATE_FORMAT(billable_date, '$dateFormat') as date"),
-        DB::raw("SUM(billable_value_final) as total_profit")
-      )
-      ->where("billable_date", ">=", $startDate)
-      ->groupBy(DB::raw("DATE_FORMAT(billable_date, '$dateFormat')"))
-      ->orderBy(DB::raw("MIN(billable_date)"))
-      ->get()
-      ->keyBy("date");
+      $clonedQuery = clone $query;
 
-    // Додавання відсутніх дат з total_profit 0
-    $statistics = $dateRange->map(function ($date) use ($results, $dateFormat) {
-      $formattedDate = $date->format("d/m");
+      $totalProfit = $clonedQuery
+        ->whereBetween("billable_date", [$date, $nextDate])
+        ->sum("billable_value_final");
+
       return [
-        "date" => $formattedDate,
-        "total_profit" => $results->get($formattedDate)->total_profit ?? 0,
+        $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,
       ];
     });
+  }
 
-    return $statistics;
+  private function formatStatistics($dateRange, $results, $interval)
+  {
+    return $dateRange->map(function ($date) use ($results, $interval) {
+      $formattedDate = $date->format($interval === "1 day" ? "d/m" : "Y-m-d");
+      $titleFormattedDate = $date->format("d/m");
+      return [
+        "date" => $titleFormattedDate,
+        "total_profit" => $results->get($formattedDate) ?? 0,
+      ];
+    });
   }
 }

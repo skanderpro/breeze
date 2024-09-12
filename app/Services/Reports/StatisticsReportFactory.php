@@ -5,6 +5,7 @@ namespace App\Services\Reports;
 use App\Models\User;
 use App\Services\Reports\Company\RebateReport;
 use App\Services\Reports\Company\SpendAnalysis;
+use App\Services\Reports\Company\ContractComplianceReport;
 
 class StatisticsReportFactory
 {
@@ -22,6 +23,8 @@ class StatisticsReportFactory
         return new SpendAnalysis();
       case "rebate":
         return new RebateReport($this->user);
+      case "contract-compliance":
+        return new ContractComplianceReport();
       default:
         throw new \InvalidArgumentException("Invalid report type");
     }

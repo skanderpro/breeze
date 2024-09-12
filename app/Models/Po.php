@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Events\CheckOrderLimit;
 
 class Po extends Model
 {
@@ -42,6 +43,10 @@ class Po extends Model
     "billable_value_final",
     "billable_date",
     "overlimit_value",
+  ];
+
+  protected $dispatchesEvents = [
+    "created" => CheckOrderLimit::class,
   ];
 
   public static function getRequestCount($number = null, $user = null)
