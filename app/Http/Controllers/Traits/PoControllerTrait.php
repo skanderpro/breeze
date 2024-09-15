@@ -485,7 +485,7 @@ trait PoControllerTrait
         if (Storage::disk('public')->exists($destinationPath)) {
             Storage::disk('public')->delete($destinationPath);
             $fileWasDeleted = true;
-            
+
         } elseif (Storage::disk('local')->exists($editPo->poPod)) {
             Storage::disk('local')->delete($editPo->poPod);
             $fileWasDeleted = true;
@@ -541,6 +541,7 @@ trait PoControllerTrait
                 $q
                     ->where('merchants.merchantName', 'like', '%' . $filter['filter']['search'] . '%')
                     ->orWhere('pos.alt_merchant_name', 'like', '%' . $filter['filter']['search'] . '%')
+                    ->orWhere('pos.poProject', 'like', '%' . $filter['filter']['search'] . '%')
                     ->orWhere('pos.poNumber', 'like', '%' . $filter['filter']['search'] . '%');
             });
         }
