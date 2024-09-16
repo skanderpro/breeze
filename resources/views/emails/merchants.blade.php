@@ -1,147 +1,438 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+@extends('layouts.mail')
 
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <!--[if !mso]>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!--<![endif]-->
+@section('content')
 
-</head>
-<body style="margin:0; padding:0; min-width: 100%;">
+    <table
+        align="center"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        class="row row-5"
+        role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt"
+        width="100%"
+    >
+        <tbody>
+        <tr>
+            <td>
+                <table
+                    align="center"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    class="row-content stack"
+                    role="presentation"
+                    style="
+                        mso-table-lspace: 0pt;
+                        mso-table-rspace: 0pt;
+                        background-color: #ffffff;
+                        border-radius: 0;
+                        color: #000000;
+                        width: 600px;
+                        margin: 0 auto;
+                      "
+                    width="600"
+                >
+                    <tbody>
+                    <tr>
+                        <td
+                            class="column column-1"
+                            style="
+                              mso-table-lspace: 0pt;
+                              mso-table-rspace: 0pt;
+                              font-weight: 400;
+                              text-align: left;
+                              padding-left: 57px;
+                              padding-right: 57px;
+                              vertical-align: top;
+                              border-top: 0px;
+                              border-right: 0px;
+                              border-bottom: 0px;
+                              border-left: 0px;
+                            "
+                            width="100%"
+                        >
+                            <table
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0"
+                                class="paragraph_block block-1"
+                                role="presentation"
+                                style="
+                                mso-table-lspace: 0pt;
+                                mso-table-rspace: 0pt;
+                                word-break: break-word;
+                              "
+                                width="100%"
+                            >
+                                <tr>
+                                    <td class="pad">
+                                        <div
+                                            style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-size: 18px;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 21.599999999999998px;
+                                    "
+                                        >
+                                            <p style="margin: 0">
+                                                Hello,<br /><br />We require a quotation
+                                                for the following <br />Material Brief.<br /><br /><strong
+                                                >IMPORTANT: Please reply directly to
+                                                    this </strong
+                                                ><br /><strong
+                                                >email attaching your quotation in PDF
+                                                    format</strong
+                                                ><br /><strong>
+                                                    and using the following Ref:</strong
+                                                ><br /><br />
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table
+        align="center"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        class="row row-6"
+        role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt"
+        width="100%"
+    >
+        <tbody>
+        <tr>
+            <td>
+                <table
+                    align="center"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    class="row-content stack"
+                    role="presentation"
+                    style="
+                        mso-table-lspace: 0pt;
+                        mso-table-rspace: 0pt;
+                        background-color: #ffffff;
+                        border-radius: 0;
+                        color: #000000;
+                        width: 600px;
+                        margin: 0 auto;
+                      "
+                    width="600"
+                >
+                    <tbody>
+                    <tr>
+                        <td
+                            class="column column-1"
+                            style="
+                              mso-table-lspace: 0pt;
+                              mso-table-rspace: 0pt;
+                              font-weight: 400;
+                              text-align: left;
+                              padding-left: 57px;
+                              padding-right: 57px;
+                              vertical-align: top;
+                              border-top: 0px;
+                              border-right: 0px;
+                              border-bottom: 0px;
+                              border-left: 0px;
+                            "
+                            width="100%"
+                        >
+                            <table
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0"
+                                class="paragraph_block block-1"
+                                role="presentation"
+                                style="
+                                mso-table-lspace: 0pt;
+                                mso-table-rspace: 0pt;
+                                word-break: break-word;
+                              "
+                                width="100%"
+                            >
+                                <tr>
+                                    <td class="pad">
+                                        <div
+                                            style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-size: 30px;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    "
+                                        >
+                                            <p style="margin: 0">
+                                      <span
+                                          style="
+                                          word-break: break-word;
+                                          color: #5172b8;
+                                        "
+                                      ><strong>{{$po->poNumber}}</strong></span
+                                      >
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table
+        align="center"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        class="row row-7"
+        role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt"
+        width="100%"
+    >
+        <tbody>
+        <tr>
+            <td>
+                <table
+                    align="center"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    class="row-content stack"
+                    role="presentation"
+                    style="
+                        mso-table-lspace: 0pt;
+                        mso-table-rspace: 0pt;
+                        background-color: #ffffff;
+                        border-radius: 0;
+                        color: #000000;
+                        width: 600px;
+                        margin: 0 auto;
+                      "
+                    width="600"
+                >
+                    <tbody>
+                    <tr>
+                        <td
+                            class="column column-1"
+                            style="
+                              mso-table-lspace: 0pt;
+                              mso-table-rspace: 0pt;
+                              font-weight: 400;
+                              text-align: left;
+                              vertical-align: top;
+                              border-top: 0px;
+                              border-right: 0px;
+                              border-bottom: 0px;
+                              border-left: 0px;
+                            "
+                            width="100%"
+                        >
+                            <div
+                                class="spacer_block block-1"
+                                style="
+                                height: 40px;
+                                line-height: 40px;
+                                font-size: 1px;
+                              "
+                            >
+                                 
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table
+        align="center"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        class="row row-8"
+        role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt"
+        width="100%"
+    >
+        <tbody>
+        <tr>
+            <td>
+                <table
+                    align="center"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    class="row-content stack"
+                    role="presentation"
+                    style="
+                        mso-table-lspace: 0pt;
+                        mso-table-rspace: 0pt;
+                        background-color: #ffffff;
+                        border-radius: 0;
+                        color: #000000;
+                        width: 600px;
+                        margin: 0 auto;
+                      "
+                    width="600"
+                >
+                    <tbody>
+                    <tr>
+                        <td
+                            class="column column-1"
+                            style="
+                              mso-table-lspace: 0pt;
+                              mso-table-rspace: 0pt;
+                              font-weight: 400;
+                              text-align: left;
+                              padding-left: 57px;
+                              padding-right: 57px;
+                              vertical-align: top;
+                              border-top: 0px;
+                              border-right: 0px;
+                              border-bottom: 0px;
+                              border-left: 0px;
+                            "
+                            width="100%"
+                        >
+                            <table
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0"
+                                class="paragraph_block block-1"
+                                role="presentation"
+                                style="
+                                mso-table-lspace: 0pt;
+                                mso-table-rspace: 0pt;
+                                word-break: break-word;
+                              "
+                                width="100%"
+                            >
+                                <tr>
+                                    <td class="pad">
+                                        <div
+                                            style="
+                                      color: #0a1e42;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-size: 14px;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 16.8px;
+                                    "
+                                        >
+                                            <div style="margin: 0">
+                                                <strong>Material Brief:</strong
+                                                ><br /><br />
 
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse">
-    <tbody>
-    <tr>
-        <td style="border-collapse:collapse;padding:15px;color:#ffffff">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%"
-                   style="border-collapse:collapse">
-                <tbody>
-                <tr>
-                    <td style="border-collapse:collapse;padding:30px;color:#ffffff;font-family:sans-serif;font-size:24px;font-weight:bold;text-align:center;background-color:#2b87f1">
-                        Purchase Order Request Created
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                                                {!! $po->poNotes !!}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table
+        align="center"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        class="row row-9"
+        role="presentation"
+        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt"
+        width="100%"
+    >
+        <tbody>
+        <tr>
+            <td>
+                <table
+                    align="center"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                    class="row-content stack"
+                    role="presentation"
+                    style="
+                        mso-table-lspace: 0pt;
+                        mso-table-rspace: 0pt;
+                        background-color: #ffffff;
+                        border-radius: 0;
+                        color: #000000;
+                        width: 600px;
+                        margin: 0 auto;
+                      "
+                    width="600"
+                >
+                    <tbody>
+                    <tr>
+                        <td
+                            class="column column-1"
+                            style="
+                              mso-table-lspace: 0pt;
+                              mso-table-rspace: 0pt;
+                              font-weight: 400;
+                              text-align: left;
+                              vertical-align: top;
+                              border-top: 0px;
+                              border-right: 0px;
+                              border-bottom: 0px;
+                              border-left: 0px;
+                            "
+                            width="100%"
+                        >
+                            <div
+                                class="spacer_block block-1"
+                                style="
+                                height: 40px;
+                                line-height: 40px;
+                                font-size: 1px;
+                              "
+                            >
+                                 
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse">
-    <tbody>
-    <tr style="border-top:1px solid #bfc1c3;border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Purchase Order Number:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;text-transform:uppercase">
-            {{ $po->poNumber }}
-        </td>
-    </tr>
-
-    <tr style="border-top:1px solid #bfc1c3;border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            User:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-
-
-            {{ $po->user->name }}
-
-        </td>
-    </tr>
-
-    <tr style="border-top:1px solid #bfc1c3;border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Company:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-
-            {{ $po->user->company?->name }}
-
-
-        </td>
-    </tr>
-
-    <tr style="border-top:1px solid #bfc1c3;border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Order Purpose:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-            {{ $po->poPurpose }}
-        </td>
-    </tr>
-
-
-    <tr style="border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Supplier Typre:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-            {{ $po->poType }}
-        </td>
-    </tr>
-    <tr style="border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Purchase Order Value:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-            {{ $po->poValue }}
-        </td>
-    </tr>
-    <tr style="border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Tash/Project Number:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-            {{ $po->poProject }}
-        </td>
-    </tr>
-    <tr style="border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            Job Location:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-            {{ $po->poProjectLocation }}
-        </td>
-    </tr>
-
-
-    <tr style="border-bottom:1px solid #bfc1c3">
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;padding:15px">
-            What Was Purchased:
-        </td>
-        <td style="border-collapse:collapse;color:#0b0c0c;font-family:sans-serif;font-size:16px;font-weight:bold;">
-            @if ($po->poMaterials)
-                {{ $po->poMaterials }}
-            @else
-                Not Completed
-            @endif
-        </td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse">
-    <tbody>
-    <tr>
-        <td style="border-collapse:collapse;padding:15px;color:#0b0c0c;font-family:sans-serif;font-size:16px;line-height:20px">
-            <address style="font-style:normal">
-                <abbr title="Express Merchants">EM</abbr> <br/>
-                Unit 34, Brownstown Busines Cen,<br/>
-                Brownstown Road<br/>
-                Portadown<br/>
-                BT62 4EA
-            </address>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-</body>
-</html>
+@endsection
