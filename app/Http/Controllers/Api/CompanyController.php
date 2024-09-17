@@ -9,64 +9,67 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    public function index(Request $request)
-    {
-        $qb = Company::query();
-        $query = $request->input('query');
-        if (!empty($query)) {
-            $qb = $qb->where('companyName', 'like', "%{$query}%");
-        }
-
-        return CompanyResource::collection($qb->paginate());
+  public function index(Request $request)
+  {
+    $qb = Company::query();
+    $query = $request->input("query");
+    if (!empty($query)) {
+      $qb = $qb->where("companyName", "like", "%{$query}%");
+      $qb = $qb->orWhere("companyContactEmail", "like", "%{$query}%");
+      $qb = $qb->orWhere("companyAddress", "like", "%{$query}%");
     }
 
-    public function single(Company $company)
-    {
-        return new CompanyResource($company);
-    }
+    return CompanyResource::collection($qb->paginate());
+  }
 
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'companyName' => 'required|max:255',
-            'companyPhone' => 'required|max:12',
-            'companyContact' => 'required|max:255',
-            'companyContactEmail' => 'required|email|max:255',
-            'companyAddress' => 'required|max:255'
-        ]);
+  public function single(Company $company)
+  {
+    return new CompanyResource($company);
+  }
 
-        $createdCompany = Company::create($request->toArray());
+  public function store(Request $request)
+  {
+    $this->validate($request, [
+      "companyName" => "required|max:255",
+      "companyPhone" => "required|max:12",
+      "companyContact" => "required|max:255",
+      "companyContactEmail" => "required|email|max:255",
+      "companyAddress" => "required|max:255",
+    ]);
 
-        return new CompanyResource($createdCompany);
-    }
+    $createdCompany = Company::create($request->toArray());
 
-    public function update(Company $company, Request $request)
-    {
-        $this->validate($request, [
-            'companyName' => 'required|max:255',
-            'companyPhone' => 'required|max:12',
-            'companyContact' => 'required|max:255',
-            'companyContactEmail' => 'required|email|max:255',
-            'companyAddress' => 'required|max:255'
-        ]);
+    return new CompanyResource($createdCompany);
+  }
 
-        $input = $request->all();
+  public function update(Company $company, Request $request)
+  {
+    $this->validate($request, [
+      "companyName" => "required|max:255",
+      "companyPhone" => "required|max:12",
+      "companyContact" => "required|max:255",
+      "companyContactEmail" => "required|email|max:255",
+      "companyAddress" => "required|max:255",
+    ]);
 
-        $company->fill($input)->save();
+    $input = $request->all();
 
-        return new CompanyResource($company);
-    }
+    $company->fill($input)->save();
 
-    public function toggle(Company $company)
-    {
-        $company->disabled = (int)$company->disabled ? '' : '1';
-        $company->save();
+    return new CompanyResource($company);
+  }
 
-        return new CompanyResource($company);
-    }
-    
-    public function findByParent($parent_id){
-        $companies = Company::where('parent_id',$parent_id)->get();
-        return CompanyResource::collection($companies);
-    }
+  public function toggle(Company $company)
+  {
+    $company->disabled = (int) $company->disabled ? "" : "1";
+    $company->save();
+
+    return new CompanyResource($company);
+  }
+
+  public function findByParent($parent_id)
+  {
+    $companies = Company::where("parent_id", $parent_id)->get();
+    return CompanyResource::collection($companies);
+  }
 }
