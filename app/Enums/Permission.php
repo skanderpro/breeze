@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum Permission: string
 {
-  // case PO_READ_LIST_ALL = 'PO:READ:LIST-ALL';
+   case PO_READ_LIST_ALL = 'PO:READ:LIST-ALL';
   // case PO_EXPORT_ALL = 'PO:EXPORT:ALL';
   // case PO_EXPORT_COMPANY = 'PO:EXPORT:COMPANY';
   // case PO_EXPORT_CLIENT = 'PO:EXPORT:CLIENT';
