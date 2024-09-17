@@ -620,91 +620,91 @@ trait PoControllerTrait
       }
 
       if (!empty($filter["filter"]["merchantPlumbing"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantPlumbing",
           $filter["filter"]["merchantPlumbing"]
         );
       }
 
       if (!empty($filter["filter"]["merchantElectrical"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantElectrical",
           $filter["filter"]["merchantElectrical"]
         );
       }
 
       if (!empty($filter["filter"]["merchantBuilders"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantBuilders",
           $filter["filter"]["merchantBuilders"]
         );
       }
 
       if (!empty($filter["filter"]["merchantHire"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantHire",
           $filter["filter"]["merchantHire"]
         );
       }
 
       if (!empty($filter["filter"]["merchantDecorating"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantDecorating",
           $filter["filter"]["merchantDecorating"]
         );
       }
 
       if (!empty($filter["filter"]["merchantFlooring"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantFlooring",
           $filter["filter"]["merchantFlooring"]
         );
       }
 
       if (!empty($filter["filter"]["merchantAuto"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantAuto",
           $filter["filter"]["merchantAuto"]
         );
       }
 
       if (!empty($filter["filter"]["merchantAggregate"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantAggregate",
           $filter["filter"]["merchantAggregate"]
         );
       }
 
       if (!empty($filter["filter"]["merchantRoofing"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantRoofing",
           $filter["filter"]["merchantRoofing"]
         );
       }
 
       if (!empty($filter["filter"]["merchantFixing"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantFixing",
           $filter["filter"]["merchantFixing"]
         );
       }
 
       if (!empty($filter["filter"]["merchantIronmongrey"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantIronmongrey",
           $filter["filter"]["merchantIronmongrey"]
         );
       }
 
       if (!empty($filter["filter"]["merchantTyres"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantTyres",
           $filter["filter"]["merchantTyres"]
         );
       }
 
       if (!empty($filter["filter"]["merchantHealth"])) {
-        $q = $q->orWere(
+        $q = $q->orWhere(
           "merchants.merchantHealth",
           $filter["filter"]["merchantHealth"]
         );
@@ -758,7 +758,8 @@ trait PoControllerTrait
 
   public function getAdminRequestList($filter)
   {
-    $pos = Po::select("pos.*")->where("pos.is_request", "1");
+    $pos = Po::select("pos.*")->where("pos.is_request", "1")
+        ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");;
 
     if (
       !empty($filter["filter"]["startDate"]) &&
@@ -771,12 +772,127 @@ trait PoControllerTrait
     }
 
     if (!empty($filter["filter"]["search"])) {
-      $pos = $pos->where(
-        "merchants.merchantName",
-        "like",
-        "%" . $filter["filter"]["search"] . "%"
-      );
+      $pos = $pos->where(function ($q) use ($filter) {
+          $q->where(
+              "merchants.merchantName",
+              "like",
+              "%" . $filter["filter"]["search"] . "%"
+          )
+              ->orWhere(
+                  "pos.alt_merchant_name",
+                  "like",
+                  "%" . $filter["filter"]["search"] . "%"
+              )->orWhere(
+                  "pos.poProject",
+                  "like",
+                  "%" . $filter["filter"]["search"] . "%"
+              )
+              ->orWhere(
+                  "pos.poNumber",
+                  "like",
+                  "%" . $filter["filter"]["search"] . "%"
+              );
+      });
     }
+
+      $pos = $pos->where(function ($q) use ($filter) {
+          $q->where("pos.id", ">", "0");
+
+          if (!empty($filter["filter"]["green_supplier"])) {
+              $q = $q->orWhere("merchants.green_supplier", "1");
+          }
+
+          if (!empty($filter["filter"]["merchantPlumbing"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantPlumbing",
+                  $filter["filter"]["merchantPlumbing"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantElectrical"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantElectrical",
+                  $filter["filter"]["merchantElectrical"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantBuilders"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantBuilders",
+                  $filter["filter"]["merchantBuilders"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantHire"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantHire",
+                  $filter["filter"]["merchantHire"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantDecorating"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantDecorating",
+                  $filter["filter"]["merchantDecorating"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantFlooring"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantFlooring",
+                  $filter["filter"]["merchantFlooring"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantAuto"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantAuto",
+                  $filter["filter"]["merchantAuto"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantAggregate"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantAggregate",
+                  $filter["filter"]["merchantAggregate"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantRoofing"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantRoofing",
+                  $filter["filter"]["merchantRoofing"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantFixing"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantFixing",
+                  $filter["filter"]["merchantFixing"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantIronmongrey"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantIronmongrey",
+                  $filter["filter"]["merchantIronmongrey"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantTyres"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantTyres",
+                  $filter["filter"]["merchantTyres"]
+              );
+          }
+
+          if (!empty($filter["filter"]["merchantHealth"])) {
+              $q = $q->orWhere(
+                  "merchants.merchantHealth",
+                  $filter["filter"]["merchantHealth"]
+              );
+          }
+      });
 
     $pos = $pos->orderBy("pos.id", "desc")->get();
     return $pos;
