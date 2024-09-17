@@ -20,919 +20,960 @@ use Ramsey\Uuid\Uuid;
 
 trait PoControllerTrait
 {
-  /** @var AccessCheckInterface */
-  public $accessCheckService;
+    /** @var AccessCheckInterface */
+    public $accessCheckService;
 
-  protected function validateStoreRequest(Request $request)
-  {
-    $poType = $request->input("poType", $request->input("items.0.poType"));
+    protected function validateStoreRequest(Request $request)
+    {
+        $poType = $request->input("poType", $request->input("items.0.poType"));
 
-    if ($poType == "alternate") {
-      return $this->validate($request, [
-        "items.*.companyId" => "required",
-        "items.*.u_id" => "required",
-        "items.*.poType" => "required|max:255",
-        "items.*.poPurpose" => "required|max:255",
-        "items.*.poNotes" => "nullable",
-        "items.*.alt_merchant_name" => "required",
-        "items.*.alt_merchant_email" => "required",
-        "items.*.alt_merchant_contact" => "required",
-        "items.*.poProjectLocation" => "required|max:255",
-      ]);
-    } elseif ($poType == "Pre Approved") {
-      return $this->validate($request, [
-        "items.*.companyId" => "required",
-        "items.*.u_id" => "required",
-        "items.*.poNotes" => "nullable",
-        "items.*.poType" => "required|max:255",
-        "items.*.poPurpose" => "required|max:255",
-        "items.*.selectMerchant" => "required",
-        "items.*.poProjectLocation" => "required|max:255",
-      ]);
-    }
-
-    throw new \Exception("poType validation failed");
-  }
-
-  protected function validateStore(Request $request)
-  {
-    if ($request->input("poType") == "alternate") {
-      return $this->validate($request, [
-        "companyId" => "required",
-        "u_id" => "required",
-        "poType" => "required|max:255",
-        "poNotes" => "nullable",
-        "poPurpose" => "required|max:255",
-        "alt_merchant_name" => "required",
-        "alt_merchant_contact" => "required",
-        "alt_merchant_email" => "required",
-        "poProjectLocation" => "required|max:255",
-      ]);
-    } elseif ($request->input("poType") == "Pre Approved") {
-      return $this->validate($request, [
-        "companyId" => "required",
-        "u_id" => "required",
-        "poNotes" => "nullable",
-        "poType" => "required|max:255",
-        "poPurpose" => "required|max:255",
-        "selectMerchant" => "required",
-        "poProjectLocation" => "required|max:255",
-      ]);
-    }
-
-    throw new \Exception("poType validation failed");
-  }
-
-  public function storeRequests(Request $request)
-  {
-    $numberKey = "po-request-key";
-    $number = Setting::getInt($numberKey) + 1;
-    Setting::set($numberKey, $number);
-    $this->validateStoreRequest($request);
-
-    $poNumber = "RQ-{$number}";
-
-    $payload = $request->toArray();
-    $pos = [];
-    $notify = [];
-    foreach ($payload["items"] as $item) {
-      $item["is_request"] = "1";
-      $item["poNumber"] = $poNumber;
-      $po = Po::create($item);
-      $pos[] = $po;
-
-      $merchant = !empty($item["selectMerchant"])
-        ? Merchant::find($item["selectMerchant"])
-        : null;
-
-      if (!$merchant && !empty($item["alt_merchant_email"])) {
-        $notify[] = [
-          "email" => $item["alt_merchant_email"],
-          "name" => $item["alt_merchant_name"],
-          "contact" => $item["alt_merchant_contact"],
-          "po" => $po,
-        ];
-      } elseif ($merchant) {
-        $notify[] = [
-          "email" => empty($merchant->merchantEmail)
-            ? $merchant->merchantContactEmail
-            : $merchant->merchantEmail,
-          "name" => empty($merchant->merchantName)
-            ? $merchant->merchantContactName
-            : $merchant->merchantName,
-          "contact" => empty($merchant->merchantPhone)
-            ? $merchant->merchantContactPhone
-            : $merchant->merchantPhone,
-          "po" => $po,
-        ];
-      }
-    }
-
-    foreach ($notify as $item) {
-      try {
-        Mail::to($item["email"])->send(new PoRequestMerchant($item["po"]));
-      } catch (\Exception $e) {
-        Log::error("email send error", [
-          "error" => $e,
-        ]);
-      }
-    }
-
-    return $pos;
-  }
-
-  public function store(Request $request)
-  {
-    $this->validateStore($request);
-
-    $creatPO = Po::create($request->toArray());
-    $creatPO->poNumber = "EM-{$creatPO->id}";
-    $creatPO->billable_value =
-      $creatPO->value * (Auth::user()->company?->agreed_markup ?? 1);
-    $creatPO->update();
-
-    $poUser = User::all()
-      ->where("id", $request->input("u_id"))
-      ->first();
-
-    $poCompany = Company::select("companyContactEmail")
-      ->where("id", $request->input("companyId"))
-      ->first();
-
-    $poAdminCompany = User::select("email")
-      ->where("companyId", $request->input("companyId"))
-      ->where("accessLevel", "2")
-      ->where("emailNotify", "!=", "1")
-      ->get();
-
-    $creatPOmechant = Merchant::all()
-      ->where("id", $request->input("selectMerchant"))
-      ->first();
-
-    $creatPOinputmechant = $request->input("inputMerchant");
-
-    try {
-      // email function to come, if validation above it met
-      Mail::send(
-        "emails.po",
-        compact(
-          "creatPO",
-          "creatPOmechant",
-          "creatPOinputmechant",
-          "poUser",
-          "poCompany",
-          "poAdminCompany"
-        ),
-        function ($message) use ($request, $poAdminCompany, $poCompany) {
-          if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
-            $message->from(
-              "webtools@cornellstudios.com",
-              $name = "Express Merchants | Local"
-            );
-          } else {
-            $message->from(
-              "helpdesk@express-merchants.co.uk",
-              $name = "Express Merchants Helpdesk"
-            );
-          }
-
-          if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
-            $message
-              ->to("webtools@cornellstudios.com")
-              ->subject("A Purchase Order has been created | Local");
-          } else {
-            $message
-              ->to("helpdesk@express-merchants.co.uk")
-              ->subject("A Purchase Order has been created");
-          }
-
-          if ($poAdminCompany) {
-            foreach ($poAdminCompany as $poAdminComp) {
-              $message
-                ->cc($poAdminComp->email)
-                ->subject("A Purchase Order has been created");
-            }
-          }
-
-          if ($poCompany) {
-            $message
-              ->cc($poCompany->companyContactEmail)
-              ->subject("A Purchase Order has been created");
-          }
-
-          // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
+        if ($poType == "alternate") {
+            return $this->validate($request, [
+                "items.*.companyId" => "required",
+                "items.*.u_id" => "required",
+                "items.*.poType" => "required|max:255",
+                "items.*.poPurpose" => "required|max:255",
+                "items.*.poNotes" => "nullable",
+                "items.*.alt_merchant_name" => "required",
+                "items.*.alt_merchant_email" => "required",
+                "items.*.alt_merchant_contact" => "required",
+                "items.*.poProjectLocation" => "required|max:255",
+            ]);
+        } elseif ($poType == "Pre Approved") {
+            return $this->validate($request, [
+                "items.*.companyId" => "required",
+                "items.*.u_id" => "required",
+                "items.*.poNotes" => "nullable",
+                "items.*.poType" => "required|max:255",
+                "items.*.poPurpose" => "required|max:255",
+                "items.*.selectMerchant" => "required",
+                "items.*.poProjectLocation" => "required|max:255",
+            ]);
         }
-      );
-    } catch (\Exception $e) {
-      Log::error($e->getMessage(), [
-        "error" => $e,
-      ]);
+
+        throw new \Exception("poType validation failed");
     }
 
-    return $creatPO;
-  }
+    protected function validateStore(Request $request)
+    {
+        if ($request->input("poType") == "alternate") {
+            return $this->validate($request, [
+                "companyId" => "required",
+                "u_id" => "required",
+                "poType" => "required|max:255",
+                "poNotes" => "nullable",
+                "poPurpose" => "required|max:255",
+                "alt_merchant_name" => "required",
+                "alt_merchant_contact" => "required",
+                "alt_merchant_email" => "required",
+                "poProjectLocation" => "required|max:255",
+            ]);
+        } elseif ($request->input("poType") == "Pre Approved") {
+            return $this->validate($request, [
+                "companyId" => "required",
+                "u_id" => "required",
+                "poNotes" => "nullable",
+                "poType" => "required|max:255",
+                "poPurpose" => "required|max:255",
+                "selectMerchant" => "required",
+                "poProjectLocation" => "required|max:255",
+            ]);
+        }
 
-  public function getList(Request $request)
-  {
-    $adminusr = User::where("accessLevel", "2")
-      ->where("companyId", Auth::user()->companyId)
-      ->first();
-
-    $merchants = Merchant::all();
-
-    // Sets the parameters from the get request to the variables.
-    $u_id = $request->get("u_id");
-    $poPod = $request->get("poPod");
-    $poId = $request->get("poId");
-    $poJobStatus = $request->get("poJobStatus");
-    $poFinanceStatus = $request->get("poFinanceStatus");
-    $company_id = $request->get("company_id");
-    $merchant_id = $request->get("merchant_id");
-    $poProject = $request->get("poProject");
-    $poLocation = $request->get("poLocation");
-    $dateFrom = $request->get("dateFrom");
-    $dateTo = $request->get("dateTo");
-    $date = $request->get("date");
-    $poPod = $request->get("poPod");
-
-    $query = Po::query()->whereNot("is_request", "1");
-
-    // $pos = DB::table('pos')
-    // ->join('companies', 'pos.companyId', '=', 'companies.id')
-    // ->select('pos.*', 'companies.companyName')
-    // ->orderBy('id', 'desc')
-    // ->paginate(15);
-
-    $companies = Company::all();
-
-    if ($this->accessCheckService->check(Permission::PO_READ_LIST_ALL->value)) {
-      $users = User::all();
-
-      if ($u_id) {
-        $query->where("u_id", "=", $u_id);
-      }
-
-      if ($poId) {
-        $query->where("id", "=", $poId);
-      }
-
-      if ($dateFrom && $dateTo) {
-        $query->whereBetween("created_at", [$dateFrom, $dateTo]);
-      }
-
-      if ($date) {
-        $query->where("created_at", "LIKE", "%$date%");
-      }
-
-      if ($company_id) {
-        $query->where("companyId", "=", $company_id);
-      }
-
-      if ($merchant_id) {
-        $query->where("selectMerchant", "=", $merchant_id);
-      }
-
-      if ($poPod) {
-        $query->where("poPod", "=", "");
-      }
-
-      if ($poJobStatus) {
-        $query->where("poJobStatus", "=", $poJobStatus);
-      }
-
-      if ($poFinanceStatus) {
-        $query->where("poFinanceStatus", "=", $poFinanceStatus);
-      }
-
-      if ($poProject) {
-        $query->where("poProject", "=", "$poProject");
-      }
-
-      if ($poLocation) {
-        $query->where("poProjectLocation", "LIKE", "%$poLocation%");
-      }
+        throw new \Exception("poType validation failed");
     }
 
-    if (
-      $this->accessCheckService->check(
-        Permission::PO_READ_LIST_COMPANY_ALL->value
-      )
-    ) {
-      $users = User::where("companyId", Auth::user()->companyId)->get();
+    public function storeRequests(Request $request)
+    {
+        $numberKey = "po-request-key";
+        $number = Setting::getInt($numberKey) + 1;
+        Setting::set($numberKey, $number);
+        $this->validateStoreRequest($request);
 
-      if ($u_id) {
-        $query->where("u_id", "=", $u_id);
-      }
+        $poNumber = "RQ-{$number}";
 
-      if ($poId) {
-        $query->where("id", "=", $poId);
-      }
+        $payload = $request->toArray();
+        $pos = [];
+        $notify = [];
+        foreach ($payload["items"] as $item) {
+            $item["is_request"] = "1";
+            $item["poNumber"] = $poNumber;
+            $po = Po::create($item);
+            $pos[] = $po;
 
-      if ($dateFrom && $dateTo) {
-        $query->whereBetween("created_at", [$dateFrom, $dateTo]);
-      }
+            $merchant = !empty($item["selectMerchant"])
+                ? Merchant::find($item["selectMerchant"])
+                : null;
 
-      if ($date) {
-        $query->where("created_at", "LIKE", "%$date%");
-      }
+            if (!$merchant && !empty($item["alt_merchant_email"])) {
+                $notify[] = [
+                    "email" => $item["alt_merchant_email"],
+                    "name" => $item["alt_merchant_name"],
+                    "contact" => $item["alt_merchant_contact"],
+                    "po" => $po,
+                ];
+            } elseif ($merchant) {
+                $notify[] = [
+                    "email" => empty($merchant->merchantEmail)
+                        ? $merchant->merchantContactEmail
+                        : $merchant->merchantEmail,
+                    "name" => empty($merchant->merchantName)
+                        ? $merchant->merchantContactName
+                        : $merchant->merchantName,
+                    "contact" => empty($merchant->merchantPhone)
+                        ? $merchant->merchantContactPhone
+                        : $merchant->merchantPhone,
+                    "po" => $po,
+                ];
+            }
+        }
 
-      if ($poProject) {
-        $query->where("poProject", "=", "$poProject");
-      }
+        foreach ($notify as $item) {
+            try {
+                Mail::to($item["email"])->send(new PoRequestMerchant($item["po"]));
+            } catch (\Exception $e) {
+                Log::error("email send error", [
+                    "error" => $e,
+                ]);
+            }
+        }
 
-      if ($poPod) {
-        $query->where("poPod", "=", "");
-      }
-
-      if ($poLocation) {
-        $query->where("poProjectLocation", "LIKE", "%$poLocation%");
-      }
-
-      $query->where("companyId", "=", Auth::user()->companyId);
+        return $pos;
     }
 
-    if (
-      $this->accessCheckService->check(Permission::PO_READ_LIST_COMPANY->value)
-    ) {
-      if ($u_id) {
-        $query->where("u_id", "=", $u_id);
-      }
+    public function store(Request $request)
+    {
+        $this->validateStore($request);
 
-      if ($poId) {
-        $query->where("id", "=", $poId);
-      }
+        $creatPO = Po::create($request->toArray());
+        $creatPO->poNumber = "EM-{$creatPO->id}";
+        $creatPO->billable_value =
+            $creatPO->value * (Auth::user()->company?->agreed_markup ?? 1);
+        $creatPO->update();
 
-      if ($dateFrom && $dateTo) {
-        $query->whereBetween("created_at", [$dateFrom, $dateTo]);
-      }
+        $poUser = User::all()
+            ->where("id", $request->input("u_id"))
+            ->first();
 
-      if ($date) {
-        $query->where("created_at", "LIKE", "%$date%");
-      }
+        $poCompany = Company::select("companyContactEmail")
+            ->where("id", $request->input("companyId"))
+            ->first();
 
-      if ($poPod) {
-        $query->where("poPod", "=", "");
-      }
+        $poAdminCompany = User::select("email")
+            ->where("companyId", $request->input("companyId"))
+            ->where("accessLevel", "2")
+            ->where("emailNotify", "!=", "1")
+            ->get();
 
-      if ($poLocation) {
-        $query->where("poProjectLocation", "LIKE", "%$poLocation%");
-      }
+        $creatPOmechant = Merchant::all()
+            ->where("id", $request->input("selectMerchant"))
+            ->first();
 
-      $query->where("companyId", "=", Auth::user()->companyId);
-      $query->where("u_id", "=", Auth::user()->id);
+        $creatPOinputmechant = $request->input("inputMerchant");
 
-      // $query->where('poInvoice', '=', "");
-      // $query->where('poPod', '=', "");
-      // $query->where('poCompanyPo', '=', "");
+        try {
+            // email function to come, if validation above it met
+            Mail::send(
+                "emails.po",
+                compact(
+                    "creatPO",
+                    "creatPOmechant",
+                    "creatPOinputmechant",
+                    "poUser",
+                    "poCompany",
+                    "poAdminCompany"
+                ),
+                function ($message) use ($request, $poAdminCompany, $poCompany) {
+                    if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
+                        $message->from(
+                            "webtools@cornellstudios.com",
+                            $name = "Express Merchants | Local"
+                        );
+                    } else {
+                        $message->from(
+                            "helpdesk@express-merchants.co.uk",
+                            $name = "Express Merchants Helpdesk"
+                        );
+                    }
+
+                    if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
+                        $message
+                            ->to("webtools@cornellstudios.com")
+                            ->subject("A Purchase Order has been created | Local");
+                    } else {
+                        $message
+                            ->to("helpdesk@express-merchants.co.uk")
+                            ->subject("A Purchase Order has been created");
+                    }
+
+                    if ($poAdminCompany) {
+                        foreach ($poAdminCompany as $poAdminComp) {
+                            $message
+                                ->cc($poAdminComp->email)
+                                ->subject("A Purchase Order has been created");
+                        }
+                    }
+
+                    if ($poCompany) {
+                        $message
+                            ->cc($poCompany->companyContactEmail)
+                            ->subject("A Purchase Order has been created");
+                    }
+
+                    // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
+                }
+            );
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [
+                "error" => $e,
+            ]);
+        }
+
+        return $creatPO;
     }
 
-    $query->orderBy("id", "desc");
+    public function getList(Request $request)
+    {
+        $adminusr = User::where("accessLevel", "2")
+            ->where("companyId", Auth::user()->companyId)
+            ->first();
 
-    if (
-      $u_id ||
-      $poId ||
-      $company_id ||
-      $merchant_id ||
-      $poProject ||
-      $poLocation ||
-      $dateFrom ||
-      $dateTo ||
-      $date
-    ) {
-      $pos = $query->paginate(10000);
-    } else {
-      $pos = $query->paginate(50);
-    }
+        $merchants = Merchant::all();
 
-    $engineer = User::where("id", "=", Auth::user()->id)->first();
+        // Sets the parameters from the get request to the variables.
+        $u_id = $request->get("u_id");
+        $poPod = $request->get("poPod");
+        $poId = $request->get("poId");
+        $poJobStatus = $request->get("poJobStatus");
+        $poFinanceStatus = $request->get("poFinanceStatus");
+        $company_id = $request->get("company_id");
+        $merchant_id = $request->get("merchant_id");
+        $poProject = $request->get("poProject");
+        $poLocation = $request->get("poLocation");
+        $dateFrom = $request->get("dateFrom");
+        $dateTo = $request->get("dateTo");
+        $date = $request->get("date");
+        $poPod = $request->get("poPod");
 
-    return compact(
-      "pos",
-      "dateTo",
-      "dateFrom",
-      "date",
-      "company_id",
-      "merchant_id",
-      "u_id",
-      "poFinanceStatus",
-      "poJobStatus",
-      "poId",
-      "poPod",
-      "poProject",
-      "poLocation",
-      "poPod",
-      "users",
-      "companies",
-      "merchants",
-      "engineer",
-      "adminusr"
-    );
-  }
+        $query = Po::query()->whereNot("is_request", "1");
 
-  public function getSingle($id)
-  {
-    return Po::select(
-      "pos.*",
-      "companies.companyName",
-      "users.name",
-      "merchants.merchantName"
-    )
-      ->leftJoin("companies", "pos.companyId", "=", "companies.id")
-      ->leftJoin("merchants", "pos.selectMerchant", "=", "merchants.id")
-      ->leftJoin("users", "pos.u_id", "=", "users.id")
-      ->where("pos.id", "=", $id)
-      ->firstOrFail();
-  }
+        // $pos = DB::table('pos')
+        // ->join('companies', 'pos.companyId', '=', 'companies.id')
+        // ->select('pos.*', 'companies.companyName')
+        // ->orderBy('id', 'desc')
+        // ->paginate(15);
 
-  public function updadePo($id, Request $request)
-  {
-    $this->validate($request, [
-      "poPod" => "file|max:6000",
-    ]);
+        $companies = Company::all();
 
-    $editPo = Po::findOrFail($id);
+        if ($this->accessCheckService->check(Permission::PO_READ_LIST_ALL->value)) {
+            $users = User::all();
 
-    $poPod = $request->get("poPod");
+            if ($u_id) {
+                $query->where("u_id", "=", $u_id);
+            }
 
-    // $input = \Request::get('poPod');
+            if ($poId) {
+                $query->where("id", "=", $poId);
+            }
 
-    $input = $request->all();
+            if ($dateFrom && $dateTo) {
+                $query->whereBetween("created_at", [$dateFrom, $dateTo]);
+            }
 
-    $destinationPath = "uploads/"; // upload path
-    $file = $request->file("poPod");
-    // $fileName = $file->getClientOriginalName();
+            if ($date) {
+                $query->where("created_at", "LIKE", "%$date%");
+            }
 
-    $filename = $_FILES["poPod"]["name"];
-    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            if ($company_id) {
+                $query->where("companyId", "=", $company_id);
+            }
 
-    if ($request->hasFile("poPod")) {
-      $request->file("poPod")->move($destinationPath, $filename);
+            if ($merchant_id) {
+                $query->where("selectMerchant", "=", $merchant_id);
+            }
 
-      $input["poPod"] = $filename;
+            if ($poPod) {
+                $query->where("poPod", "=", "");
+            }
 
-      // if ($ext == 'pdf')
-      // {
-      //   $request->file('poPod')->move($destinationPath, $filename . '.pdf');
-      // }
-      //
-      //
-      // if ($ext == 'jpg' || $ext == 'jpeg')
-      // {
-      //   $request->file('poPod')->move($destinationPath, $filename . '.jpg');
-      // }
-    }
+            if ($poJobStatus) {
+                $query->where("poJobStatus", "=", $poJobStatus);
+            }
 
-    $editPo->fill($input)->save();
-    $editPo->billable_value =
-      $editPo->value * (Auth::user()->company?->agreed_markup ?? 1);
-    $editPo->save();
+            if ($poFinanceStatus) {
+                $query->where("poFinanceStatus", "=", $poFinanceStatus);
+            }
 
-    return $editPo;
-  }
+            if ($poProject) {
+                $query->where("poProject", "=", "$poProject");
+            }
 
-  public function uploadPoPod($id, Request $request)
-  {
-    $this->validate($request, [
-      "poPod" => "file|max:6000",
-    ]);
+            if ($poLocation) {
+                $query->where("poProjectLocation", "LIKE", "%$poLocation%");
+            }
+        }
 
-    $destinationPath = "uploads/"; // upload path
+        if (
+            $this->accessCheckService->check(
+                Permission::PO_READ_LIST_COMPANY_ALL->value
+            )
+        ) {
+            $users = User::where("companyId", Auth::user()->companyId)->get();
 
-    $filename = $_FILES["poPod"]["name"];
+            if ($u_id) {
+                $query->where("u_id", "=", $u_id);
+            }
 
-    $editPo = Po::findOrFail($id);
-    if ($request->hasFile("poPod")) {
-      $ext = pathinfo($filename, PATHINFO_EXTENSION);
-      $tmpName = Uuid::uuid4();
-      $filename = "{$tmpName}.{$ext}";
-      $request
-        ->file("poPod")
-        ->move(Storage::disk("public")->path($destinationPath), $filename);
-      $editPo->poPod = "/storage/{$destinationPath}{$filename}";
-      $editPo->save();
-    }
+            if ($poId) {
+                $query->where("id", "=", $poId);
+            }
 
-    return $editPo;
-  }
+            if ($dateFrom && $dateTo) {
+                $query->whereBetween("created_at", [$dateFrom, $dateTo]);
+            }
 
-  public function removePod($id, Request $request)
-  {
-    $this->validate($request, [
-      "poPod" => "file|max:6000",
-    ]);
+            if ($date) {
+                $query->where("created_at", "LIKE", "%$date%");
+            }
 
-    $editPo = Po::findOrFail($id);
-    $destinationPath = "uploads/" . $editPo->poPod; // upload path
+            if ($poProject) {
+                $query->where("poProject", "=", "$poProject");
+            }
 
-    $fileWasDeleted = false;
+            if ($poPod) {
+                $query->where("poPod", "=", "");
+            }
 
-    if (Storage::disk("public")->exists($destinationPath)) {
-      Storage::disk("public")->delete($destinationPath);
-      $fileWasDeleted = true;
-    } elseif (Storage::disk("local")->exists($editPo->poPod)) {
-      Storage::disk("local")->delete($editPo->poPod);
-      $fileWasDeleted = true;
-    } elseif (Storage::exists($editPo->poPod)) {
-      Storage::delete($editPo->poPod);
-      $fileWasDeleted = true;
-    } elseif (file_exists(base_path($editPo->poPod))) {
-      unlink(base_path($editPo->poPod));
-      $fileWasDeleted = true;
-    } elseif (
-      Storage::disk("public")->exists(
-        str_replace("/storage/", "", $editPo->poPod)
-      )
-    ) {
-      Storage::disk("public")->delete(
-        str_replace("/storage/", "", $editPo->poPod)
-      );
-      $fileWasDeleted = true;
-    }
+            if ($poLocation) {
+                $query->where("poProjectLocation", "LIKE", "%$poLocation%");
+            }
 
-    if ($fileWasDeleted) {
-      $editPo->poPod = "";
-      $editPo->save();
-    }
+            $query->where("companyId", "=", Auth::user()->companyId);
+        }
 
-    return $editPo;
-  }
+        if (
+            $this->accessCheckService->check(Permission::PO_READ_LIST_COMPANY->value)
+        ) {
+            if ($u_id) {
+                $query->where("u_id", "=", $u_id);
+            }
 
-  public function getList4Role($user, $filter)
-  {
-    $pos = Po::select("pos.*")
-      ->whereNot("pos.is_request", "1")
-      ->join("companies", "companies.id", "=", "pos.companyId")
-      ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");
-    // ->where(function ($q) use ($user) {
-    //     $q
-    //         ->where('companies.parent_id', $user->companyId)
-    //         ->orWhere('companies.id', $user->companyId);
-    // })
+            if ($poId) {
+                $query->where("id", "=", $poId);
+            }
 
-    // if (!empty($filter['filter']['u_id'])) {
-    //     $pos = $pos->where('pos.u_id', $filter['filter']['u_id']);
-    // }
+            if ($dateFrom && $dateTo) {
+                $query->whereBetween("created_at", [$dateFrom, $dateTo]);
+            }
 
-    if (
-      !empty($filter["filter"]["startDate"]) &&
-      !empty($filter["filter"]["endDate"])
-    ) {
-      $startDate = date(
-        "Y-m-d H:i:s",
-        strtotime($filter["filter"]["startDate"])
-      );
-      $endDate = date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"]));
+            if ($date) {
+                $query->where("created_at", "LIKE", "%$date%");
+            }
 
-      $pos = $pos->where(function ($q) use ($startDate, $endDate) {
-        $q->where("pos.created_at", ">=", $startDate)->where(
-          "pos.created_at",
-          "<=",
-          $endDate
+            if ($poPod) {
+                $query->where("poPod", "=", "");
+            }
+
+            if ($poLocation) {
+                $query->where("poProjectLocation", "LIKE", "%$poLocation%");
+            }
+
+            $query->where("companyId", "=", Auth::user()->companyId);
+            $query->where("u_id", "=", Auth::user()->id);
+
+            // $query->where('poInvoice', '=', "");
+            // $query->where('poPod', '=', "");
+            // $query->where('poCompanyPo', '=', "");
+        }
+
+        $query->orderBy("id", "desc");
+
+        if (
+            $u_id ||
+            $poId ||
+            $company_id ||
+            $merchant_id ||
+            $poProject ||
+            $poLocation ||
+            $dateFrom ||
+            $dateTo ||
+            $date
+        ) {
+            $pos = $query->paginate(10000);
+        } else {
+            $pos = $query->paginate(50);
+        }
+
+        $engineer = User::where("id", "=", Auth::user()->id)->first();
+
+        return compact(
+            "pos",
+            "dateTo",
+            "dateFrom",
+            "date",
+            "company_id",
+            "merchant_id",
+            "u_id",
+            "poFinanceStatus",
+            "poJobStatus",
+            "poId",
+            "poPod",
+            "poProject",
+            "poLocation",
+            "poPod",
+            "users",
+            "companies",
+            "merchants",
+            "engineer",
+            "adminusr"
         );
-      });
     }
 
-    if (!empty($filter["filter"]["search"])) {
-      $pos = $pos->where(function ($q) use ($filter) {
-        $q->where(
-          "merchants.merchantName",
-          "like",
-          "%" . $filter["filter"]["search"] . "%"
+    public function getSingle($id)
+    {
+        return Po::select(
+            "pos.*",
+            "companies.companyName",
+            "users.name",
+            "merchants.merchantName"
         )
-          ->orWhere(
-            "pos.alt_merchant_name",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          )
-          ->orWhere(
-            "pos.poNumber",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          );
-      });
+            ->leftJoin("companies", "pos.companyId", "=", "companies.id")
+            ->leftJoin("merchants", "pos.selectMerchant", "=", "merchants.id")
+            ->leftJoin("users", "pos.u_id", "=", "users.id")
+            ->where("pos.id", "=", $id)
+            ->firstOrFail();
     }
 
-    $pos = $pos->where(function ($q) use ($filter) {
-      $q->where("pos.id", ">", "0");
+    public function updadePo($id, Request $request)
+    {
+        $this->validate($request, [
+            "poPod" => "file|max:6000",
+        ]);
 
-      if (!empty($filter["filter"]["green_supplier"])) {
-        $q = $q->orWhere("merchants.green_supplier", "1");
-      }
+        $editPo = Po::findOrFail($id);
 
-      if (!empty($filter["filter"]["merchantPlumbing"])) {
-        $q = $q->orWhere(
-          "merchants.merchantPlumbing",
-          $filter["filter"]["merchantPlumbing"]
-        );
-      }
+        $poPod = $request->get("poPod");
 
-      if (!empty($filter["filter"]["merchantElectrical"])) {
-        $q = $q->orWhere(
-          "merchants.merchantElectrical",
-          $filter["filter"]["merchantElectrical"]
-        );
-      }
+        // $input = \Request::get('poPod');
 
-      if (!empty($filter["filter"]["merchantBuilders"])) {
-        $q = $q->orWhere(
-          "merchants.merchantBuilders",
-          $filter["filter"]["merchantBuilders"]
-        );
-      }
+        $input = $request->all();
 
-      if (!empty($filter["filter"]["merchantHire"])) {
-        $q = $q->orWhere(
-          "merchants.merchantHire",
-          $filter["filter"]["merchantHire"]
-        );
-      }
+        $destinationPath = "uploads/"; // upload path
+        $file = $request->file("poPod");
+        // $fileName = $file->getClientOriginalName();
 
-      if (!empty($filter["filter"]["merchantDecorating"])) {
-        $q = $q->orWhere(
-          "merchants.merchantDecorating",
-          $filter["filter"]["merchantDecorating"]
-        );
-      }
+        $filename = $_FILES["poPod"]["name"];
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-      if (!empty($filter["filter"]["merchantFlooring"])) {
-        $q = $q->orWhere(
-          "merchants.merchantFlooring",
-          $filter["filter"]["merchantFlooring"]
-        );
-      }
+        if ($request->hasFile("poPod")) {
+            $request->file("poPod")->move($destinationPath, $filename);
 
-      if (!empty($filter["filter"]["merchantAuto"])) {
-        $q = $q->orWhere(
-          "merchants.merchantAuto",
-          $filter["filter"]["merchantAuto"]
-        );
-      }
+            $input["poPod"] = $filename;
 
-      if (!empty($filter["filter"]["merchantAggregate"])) {
-        $q = $q->orWhere(
-          "merchants.merchantAggregate",
-          $filter["filter"]["merchantAggregate"]
-        );
-      }
+            // if ($ext == 'pdf')
+            // {
+            //   $request->file('poPod')->move($destinationPath, $filename . '.pdf');
+            // }
+            //
+            //
+            // if ($ext == 'jpg' || $ext == 'jpeg')
+            // {
+            //   $request->file('poPod')->move($destinationPath, $filename . '.jpg');
+            // }
+        }
 
-      if (!empty($filter["filter"]["merchantRoofing"])) {
-        $q = $q->orWhere(
-          "merchants.merchantRoofing",
-          $filter["filter"]["merchantRoofing"]
-        );
-      }
+        $editPo->fill($input)->save();
+        $editPo->billable_value =
+            $editPo->value * (Auth::user()->company?->agreed_markup ?? 1);
+        $editPo->save();
 
-      if (!empty($filter["filter"]["merchantFixing"])) {
-        $q = $q->orWhere(
-          "merchants.merchantFixing",
-          $filter["filter"]["merchantFixing"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantIronmongrey"])) {
-        $q = $q->orWhere(
-          "merchants.merchantIronmongrey",
-          $filter["filter"]["merchantIronmongrey"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantTyres"])) {
-        $q = $q->orWhere(
-          "merchants.merchantTyres",
-          $filter["filter"]["merchantTyres"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantHealth"])) {
-        $q = $q->orWhere(
-          "merchants.merchantHealth",
-          $filter["filter"]["merchantHealth"]
-        );
-      }
-    });
-
-    $pos = $pos->orderBy("pos.id", "desc")->get();
-    return $pos;
-  }
-
-  public function getRequestList4Role($user, $filter)
-  {
-    $pos = Po::select("pos.*")
-      ->where("pos.is_request", "1")
-      ->join("companies", "companies.id", "=", "pos.companyId")
-      ->where("companies.parent_id", $user->companyId);
-
-    if (
-      !empty($filter["filter"]["startDate"]) &&
-      !empty($filter["filter"]["endDate"])
-    ) {
-      $pos = $pos->whereBetween("pos.created_at", [
-        date("Y-m-d H:i:s", strtotime($filter["filter"]["startDate"])),
-        date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"])),
-      ]);
+        return $editPo;
     }
 
-    if (!empty($filter["filter"]["search"])) {
-      $pos = $pos->where(function ($q) use ($filter) {
-        $q->where(
-          "pos.poNumber",
-          "like",
-          "%" . $filter["filter"]["search"] . "%"
-        );
-      });
+    public function uploadPoPod($id, Request $request)
+    {
+        $this->validate($request, [
+            "poPod" => "file|max:6000",
+        ]);
+
+        $destinationPath = "uploads/"; // upload path
+
+        $filename = $_FILES["poPod"]["name"];
+
+        $editPo = Po::findOrFail($id);
+        if ($request->hasFile("poPod")) {
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $tmpName = Uuid::uuid4();
+            $filename = "{$tmpName}.{$ext}";
+            $request
+                ->file("poPod")
+                ->move(Storage::disk("public")->path($destinationPath), $filename);
+            $editPo->poPod = "/storage/{$destinationPath}{$filename}";
+            $editPo->save();
+        }
+
+        return $editPo;
     }
 
-    $pos = $pos->orderBy("pos.id", "desc")->get();
-    return $pos;
-  }
+    public function removePod($id, Request $request)
+    {
+        $this->validate($request, [
+            "poPod" => "file|max:6000",
+        ]);
 
-  public function getAdminRequestList($filter)
-  {
-    $pos = Po::select("pos.*")
-      ->where("pos.is_request", "1")
-      ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");
+        $editPo = Po::findOrFail($id);
+        $destinationPath = "uploads/" . $editPo->poPod; // upload path
 
-    if (
-      !empty($filter["filter"]["startDate"]) &&
-      !empty($filter["filter"]["endDate"])
-    ) {
-      $pos = $pos->whereBetween("pos.created_at", [
-        date("Y-m-d H:i:s", strtotime($filter["filter"]["startDate"])),
-        date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"])),
-      ]);
+        $fileWasDeleted = false;
+
+        if (Storage::disk("public")->exists($destinationPath)) {
+            Storage::disk("public")->delete($destinationPath);
+            $fileWasDeleted = true;
+        } elseif (Storage::disk("local")->exists($editPo->poPod)) {
+            Storage::disk("local")->delete($editPo->poPod);
+            $fileWasDeleted = true;
+        } elseif (Storage::exists($editPo->poPod)) {
+            Storage::delete($editPo->poPod);
+            $fileWasDeleted = true;
+        } elseif (file_exists(base_path($editPo->poPod))) {
+            unlink(base_path($editPo->poPod));
+            $fileWasDeleted = true;
+        } elseif (
+            Storage::disk("public")->exists(
+                str_replace("/storage/", "", $editPo->poPod)
+            )
+        ) {
+            Storage::disk("public")->delete(
+                str_replace("/storage/", "", $editPo->poPod)
+            );
+            $fileWasDeleted = true;
+        }
+
+        if ($fileWasDeleted) {
+            $editPo->poPod = "";
+            $editPo->save();
+        }
+
+        return $editPo;
     }
 
-    if (!empty($filter["filter"]["search"])) {
-      $pos = $pos->where(function ($q) use ($filter) {
-        $q->where(
-          "merchants.merchantName",
-          "like",
-          "%" . $filter["filter"]["search"] . "%"
-        )
-          ->orWhere(
-            "pos.alt_merchant_name",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          )
-          ->orWhere(
-            "pos.poProject",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          )
-          ->orWhere(
-            "pos.poNumber",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          );
-      });
+    public function getList4Role($user, $filter)
+    {
+        $pos = Po::select("pos.*")
+            ->whereNot("pos.is_request", "1")
+            ->join("companies", "companies.id", "=", "pos.companyId")
+            ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");
+        // ->where(function ($q) use ($user) {
+        //     $q
+        //         ->where('companies.parent_id', $user->companyId)
+        //         ->orWhere('companies.id', $user->companyId);
+        // })
+
+        // if (!empty($filter['filter']['u_id'])) {
+        //     $pos = $pos->where('pos.u_id', $filter['filter']['u_id']);
+        // }
+
+        if (
+            !empty($filter["filter"]["startDate"]) &&
+            !empty($filter["filter"]["endDate"])
+        ) {
+            $startDate = date(
+                "Y-m-d H:i:s",
+                strtotime($filter["filter"]["startDate"])
+            );
+            $endDate = date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"]));
+
+            $pos = $pos->where(function ($q) use ($startDate, $endDate) {
+                $q->where("pos.created_at", ">=", $startDate)->where(
+                    "pos.created_at",
+                    "<=",
+                    $endDate
+                );
+            });
+        }
+
+        if (!empty($filter["filter"]["search"])) {
+            $pos = $pos->where(function ($q) use ($filter) {
+                $q->where(
+                    "merchants.merchantName",
+                    "like",
+                    "%" . $filter["filter"]["search"] . "%"
+                )
+                    ->orWhere(
+                        "pos.alt_merchant_name",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    )
+                    ->orWhere(
+                        "pos.poNumber",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    );
+            });
+        }
+
+        $pos = $pos->where(function ($q) use ($filter) {
+            $q->where("pos.id", ">", "0");
+
+            if (!empty($filter["filter"]["green_supplier"])) {
+                $q = $q->orWhere("merchants.green_supplier", "1");
+            }
+
+            if (!empty($filter["filter"]["merchantPlumbing"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantPlumbing",
+                    $filter["filter"]["merchantPlumbing"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantElectrical"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantElectrical",
+                    $filter["filter"]["merchantElectrical"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantBuilders"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantBuilders",
+                    $filter["filter"]["merchantBuilders"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantHire"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantHire",
+                    $filter["filter"]["merchantHire"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantDecorating"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantDecorating",
+                    $filter["filter"]["merchantDecorating"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantFlooring"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantFlooring",
+                    $filter["filter"]["merchantFlooring"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantAuto"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantAuto",
+                    $filter["filter"]["merchantAuto"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantAggregate"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantAggregate",
+                    $filter["filter"]["merchantAggregate"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantRoofing"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantRoofing",
+                    $filter["filter"]["merchantRoofing"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantFixing"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantFixing",
+                    $filter["filter"]["merchantFixing"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantIronmongrey"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantIronmongrey",
+                    $filter["filter"]["merchantIronmongrey"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantTyres"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantTyres",
+                    $filter["filter"]["merchantTyres"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantHealth"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantHealth",
+                    $filter["filter"]["merchantHealth"]
+                );
+            }
+
+            if (!empty($filter["filter"]['pod_required'])) {
+                $q = $q->whereNull('pos.poPod')
+                    ->orWhere('pos.poPod', '=', '');
+            }
+
+            if (!empty($filter["filter"]['unused_orders'])) {
+                $q = $q->whereNot('pos.u_id', '=', Auth::id())
+                ->whereNot('pos.poVisitStatus');
+            }
+        });
+
+        if (!empty($filter["filter"]['unused_orders'])) {
+//            Auth::user()->id != $this->u_id && !$this->poVisitStatus
+
+
+        }
+
+        if (!empty($filter["filter"]['pod_required'])) {
+            $pos = $pos->where(function ($q) use ($filter) {
+
+            });
+        }
+
+        $pos = $pos->orderBy("pos.id", "desc")->get();
+        return $pos;
     }
 
-    $pos = $pos->where(function ($q) use ($filter) {
-      $q->where("pos.id", ">", "0");
+    public function getRequestList4Role($user, $filter)
+    {
+        $pos = Po::select("pos.*")
+            ->where("pos.is_request", "1")
+            ->join("companies", "companies.id", "=", "pos.companyId")
+            ->where("companies.parent_id", $user->companyId);
 
-      if (!empty($filter["filter"]["green_supplier"])) {
-        $q = $q->orWhere("merchants.green_supplier", "1");
-      }
+        if (
+            !empty($filter["filter"]["startDate"]) &&
+            !empty($filter["filter"]["endDate"])
+        ) {
+            $pos = $pos->whereBetween("pos.created_at", [
+                date("Y-m-d H:i:s", strtotime($filter["filter"]["startDate"])),
+                date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"])),
+            ]);
+        }
 
-      if (!empty($filter["filter"]["merchantPlumbing"])) {
-        $q = $q->orWhere(
-          "merchants.merchantPlumbing",
-          $filter["filter"]["merchantPlumbing"]
-        );
-      }
+        if (!empty($filter["filter"]["search"])) {
+            $pos = $pos->where(function ($q) use ($filter) {
+                $q->where(
+                    "merchants.merchantName",
+                    "like",
+                    "%" . $filter["filter"]["search"] . "%"
+                )
+                    ->orWhere(
+                        "pos.alt_merchant_name",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    )
+                    ->orWhere(
+                        "pos.poNumber",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    );
+            });
+        }
 
-      if (!empty($filter["filter"]["merchantElectrical"])) {
-        $q = $q->orWhere(
-          "merchants.merchantElectrical",
-          $filter["filter"]["merchantElectrical"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantBuilders"])) {
-        $q = $q->orWhere(
-          "merchants.merchantBuilders",
-          $filter["filter"]["merchantBuilders"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantHire"])) {
-        $q = $q->orWhere(
-          "merchants.merchantHire",
-          $filter["filter"]["merchantHire"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantDecorating"])) {
-        $q = $q->orWhere(
-          "merchants.merchantDecorating",
-          $filter["filter"]["merchantDecorating"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantFlooring"])) {
-        $q = $q->orWhere(
-          "merchants.merchantFlooring",
-          $filter["filter"]["merchantFlooring"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantAuto"])) {
-        $q = $q->orWhere(
-          "merchants.merchantAuto",
-          $filter["filter"]["merchantAuto"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantAggregate"])) {
-        $q = $q->orWhere(
-          "merchants.merchantAggregate",
-          $filter["filter"]["merchantAggregate"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantRoofing"])) {
-        $q = $q->orWhere(
-          "merchants.merchantRoofing",
-          $filter["filter"]["merchantRoofing"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantFixing"])) {
-        $q = $q->orWhere(
-          "merchants.merchantFixing",
-          $filter["filter"]["merchantFixing"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantIronmongrey"])) {
-        $q = $q->orWhere(
-          "merchants.merchantIronmongrey",
-          $filter["filter"]["merchantIronmongrey"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantTyres"])) {
-        $q = $q->orWhere(
-          "merchants.merchantTyres",
-          $filter["filter"]["merchantTyres"]
-        );
-      }
-
-      if (!empty($filter["filter"]["merchantHealth"])) {
-        $q = $q->orWhere(
-          "merchants.merchantHealth",
-          $filter["filter"]["merchantHealth"]
-        );
-      }
-    });
-
-    $pos = $pos->orderBy("pos.id", "desc")->get();
-    return $pos;
-  }
-
-  public function cancelPo($id, $status)
-  {
-    $editPo = Po::findOrFail($id);
-    $editPo->poCancelled = 1;
-    $editPo->poCancelledBy = Auth::user()->name;
-    $editPo->poCompletedStatus = $status;
-    $editPo->update();
-    return $editPo;
-  }
-
-  public function visitPo($id)
-  {
-    $editPo = Po::findOrFail($id);
-    $editPo->poVisitStatus = 1;
-    $editPo->update();
-    return $editPo;
-  }
-
-  public function getRequestsByNumber($number)
-  {
-    $pos = PO::where("poNumber", $number)->get();
-    return $pos;
-  }
-
-  public function uploadRequestFileMethod($request)
-  {
-    $this->validate($request, [
-      "file" => "file|max:6000",
-    ]);
-
-    $destinationPath = "uploads/"; // upload path
-    $filename = "";
-    $path = "";
-
-    if ($request->hasFile("file")) {
-      $ext = $request->file("file")->extension();
-      $tmpName = Uuid::uuid4();
-      $filename = "{$tmpName}.{$ext}";
-      $request
-        ->file("file")
-        ->move(Storage::disk("public")->path($destinationPath), $filename);
-      $path = "/storage/{$destinationPath}{$filename}";
+        $pos = $pos->orderBy("pos.id", "desc")->get();
+        return $pos;
     }
-    return ["file" => $path];
-  }
+
+    public function getAdminRequestList($filter)
+    {
+        $pos = Po::select("pos.*")->where("pos.is_request", "1")
+            ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");;
+        if (
+            !empty($filter["filter"]["startDate"]) &&
+            !empty($filter["filter"]["endDate"])
+        ) {
+            $pos = $pos->whereBetween("pos.created_at", [
+                date("Y-m-d H:i:s", strtotime($filter["filter"]["startDate"])),
+                date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"])),
+            ]);
+        }
+
+        if (!empty($filter["filter"]["search"])) {
+            $pos = $pos->where(function ($q) use ($filter) {
+                $q->where(
+                    "merchants.merchantName",
+                    "like",
+                    "%" . $filter["filter"]["search"] . "%"
+                )
+                    ->orWhere(
+                        "pos.alt_merchant_name",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    )->orWhere(
+                        "pos.poProject",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    )
+                    ->orWhere(
+                        "pos.poNumber",
+                        "like",
+                        "%" . $filter["filter"]["search"] . "%"
+                    );
+            });
+        }
+
+        $pos = $pos->where(function ($q) use ($filter) {
+            $q->where("pos.id", ">", "0");
+
+            if (!empty($filter["filter"]["green_supplier"])) {
+                $q = $q->orWhere("merchants.green_supplier", "1");
+            }
+
+            if (!empty($filter["filter"]["merchantPlumbing"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantPlumbing",
+                    $filter["filter"]["merchantPlumbing"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantElectrical"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantElectrical",
+                    $filter["filter"]["merchantElectrical"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantBuilders"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantBuilders",
+                    $filter["filter"]["merchantBuilders"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantHire"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantHire",
+                    $filter["filter"]["merchantHire"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantDecorating"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantDecorating",
+                    $filter["filter"]["merchantDecorating"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantFlooring"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantFlooring",
+                    $filter["filter"]["merchantFlooring"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantAuto"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantAuto",
+                    $filter["filter"]["merchantAuto"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantAggregate"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantAggregate",
+                    $filter["filter"]["merchantAggregate"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantRoofing"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantRoofing",
+                    $filter["filter"]["merchantRoofing"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantFixing"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantFixing",
+                    $filter["filter"]["merchantFixing"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantIronmongrey"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantIronmongrey",
+                    $filter["filter"]["merchantIronmongrey"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantTyres"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantTyres",
+                    $filter["filter"]["merchantTyres"]
+                );
+            }
+
+            if (!empty($filter["filter"]["merchantHealth"])) {
+                $q = $q->orWhere(
+                    "merchants.merchantHealth",
+                    $filter["filter"]["merchantHealth"]
+                );
+            }
+        });
+
+        if (!empty($filter["filter"]['awaiting_quotes'])) {
+
+        }
+
+        if (!empty($filter["filter"]['pending_approval'])) {
+
+        }
+
+        if (!empty($filter["filter"]['approved'])) {
+
+        }
+
+        $pos = $pos->orderBy("pos.id", "desc")->get();
+        return $pos;
+    }
+
+    public function cancelPo($id, $status)
+    {
+        $editPo = Po::findOrFail($id);
+        $editPo->poCancelled = 1;
+        $editPo->poCancelledBy = Auth::user()->name;
+        $editPo->poCompletedStatus = $status;
+        $editPo->update();
+        return $editPo;
+    }
+
+    public function visitPo($id)
+    {
+        $editPo = Po::findOrFail($id);
+        $editPo->poVisitStatus = 1;
+        $editPo->update();
+        return $editPo;
+    }
+
+    public function getRequestsByNumber($number)
+    {
+        $pos = PO::where("poNumber", $number)->get();
+        return $pos;
+    }
+
+    public function uploadRequestFileMethod($request)
+    {
+        $this->validate($request, [
+            "file" => "file|max:6000",
+        ]);
+
+        $destinationPath = "uploads/"; // upload path
+        $filename = "";
+        $path = "";
+
+        if ($request->hasFile("file")) {
+            $ext = $request->file("file")->extension();
+            $tmpName = Uuid::uuid4();
+            $filename = "{$tmpName}.{$ext}";
+            $request
+                ->file("file")
+                ->move(Storage::disk("public")->path($destinationPath), $filename);
+            $path = "/storage/{$destinationPath}{$filename}";
+        }
+        return ["file" => $path];
+    }
 }
