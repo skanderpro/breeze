@@ -31,7 +31,7 @@ class CompanyController extends Controller
   {
     $this->validate($request, [
       "companyName" => "required|max:255",
-      "companyPhone" => "required|max:12",
+      "companyPhone" => "required|max:20",
       "companyContact" => "required|max:255",
       "companyContactEmail" => "required|email|max:255",
       "companyAddress" => "required|max:255",
