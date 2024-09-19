@@ -86,8 +86,10 @@ class PoRequestController extends Controller
 
         $number = $po->poNumber;
 
+        $parts = explode('-', $number);
+
         $po->is_request = 0;
-        $po->poNumber = "EM-{$po->id}";
+        $po->poNumber = "EM-{$parts[1]}";
         $po->save();
 
         Po::query()
