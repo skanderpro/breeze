@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Ramsey\Uuid\Uuid;
 
 class NotificationController extends Controller
 {
@@ -27,11 +29,11 @@ class NotificationController extends Controller
          }
          $filter = $request->input('filter');
          if(!empty($filter['types'])){
-             
+
              $query = $query->whereIn('type',$filter['types']);
          }
          if(!empty($filter['read'])){
-              
+
               $query = $query->whereIn('read',$filter['read']);
           }
 
@@ -39,14 +41,14 @@ class NotificationController extends Controller
 
         return NotificationResource::collection($notifications);
     }
-    
+
     public function countUnread(){
         $query = Notification::query()
             ->where('read',0)
             ->where('user_id', Auth::id())
             ->count();
-                
-        return response()->json(['numbers' => $query]);    
+
+        return response()->json(['numbers' => $query]);
     }
 
     public function markAsRead(Notification $notification)
@@ -75,28 +77,51 @@ class NotificationController extends Controller
 
     public function getBanner()
     {
-        $banner = Setting::get('site_banner', '');
+        $existingBanner = Setting::get('site_banner', '[]');
+        $existingBanner = json_decode($existingBanner, true);
+        if (!is_array($existingBanner)) {
+            $existingBanner = [];
+        }
+
+        foreach ($existingBanner as $key => $val) {
+            $existingBanner[$key] = Storage::disk("public")->url($val);
+        }
 
         return response()->json([
-            'data' => [
-                'banner' => $banner,
-            ],
+            'data' => $existingBanner,
         ]);
     }
 
     public function setBanner(Request $request)
     {
-        $request->validate([
-            'banner' => 'required',
-        ]);
+        $existingBanner = Setting::get('site_banner', '[]');
+        $existingBanner = json_decode($existingBanner, true);
+        if (!is_array($existingBanner)) {
+            $existingBanner = [];
+        }
 
-        $banner = $request->input('banner');
-        Setting::set('site_banner', $banner);
+        $destinationPath = "uploads/";
+
+        $sizes = ['lg', 'md', 'sm'];
+        foreach ($sizes as $size) {
+            if ($request->hasFile($size)) {
+                $tmpName = Uuid::uuid4();
+                $filename = "{$tmpName}";
+                $request
+                    ->file($size)
+                    ->move(Storage::disk("public")->path($destinationPath), $filename);
+                $existingBanner[$size] = "/{$destinationPath}{$filename}";
+            }
+        }
+
+        Setting::set('site_banner', json_encode($existingBanner));
+
+        foreach ($existingBanner as $key => $val) {
+            $existingBanner[$key] = Storage::disk("public")->url($val);
+        }
 
         return response()->json([
-            'data' => [
-                'banner' => $banner,
-            ]
+            'data' => $existingBanner,
         ]);
     }
 
