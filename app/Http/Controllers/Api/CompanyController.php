@@ -19,7 +19,7 @@ class CompanyController extends Controller
       $qb = $qb->orWhere("companyAddress", "like", "%{$query}%");
     }
 
-    return CompanyResource::collection($qb->paginate());
+    return CompanyResource::collection($qb->get());
   }
 
   public function single(Company $company)

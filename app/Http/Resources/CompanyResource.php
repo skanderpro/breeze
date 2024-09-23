@@ -37,6 +37,9 @@ class CompanyResource extends JsonResource
       "parent_id" => $this->resource->parent_id,
       "mark_up" => $this->resource->mark_up,
       "email" => $this->resource->companyContactEmail,
+      "limit_4_role" => $this->resource->limit_4_role,
+      "limit_5_role" => $this->resource->limit_5_role,
+      "limit_6_role:" => $this->resource->limit_6_role,
     ];
   }
 }

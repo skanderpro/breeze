@@ -9,36 +9,38 @@ use Illuminate\Support\Facades\Auth;
 
 class UserResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
-    {
-        return [
-            'id' => $this->resource->id,
-			'companies' => CompanyResource::collection($this->companies),
-            'name' => $this->name,
-            'companyLimit' => $this->order_limit,
-            'accessLevel' => $this->resource->accessLevel,
-            'phone' => $this->resource->phone,
-            'disabled' => $this->resource->disabled,
-            'email' => $this->resource->email,
-            'created_at' => $this->resource->created_at,
-            'orders_count' => Po::getOrdersCount(null, $this->resource),
-            'merchant_id' => $this->resource->merchant_id,
-            'merchant_parent_id' => $this->resource->merchant_parent_id,    
-			'company' => CompanyResource::make($this->company)
-        ] + (
-            $this->resource->id === Auth::id()
-                ? [
-                    'settings' => [
-                        'push_notification' => (boolean)$this->resource->setting_push_notification,
-                        'email_notification' => (boolean)$this->resource->setting_email_notification,
-                    ]
-            ]
-                : []
-        );
-    }
+  /**
+   * Transform the resource into an array.
+   *
+   * @return array<string, mixed>
+   */
+  public function toArray(Request $request): array
+  {
+    return [
+      "id" => $this->resource->id,
+      "companies" => CompanyResource::collection($this->companies),
+      "name" => $this->name,
+      "companyLimit" => $this->order_limit,
+      "accessLevel" => $this->resource->accessLevel,
+      "phone" => $this->resource->phone,
+      "disabled" => $this->resource->disabled,
+      "email" => $this->resource->email,
+      "created_at" => $this->resource->created_at,
+      "orders_count" => Po::getOrdersCount(null, $this->resource),
+      "merchant_id" => $this->resource->merchant_id,
+      "merchant_parent_id" => $this->resource->merchant_parent_id,
+      "price_limit" => $this->resource->price_limit,
+      "company" => CompanyResource::make($this->company),
+    ] +
+      ($this->resource->id === Auth::id()
+        ? [
+          "settings" => [
+            "push_notification" =>
+              (bool) $this->resource->setting_push_notification,
+            "email_notification" =>
+              (bool) $this->resource->setting_email_notification,
+          ],
+        ]
+        : []);
+  }
 }
