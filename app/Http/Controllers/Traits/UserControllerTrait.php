@@ -99,7 +99,7 @@ trait UserControllerTrait
     }
     $editUser->companies()->sync($ids);
     $editUser->fill($input);
-    $editUser->save();
+    $editUser->update();
 
     return $editUser;
   }

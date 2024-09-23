@@ -54,6 +54,7 @@ class PoResource extends JsonResource
       "alt_merchant_name" => $this->resource->alt_merchant_name ?? null,
       "alt_merchant_contact" => $this->resource->alt_merchant_contact ?? null,
       "contract_id" => $this->contract_id,
+      "counts" => $this->resource->request_count,
     ];
   }
 }

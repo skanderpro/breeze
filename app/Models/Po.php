@@ -191,6 +191,18 @@ class Po extends Model
     return static::getRequestsQB($number)->update($fields);
   }
 
+  public function getRequestCountAttribute()
+  {
+    if ($this->is_request) {
+      return [
+        "total" => static::getRequestCount($this->poNumber),
+        "admin_approved" => static::getApprovedRequestsCount($this->poNumber),
+      ];
+    } else {
+      return [];
+    }
+  }
+
   protected static function boot()
   {
     parent::boot();
