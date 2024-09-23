@@ -33,6 +33,7 @@ class User extends Authenticatable
     "setting_email_notification",
     "merchant_id",
     "merchant_parent_id",
+    "price_limit",
   ];
 
   /**

@@ -8,6 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Events\CheckOrderLimit;
 use App\Listeners\CheckOrderLimitListener;
+use App\Events\CompanyCreated;
+use App\Listeners\DuplicateCompany;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,7 @@ class EventServiceProvider extends ServiceProvider
   protected $listen = [
     Registered::class => [SendEmailVerificationNotification::class],
     CheckOrderLimit::class => [CheckOrderLimitListener::class],
+    CompanyCreated::class => [DuplicateCompany::class],
   ];
 
   /**
