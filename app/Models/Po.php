@@ -43,11 +43,17 @@ class Po extends Model
     "billable_value_final",
     "billable_date",
     "overlimit_value",
+    'created_by_id'
   ];
 
   protected $dispatchesEvents = [
     "created" => CheckOrderLimit::class,
   ];
+
+  public function createdBy()
+  {
+    return $this->belongsTo(User::class, 'created_by_id');
+  }
 
   public static function getRequestCount($number = null, $user = null)
   {
