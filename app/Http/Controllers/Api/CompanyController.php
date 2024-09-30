@@ -35,6 +35,8 @@ class CompanyController extends Controller
       "companyContact" => "required|max:255",
       "companyContactEmail" => "required|email|max:255",
       "companyAddress" => "required|max:255",
+      'url' => 'nullable',
+      'companyContactPhone' => 'nullable',
     ]);
 
     $createdCompany = Company::create($request->toArray());
@@ -50,6 +52,8 @@ class CompanyController extends Controller
       "companyContact" => "required|max:255",
       "companyContactEmail" => "required|email|max:255",
       "companyAddress" => "required|max:255",
+      'url' => 'nullable',
+      'companyContactPhone' => 'nullable',
     ]);
 
     $input = $request->all();
