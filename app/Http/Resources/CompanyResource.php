@@ -39,7 +39,7 @@ class CompanyResource extends JsonResource
       "email" => $this->resource->companyContactEmail,
       "limit_4_role" => $this->resource->limit_4_role,
       "limit_5_role" => $this->resource->limit_5_role,
-      "limit_6_role:" => $this->resource->limit_6_role,
+      "limit_6_role" => $this->resource->limit_6_role,
       'url' => $this->resource->url,
       'companyContactPhone' => $this->resource->companyContactPhone,
     ];
