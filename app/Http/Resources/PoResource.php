@@ -39,7 +39,7 @@ class PoResource extends JsonResource
       "completed" => $this->resource->poCompleted,
       "notes" => $this->resource->poNotes,
       "created_at" => $this->resource->created_at,
-      'created_by' => $this->resource->createdBy ? USerResource::make($this->resource->createdBy) : null,
+      'created_by' => $this->resource->createdBy ? UserResource::make($this->resource->createdBy) : null,
       "updated_at" => $this->resource->updated_at,
       "merchantId" => $this->merchant?->merchantId ?? null,
       "status" => $this->status,
