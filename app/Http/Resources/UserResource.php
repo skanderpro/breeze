@@ -31,6 +31,7 @@ class UserResource extends JsonResource
       "merchant_parent_id" => $this->resource->merchant_parent_id,
       "price_limit" => $this->resource->price_limit,
       "company" => CompanyResource::make($this->company),
+      'country' => $this->resource->country,
     ] +
       ($this->resource->id === Auth::id()
         ? [
