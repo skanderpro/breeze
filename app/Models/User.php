@@ -34,6 +34,7 @@ class User extends Authenticatable
     "merchant_id",
     "merchant_parent_id",
     "price_limit",
+    'country'
   ];
 
   /**
