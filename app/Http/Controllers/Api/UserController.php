@@ -98,6 +98,8 @@ class UserController extends Controller
       "email" => "required|email",
       "accessLevel" => "required",
       "permissions" => "nullable",
+      "country" => "nullable",
+      "phone" => "nullable",
       // 'password' => 'required|min:6|confirmed'
     ]);
 
