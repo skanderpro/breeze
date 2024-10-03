@@ -75,6 +75,8 @@ trait UserControllerTrait
       "email" => "required|email",
       "accessLevel" => "required",
       "permissions" => "nullable",
+      'phone' => 'nullable',
+      'country' => 'nullable',
       "companyId" => "nullable",
       "merchant_id" => "nullable",
       "merchant_parent_id" => "nullable",
