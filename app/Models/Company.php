@@ -28,6 +28,7 @@ class Company extends Model
     "limit_6_role",
     'url',
     'companyContactPhone',
+    'phoneCode',
   ];
 
   public function getRootCompanyAttribute()
