@@ -42,6 +42,7 @@ class CompanyResource extends JsonResource
       "limit_6_role" => $this->resource->limit_6_role,
       'url' => $this->resource->url,
       'companyContactPhone' => $this->resource->companyContactPhone,
+      'phoneCode' => $this->resource->phoneCode,
     ];
   }
 }
