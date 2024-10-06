@@ -38,7 +38,8 @@ class Merchant extends Model
         'merchantContactName',
         'merchantContactEmail',
         'merchantContactPhone',
-        'parent_id'
+        'parent_id',
+        'merchantPhoneCode',
     ];
 
     public function getAddress()
