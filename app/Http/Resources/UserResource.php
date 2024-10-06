@@ -32,6 +32,7 @@ class UserResource extends JsonResource
       "price_limit" => $this->resource->price_limit,
       "company" => CompanyResource::make($this->company),
       'country' => $this->resource->country,
+      'phoneCode' => $this->resource->phoneCode,
     ] +
       ($this->resource->id === Auth::id()
         ? [

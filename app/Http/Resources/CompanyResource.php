@@ -43,6 +43,7 @@ class CompanyResource extends JsonResource
       'url' => $this->resource->url,
       'companyContactPhone' => $this->resource->companyContactPhone,
       'phoneCode' => $this->resource->phoneCode,
+      'contactPhoneCode' => $this->resource->companyContactPhoneCode,
     ];
   }
 }
