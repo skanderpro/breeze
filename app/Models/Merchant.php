@@ -40,4 +40,18 @@ class Merchant extends Model
         'merchantContactPhone',
         'parent_id'
     ];
+
+    public function getAddress()
+    {
+        $addressParts = [];
+        if (!empty($this->merchantAddress1)) {
+            $addressParts[] = $this->merchantAddress1;
+        }
+
+        if (!empty($this->merchantAddress2)) {
+            $addressParts[] = $this->merchantAddress2;
+        }
+
+        return implode(', ', $addressParts);
+    }
 }
