@@ -100,6 +100,7 @@ class UserController extends Controller
       "permissions" => "nullable",
       "country" => "nullable",
       "phone" => "nullable",
+      'phoneCode' => 'nullable',
       // 'password' => 'required|min:6|confirmed'
     ]);
 

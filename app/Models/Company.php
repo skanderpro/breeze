@@ -29,6 +29,7 @@ class Company extends Model
     'url',
     'companyContactPhone',
     'phoneCode',
+    'companyContactPhoneCode',
   ];
 
   public function getRootCompanyAttribute()

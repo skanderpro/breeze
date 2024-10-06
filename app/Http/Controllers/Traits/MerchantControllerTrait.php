@@ -23,6 +23,7 @@ trait MerchantControllerTrait
       "merchantPhone" => "required|max:22",
       "merchantEmail" => "required|max:255",
       "parent_id" => "nullable",
+      "merchantPhoneCode" => "nullable",
 
       "alt_merchant_name" => "nullable",
       "alt_merchant_contact" => "nullable",
@@ -51,6 +52,7 @@ trait MerchantControllerTrait
       "lng" => "required|max:12",
       "lat" => "required|max:12",
       "parent_id" => "nullable",
+      "merchantPhoneCode" => "nullable",
 
       "merchantPlumbing" => "nullable",
       "merchantElectrical" => "nullable",
