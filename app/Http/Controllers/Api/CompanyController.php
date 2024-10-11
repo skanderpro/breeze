@@ -39,10 +39,13 @@ class CompanyController extends Controller
       'companyContactPhone' => 'nullable',
       'phoneCode' => 'nullable',
       'companyContactPhoneCode' => 'nullable',
+
     ]);
 
     $createdCompany = Company::create($request->toArray());
-
+    $lockout = collect($request->input("lockout"));
+    $merchantIds = $lockout->pluck("value")->toArray();
+    $createdCompany->lockout()->sync($merchantIds);
     return new CompanyResource($createdCompany);
   }
 
@@ -54,14 +57,21 @@ class CompanyController extends Controller
       "companyContact" => "required|max:255",
       "companyContactEmail" => "required|email|max:255",
       "companyAddress" => "required|max:255",
+<<<<<<< HEAD
       'url' => 'nullable',
       'phoneCode' => 'nullable',
       'companyContactPhone' => 'nullable',
       'companyContactPhoneCode' => 'nullable',
+=======
+      "url" => "nullable",
+      "companyContactPhone" => "nullable",
+>>>>>>> f13e949 (fix)
     ]);
 
     $input = $request->all();
-
+    $lockout = collect($request->input("lockout"));
+    $merchantIds = $lockout->pluck("value")->toArray();
+    $company->lockout()->sync($merchantIds);
     $company->fill($input)->save();
 
     return new CompanyResource($company);
