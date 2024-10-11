@@ -26,10 +26,10 @@ class Company extends Model
     "limit_4_role",
     "limit_5_role",
     "limit_6_role",
-    'url',
-    'companyContactPhone',
-    'phoneCode',
-    'companyContactPhoneCode',
+    "url",
+    "companyContactPhone",
+    "phoneCode",
+    "companyContactPhoneCode",
   ];
 
   public function getRootCompanyAttribute()
@@ -38,5 +38,10 @@ class Company extends Model
       ->where("id", $this->parent_id)
       ->first();
     return $company;
+  }
+
+  public function lockout()
+  {
+    return $this->belongsToMany(Merchant::class, "lockout_companies_merchants");
   }
 }

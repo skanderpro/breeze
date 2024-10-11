@@ -34,16 +34,22 @@ class CompanyResource extends JsonResource
           "name" => $this->root_company->companyName,
         ]
         : null,
+      "lockout" => $this->lockout->map(function ($merchant) {
+        return [
+          "value" => $merchant->id,
+          "label" => $merchant->merchantName,
+        ];
+      }),
       "parent_id" => $this->resource->parent_id,
       "mark_up" => $this->resource->mark_up,
       "email" => $this->resource->companyContactEmail,
       "limit_4_role" => $this->resource->limit_4_role,
       "limit_5_role" => $this->resource->limit_5_role,
       "limit_6_role" => $this->resource->limit_6_role,
-      'url' => $this->resource->url,
-      'companyContactPhone' => $this->resource->companyContactPhone,
-      'phoneCode' => $this->resource->phoneCode,
-      'contactPhoneCode' => $this->resource->companyContactPhoneCode,
+      "url" => $this->resource->url,
+      "companyContactPhone" => $this->resource->companyContactPhone,
+      "phoneCode" => $this->resource->phoneCode,
+      "contactPhoneCode" => $this->resource->companyContactPhoneCode,
     ];
   }
 }
