@@ -98,19 +98,24 @@ class User extends Authenticatable
 
   public function getOrderLimitAttribute()
   {
-    if (!!$this->price_limit) {
-      return $this->price_limit;
-    } elseif ($this->accessLevel == 4) {
-      return $this->company->limit_4_role;
-    } elseif ($this->accessLevel == 5) {
-      return $this->company->limit_5_role;
-    } elseif ($this->accessLevel == 6) {
-      return $this->company->limit_6_role;
-    } elseif ($this->accessLevel == 7) {
-      return $this->company->limit_7_role;
-    } else {
-      return null;
-    }
+    if (!empty($this->company)) {
+      if (!!$this->price_limit) {
+        return $this->price_limit;
+      }
+      switch ($this->accessLevel) {
+        case 4:
+          return $this->company->limit_4_role;
+        case 5:
+          return $this->company->limit_5_role;
+        case 6:
+          return $this->company->limit_6_role;
+        case 7:
+          return $this->company->limit_7_role;
+        default:
+          return 0;
+      }
+    }  
+    return 0;
   }
 
   public function pos()
