@@ -100,7 +100,7 @@ class UserController extends Controller
       "permissions" => "nullable",
       "country" => "nullable",
       "phone" => "nullable",
-      'phoneCode' => 'nullable',
+      "phoneCode" => "nullable",
       // 'password' => 'required|min:6|confirmed'
     ]);
 
@@ -119,5 +119,11 @@ class UserController extends Controller
     $user = User::create($input);
 
     return UserResource::make($user);
+  }
+
+  public function isEmailUnique($email)
+  {
+    $user = User::where("email", $email)->first();
+    return response()->json(["isUnique" => empty($user)]);
   }
 }
