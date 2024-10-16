@@ -132,6 +132,11 @@ Route::prefix("v1")
           UserController::class,
           "userSettings",
         ])->name("settings");
+
+        Route::get("/{email}/is-email-unique", [
+          UserController::class,
+          "isEmailUnique",
+        ])->name("is-email-unique");
         Route::patch("/{user}/settings", [
           UserController::class,
           "updateUserSettings",
