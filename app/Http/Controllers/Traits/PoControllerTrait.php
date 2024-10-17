@@ -98,7 +98,7 @@ trait PoControllerTrait
     foreach ($payload["items"] as $item) {
       $item["is_request"] = "1";
       $item["poNumber"] = $poNumber;
-      $item['created_by_id'] = Auth::id();
+      $item["created_by_id"] = Auth::id();
       $po = Po::create($item);
       $pos[] = $po;
 
@@ -148,8 +148,8 @@ trait PoControllerTrait
 
     $creatPO = Po::create($request->toArray());
     $creatPO->poNumber = "EM-{$creatPO->id}";
-    $creatPO->billable_value =
-    $creatPO->value * (Auth::user()->company?->agreed_markup ?? 1);
+    // $creatPO->billable_value =
+    // $creatPO->value * (Auth::user()->company?->agreed_markup ?? 1);
     $creatPO->created_by_id = Auth::id();
     $creatPO->update();
 
@@ -485,8 +485,8 @@ trait PoControllerTrait
     }
 
     $editPo->fill($input)->save();
-    $editPo->billable_value =
-      $editPo->value * (Auth::user()->company?->agreed_markup ?? 1);
+    // $editPo->billable_value =
+    //   $editPo->value * (Auth::user()->company?->agreed_markup ?? 1);
     $editPo->save();
 
     return $editPo;

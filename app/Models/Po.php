@@ -39,11 +39,11 @@ class Po extends Model
     "alt_merchant_email",
     "contract_id",
     "request_file",
-    "billable_value",
+    "actual_value",
     "billable_value_final",
     "billable_date",
     "overlimit_value",
-    'created_by_id'
+    "created_by_id",
   ];
 
   protected $dispatchesEvents = [
@@ -52,7 +52,7 @@ class Po extends Model
 
   public function createdBy()
   {
-    return $this->belongsTo(User::class, 'created_by_id');
+    return $this->belongsTo(User::class, "created_by_id");
   }
 
   public static function getRequestCount($number = null, $user = null)
@@ -132,7 +132,7 @@ class Po extends Model
 
     return $qb
       ->whereNotNull("poValue")
-      ->whereNotNull("billable_value")
+      ->whereNotNull("billable_value_final")
       ->whereNotNull("request_file")
       ->get()
       ->count();
