@@ -39,19 +39,21 @@ class PoResource extends JsonResource
       "completed" => $this->resource->poCompleted,
       "notes" => $this->resource->poNotes,
       "created_at" => $this->resource->created_at,
-      'created_by' => $this->resource->createdBy ? UserResource::make($this->resource->createdBy) : null,
+      "created_by" => $this->resource->createdBy
+        ? UserResource::make($this->resource->createdBy)
+        : null,
       "updated_at" => $this->resource->updated_at,
       "merchantId" => $this->merchant?->merchantId ?? null,
       "status" => $this->status,
       "username" => $this->user->name,
-      'user' => $this->user ? UserResource::make($this->user) : null,
+      "user" => $this->user ? UserResource::make($this->user) : null,
       "merchantName" => $this->merchant?->merchantName ?? null,
       "contractName" => $this->contract?->companyName ?? null,
       "poVisitStatus" => !!$this->resource->poVisitStatus,
       "request_file" => !empty($this->request_file)
         ? asset($this->request_file)
         : null,
-      "billable_value" => $this->billable_value,
+      "actual_value" => $this->actual_value,
       "billable_value_final" => $this->billable_value_final,
       "alt_merchant_name" => $this->resource->alt_merchant_name ?? null,
       "alt_merchant_contact" => $this->resource->alt_merchant_contact ?? null,

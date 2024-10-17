@@ -73,12 +73,12 @@ class PoController extends Controller
     $payload = $request->validate([
       "poNumber" => "required",
       "billable_value_final" => "nullable",
+      "actual_value" => "nullable",
       "poInvoice" => "nullable",
       "poEMInvoice" => "nullable",
       "contractName" => "nullable",
       "status" => "required",
       "poMaterials" => "required",
-      "poNotes" => "required",
     ]);
 
     $po->fill($payload);
