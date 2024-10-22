@@ -13,7 +13,11 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\PoDocumentController;
+use App\Http\Controllers\Api\PoHistoryController;
+use App\Http\Controllers\Api\PoNoteController;
 use App\Http\Controllers\Api\ReportController;
+use App\Models\PoHistory;
 
 /*
 |--------------------------------------------------------------------------
@@ -192,6 +196,36 @@ Route::prefix("v1")
         Route::patch("/{po}/cancel", [PoController::class, "cancel"])->name(
           "cancel"
         );
+        Route::put("po-note", [PoController::class, "addNote"])->name(
+          "add-note"
+        );
+        Route::put("po-document", [PoController::class, "addDocument"])->name(
+          "add-document"
+        );
+      });
+
+    Route::name("poNote.")
+      ->prefix("/po-note")
+      ->middleware(["auth:sanctum"])
+      ->group(function () {
+        Route::post("/", [PoNoteController::class, "store"])->name("store");
+      });
+
+    Route::name("poDocument.")
+      ->prefix("/po-document")
+      ->middleware(["auth:sanctum"])
+      ->group(function () {
+        Route::post("/", [PoDocumentController::class, "store"])->name("store");
+      });
+
+    Route::name("poHistory.")
+      ->prefix("/po-history")
+      ->middleware(["auth:sanctum"])
+      ->group(function () {
+        Route::get("/{po}", [PoHistoryController::class, "index"])->name(
+          "index"
+        );
+        Route::post("/", [PoHistoryController::class, "store"])->name("store");
       });
 
     Route::name("poRequest.")

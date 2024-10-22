@@ -153,6 +153,11 @@ class Po extends Model
     return $this->belongsTo(Company::class, "companyId");
   }
 
+  public function history()
+  {
+    return $this->hasMany(PoHistory::class, "po_id");
+  }
+
   public function getStatusAttribute()
   {
     $statuses = [];
@@ -214,9 +219,54 @@ class Po extends Model
     parent::boot();
 
     static::updating(function ($model) {
+      $user = Auth::user();
       if ($model->isDirty("billable_value_final")) {
         $model->billable_date = now();
+
+        PoHistory::create([
+          "action" => "Seted Billable Value",
+          "data" => null,
+          "user_id" => $user->id,
+          "po_id" => $model->id,
+        ]);
       }
+      if (
+        $model->isDirty("poCancelled") &&
+        $model->isDirty("poCompletedStatus")
+      ) {
+        PoHistory::create([
+          "action" => "Cancelled PO",
+          "data" => null,
+          "user_id" => $user->id,
+          "po_id" => $model->id,
+        ]);
+      }
+      if ($model->isDirty("poPod") && !empty($model->poPod)) {
+        PoHistory::create([
+          "action" => "Uploaded POD",
+          "data" => $model->poPod,
+          "user_id" => $user->id,
+          "po_id" => $model->id,
+        ]);
+      }
+      if ($model->isDirty("poPod") && empty($model->poPod)) {
+        PoHistory::create([
+          "action" => "Deleted POD",
+          "data" => null,
+          "user_id" => $user->id,
+          "po_id" => $model->id,
+        ]);
+      }
+    });
+
+    static::created(function ($model) {
+      $user = Auth::user();
+      PoHistory::create([
+        "action" => "Created PO",
+        "data" => null,
+        "user_id" => $user->id,
+        "po_id" => $model->id,
+      ]);
     });
   }
 }
