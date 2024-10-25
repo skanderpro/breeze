@@ -89,6 +89,7 @@ class PoRequestController extends Controller
     $parts = explode("-", $number);
 
     $po->is_request = 0;
+    $po->status = "New Order";
     $po->poNumber = "EM-{$parts[1]}";
     $po->save();
 

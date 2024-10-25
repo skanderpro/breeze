@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Events\CheckOrderLimit;
+use Illuminate\Support\Facades\Log;
 
 class Po extends Model
 {
@@ -155,34 +156,7 @@ class Po extends Model
 
   public function history()
   {
-    return $this->hasMany(PoHistory::class, "po_id");
-  }
-
-  public function getStatusAttribute()
-  {
-    $statuses = [];
-    if ($this->is_request) {
-      if (static::getApprovedRequestsCount($this->poNumber)) {
-        $statuses[] = "Pending";
-      } else {
-        $statuses[] = "Awaiting Quote(s)";
-      }
-    } else {
-      if (Auth::user()->id != $this->u_id && !$this->poVisitStatus) {
-        $statuses[] = "Unused";
-      }
-      if (Auth::user()->id == $this->u_id || $this->poVisitStatus) {
-        $statuses[] = "POD Required";
-      }
-      if (!!$this->poPod) {
-        $statuses[] = "Completed";
-      }
-      if ($this->poCancelled) {
-        $statuses[] = "Cancelled";
-      }
-    }
-
-    return end($statuses);
+    return $this->hasMany(PoHistory::class, "po_id")->orderBy("id", "desc");
   }
 
   protected static function getRequestsQB($number)
@@ -214,14 +188,29 @@ class Po extends Model
     }
   }
 
+  public static function setGroupStatus($number, $status)
+  {
+    $models = Po::where("poNumber", $number)->get();
+
+    $models->each(function ($model) use ($status) {
+      Log::info("update statuses: {$status}");
+      $model->status = $status;
+      $model->update();
+    });
+  }
+
   protected static function boot()
   {
     parent::boot();
 
     static::updating(function ($model) {
       $user = Auth::user();
-      if ($model->isDirty("billable_value_final")) {
+      if (
+        $model->isDirty("billable_value_final" && $model->billable_value_final)
+      ) {
         $model->billable_date = now();
+        if ($model->is_request) {
+        }
 
         PoHistory::create([
           "action" => "Seted Billable Value",
@@ -230,6 +219,15 @@ class Po extends Model
           "po_id" => $model->id,
         ]);
       }
+
+      static::updated(function ($model) {
+        Log::info("Po updated");
+        if ($model->isDirty("billable_value_final") && $model->is_request) {
+          Log::info("Po updated statuses rule");
+          Po::setGroupStatus($model->poNumber, "Pending Approval");
+        }
+      });
+
       if (
         $model->isDirty("poCancelled") &&
         $model->isDirty("poCompletedStatus")
