@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum Permission: string
 {
-   case PO_READ_LIST_ALL = 'PO:READ:LIST-ALL';
+  case PO_READ_LIST_ALL = "PO:READ:LIST-ALL";
   // case PO_EXPORT_ALL = 'PO:EXPORT:ALL';
   // case PO_EXPORT_COMPANY = 'PO:EXPORT:COMPANY';
   // case PO_EXPORT_CLIENT = 'PO:EXPORT:CLIENT';
@@ -57,6 +57,9 @@ enum Permission: string
   case SUPPORT_PAGE = "SUPPORT:PAGE";
   case MANAGE_ALERT = "MANAGE:ALERT";
   case VIEW_NOTIFICATIION = "VIEW:NOTIFICATION";
+  case ADMIN_GROUP = "ADMIN:GROUP";
+  case COMPANY_GROUP = "COMPANY:GROUP";
+  case SUPPLIER_GROUP = "SUPPLIER:GROUP";
 
   public static function getRoleMap()
   {
@@ -68,6 +71,7 @@ enum Permission: string
         Permission::REQUEST_CREATE->value,
         Permission::REQUEST_MANAGE->value,
         Permission::REQUESTS_ALL->value,
+        Permission::REQUEST_VIEW->value,
         Permission::EV_CHARGING->value,
         Permission::USER_MANAGE->value,
         Permission::COMPANY_MANAGE->value,
@@ -83,6 +87,7 @@ enum Permission: string
         Permission::USERS_ALL->value,
         Permission::SUPPLIERS_ADMIN->value,
         Permission::PO_OVERLIMIT->value,
+        Permission::ADMIN_GROUP->value,
         // Permission::PO_READ_LIST_ALL->value,
         // Permission::MENU_READ_ADMIN->value,
         // Permission::PO_READ_USERS_ALL->value,
@@ -97,7 +102,7 @@ enum Permission: string
         Permission::PO_UPDATE->value,
         Permission::PO_MANAGE_BY_COMPANY->value,
         Permission::REQUEST_CREATE->value,
-        // Permission::REQUEST_VIEW->value,
+        Permission::REQUEST_VIEW->value,
         Permission::REQUESTS_ALL->value,
         Permission::REQUEST_MANAGE->value,
         Permission::EV_CHARGING->value,
@@ -115,6 +120,8 @@ enum Permission: string
         Permission::USERS_ALL->value,
         Permission::SUPPLIERS_ADMIN->value,
         Permission::PO_OVERLIMIT->value,
+        Permission::ADMIN_GROUP->value,
+
         // Permission::PO_READ_LIST_COMPANY_ALL->value,
         // Permission::COMPANY_MANAGE->value,
         // Permission::USERS_READ_COMPANY->value,
@@ -138,6 +145,7 @@ enum Permission: string
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_COMPANY->value,
         Permission::PO_OVERLIMIT->value,
+        Permission::COMPANY_GROUP->value,
         // Permission::PO_READ_LIST_COMPANY->value,
         // Permission::PO_EXPORT_CLIENT->value,
       ],
@@ -156,6 +164,7 @@ enum Permission: string
         Permission::POS_BY_CONTRACT->value,
         Permission::COMPANIES_BY_OWN->value,
         Permission::PO_OVERLIMIT->value,
+        Permission::COMPANY_GROUP->value,
       ],
       "5" => [
         Permission::PO_CREATE->value,
@@ -172,6 +181,7 @@ enum Permission: string
         Permission::POS_BY_CONTRACT->value,
         Permission::COMPANIES_BY_OWN->value,
         Permission::PO_OVERLIMIT->value,
+        Permission::COMPANY_GROUP->value,
       ],
       "6" => [
         Permission::PO_CREATE->value,
@@ -186,6 +196,7 @@ enum Permission: string
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_OWN->value,
         Permission::COMPANIES_BY_OWN->value,
+        Permission::COMPANY_GROUP->value,
       ],
       "7" => [
         Permission::PO_MANAGE_BY_COMPANY->value,
@@ -197,6 +208,7 @@ enum Permission: string
         Permission::ACCOUNT->value,
         Permission::VIEW_NOTIFICATIION->value,
         Permission::COMPANIES_BY_OWN->value,
+        Permission::COMPANY_GROUP->value,
       ],
       "8" => [
         Permission::PO_UPDATE->value,
@@ -209,6 +221,7 @@ enum Permission: string
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_OWN_MERCHANT->value,
         Permission::ADMIN_PANEL->value,
+        Permission::SUPPLIER_GROUP->value,
       ],
       "9" => [
         Permission::PO_UPDATE->value,
@@ -218,6 +231,7 @@ enum Permission: string
         Permission::ACCOUNT->value,
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_OWN_BRANCH->value,
+        Permission::SUPPLIER_GROUP->value,
       ],
     ];
   }

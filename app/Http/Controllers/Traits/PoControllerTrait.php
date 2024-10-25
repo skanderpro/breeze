@@ -99,6 +99,7 @@ trait PoControllerTrait
       $item["is_request"] = "1";
       $item["poNumber"] = $poNumber;
       $item["created_by_id"] = Auth::id();
+      $item["status"] = "Awaiting Quote(s)";
       $po = Po::create($item);
       $pos[] = $po;
 
@@ -148,8 +149,7 @@ trait PoControllerTrait
 
     $creatPO = Po::create($request->toArray());
     $creatPO->poNumber = "EM-{$creatPO->id}";
-    // $creatPO->billable_value =
-    // $creatPO->value * (Auth::user()->company?->agreed_markup ?? 1);
+    $creatPO->status = "New Order";
     $creatPO->created_by_id = Auth::id();
     $creatPO->update();
 
