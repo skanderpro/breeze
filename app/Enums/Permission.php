@@ -52,6 +52,7 @@ enum Permission: string
   case SUPPLIERS_BY_MERCHANT = "SUPPLIERS:BY-MERCHANT";
   case SUPPLIER_REPORTS = "SUPPLIER:REPORTS";
   case ADMIN_PANEL = "ADMIN:PANEL";
+  case APP_CONTROL_PANEL = "APP:CONTROL:PANEL";
   case SETTINGS = "SETTINGS";
   case ACCOUNT = "ACCOUNT";
   case SUPPORT_PAGE = "SUPPORT:PAGE";
@@ -88,6 +89,7 @@ enum Permission: string
         Permission::SUPPLIERS_ADMIN->value,
         Permission::PO_OVERLIMIT->value,
         Permission::ADMIN_GROUP->value,
+        Permission::APP_CONTROL_PANEL->value,
         // Permission::PO_READ_LIST_ALL->value,
         // Permission::MENU_READ_ADMIN->value,
         // Permission::PO_READ_USERS_ALL->value,
@@ -121,7 +123,7 @@ enum Permission: string
         Permission::SUPPLIERS_ADMIN->value,
         Permission::PO_OVERLIMIT->value,
         Permission::ADMIN_GROUP->value,
-
+        Permission::APP_CONTROL_PANEL->value,
         // Permission::PO_READ_LIST_COMPANY_ALL->value,
         // Permission::COMPANY_MANAGE->value,
         // Permission::USERS_READ_COMPANY->value,
@@ -146,6 +148,7 @@ enum Permission: string
         Permission::POS_BY_COMPANY->value,
         Permission::PO_OVERLIMIT->value,
         Permission::COMPANY_GROUP->value,
+        Permission::APP_CONTROL_PANEL->value,
         // Permission::PO_READ_LIST_COMPANY->value,
         // Permission::PO_EXPORT_CLIENT->value,
       ],
@@ -165,6 +168,7 @@ enum Permission: string
         Permission::COMPANIES_BY_OWN->value,
         Permission::PO_OVERLIMIT->value,
         Permission::COMPANY_GROUP->value,
+        Permission::APP_CONTROL_PANEL->value,
       ],
       "5" => [
         Permission::PO_CREATE->value,
@@ -182,6 +186,7 @@ enum Permission: string
         Permission::COMPANIES_BY_OWN->value,
         Permission::PO_OVERLIMIT->value,
         Permission::COMPANY_GROUP->value,
+        Permission::APP_CONTROL_PANEL->value,
       ],
       "6" => [
         Permission::PO_CREATE->value,
@@ -197,6 +202,7 @@ enum Permission: string
         Permission::POS_BY_OWN->value,
         Permission::COMPANIES_BY_OWN->value,
         Permission::COMPANY_GROUP->value,
+        Permission::APP_CONTROL_PANEL->value,
       ],
       "7" => [
         Permission::PO_MANAGE_BY_COMPANY->value,
@@ -209,6 +215,7 @@ enum Permission: string
         Permission::VIEW_NOTIFICATIION->value,
         Permission::COMPANIES_BY_OWN->value,
         Permission::COMPANY_GROUP->value,
+        Permission::APP_CONTROL_PANEL->value,
       ],
       "8" => [
         Permission::PO_UPDATE->value,
@@ -232,6 +239,7 @@ enum Permission: string
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_OWN_BRANCH->value,
         Permission::SUPPLIER_GROUP->value,
+        Permission::ADMIN_PANEL->value,
       ],
     ];
   }
