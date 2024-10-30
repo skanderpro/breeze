@@ -101,6 +101,9 @@ class UserController extends Controller
       "country" => "nullable",
       "phone" => "nullable",
       "phoneCode" => "nullable",
+      "companyId" => "nullable",
+      "merchant_id:" => "nullable",
+      "merchant_parent_id" => "nullable",
       // 'password' => 'required|min:6|confirmed'
     ]);
 
@@ -115,15 +118,22 @@ class UserController extends Controller
     if (empty($input["permissions"])) {
       unset($input["permissions"]);
     }
-
+    $contracts = $request->get("contracts");
     $user = User::create($input);
+    $ids = [];
+    for ($i = 0; $i < count($contracts); $i++) {
+      $ids[] = $contracts[$i]["value"];
+    }
+    $user->companies()->sync($ids);
 
     return UserResource::make($user);
   }
 
-  public function isEmailUnique($email)
+  public function isEmailUnique(User $user, $email)
   {
-    $user = User::where("email", $email)->first();
-    return response()->json(["isUnique" => empty($user)]);
+    $userVerify = User::where("email", $email)
+      ->where("id", "<>", $user->id)
+      ->first();
+    return response()->json(["isUnique" => empty($userVerify)]);
   }
 }
