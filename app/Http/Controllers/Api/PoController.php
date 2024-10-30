@@ -12,10 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use App\Models\PoDocument;
-use App\Models\PoNote;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use App\Exports\PosExport;
+use Excel;
 
 class PoController extends Controller
 {
@@ -148,5 +149,23 @@ class PoController extends Controller
   public function byUser(User $user)
   {
     return PoResource::collection($user->pos);
+  }
+
+  public function export(Request $request)
+  {
+    $startDate = $request->query("exportStartDate");
+    $endDate = $request->query("exportEndDate");
+
+    $timestamp = Carbon::now()->format("Y-m-d_H-i-s");
+    $fileName = "pos_export_{$timestamp}.xlsx";
+    $filePath = "exports/{$fileName}";
+    Excel::store(new PosExport($startDate, $endDate), $filePath, "public");
+
+    $url = Storage::url($filePath);
+
+    return response()->json([
+      "message" => "File exported successfully",
+      "url" => url($url),
+    ]);
   }
 }

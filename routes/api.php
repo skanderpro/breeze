@@ -137,7 +137,7 @@ Route::prefix("v1")
           "userSettings",
         ])->name("settings");
 
-        Route::get("/{email}/is-email-unique", [
+        Route::get("/{user}/is-email-unique/{email}", [
           UserController::class,
           "isEmailUnique",
         ])->name("is-email-unique");
@@ -173,6 +173,7 @@ Route::prefix("v1")
         Route::get("/{user}/by-user", [PoController::class, "byUser"])->name(
           "by-user"
         );
+        Route::get("export", [PoController::class, "export"])->name("export");
         Route::get("/{id}", [PoController::class, "show"])->name("show");
         Route::post("/", [PoController::class, "storePo"])->name("storePo");
         Route::post("/visit/{id}", [PoController::class, "visit"])->name(
