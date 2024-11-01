@@ -76,7 +76,6 @@ class PoController extends Controller
   public function updatePo(Po $po, Request $request)
   {
     $payload = $request->validate([
-      "poNumber" => "required",
       "billable_value_final" => "nullable",
       "actual_value" => "nullable",
       "poInvoice" => "nullable",
