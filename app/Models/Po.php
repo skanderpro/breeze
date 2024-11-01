@@ -221,7 +221,6 @@ class Po extends Model
       }
 
       static::updated(function ($model) {
-        Log::info("Po updated");
         if ($model->isDirty("billable_value_final") && $model->is_request) {
           Log::info("Po updated statuses rule");
           Po::setGroupStatus($model->poNumber, "Pending Approval");
@@ -265,6 +264,17 @@ class Po extends Model
         "user_id" => $user->id,
         "po_id" => $model->id,
       ]);
+
+      if ($user->id !== $model->u_id) {
+        Notification::create([
+          "title" => "Breeze Order - #EM-{$model->id}",
+          "content" => "Your PO for {$model->merchant->merchantName} is Ready – [EM-{$model->id}]. Click here to open PO and use it for collection. Please ensure your goods are ready and available before proceeding to the Supplier.",
+          "active" => 0,
+          "user_id" => $model->u_id,
+          "type" => "po_created_anothe_user",
+          "data" => $model->id,
+        ]);
+      }
     });
   }
 }
