@@ -129,11 +129,17 @@ class UserController extends Controller
     return UserResource::make($user);
   }
 
-  public function isEmailUnique(User $user, $email)
+  public function isEmailUnique($user, $email)
   {
+    $userModel = User::find($user);
+    if (!$userModel) {
+      return response()->json(["isUnique" => true]);
+    }
+
     $userVerify = User::where("email", $email)
-      ->where("id", "<>", $user->id)
+      ->where("id", "<>", $user)
       ->first();
+
     return response()->json(["isUnique" => empty($userVerify)]);
   }
 }
