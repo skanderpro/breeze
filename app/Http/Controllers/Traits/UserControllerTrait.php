@@ -50,10 +50,7 @@ trait UserControllerTrait
         break;
     }
 
-    return [
-      $query->orderBy("name", "asc")->paginate(empty($search) ? 25 : 1000),
-      $search,
-    ];
+    return [$query->orderBy("id", "desc")->get(), $search];
   }
 
   public function remove($id)
@@ -75,13 +72,13 @@ trait UserControllerTrait
       "email" => "required|email",
       "accessLevel" => "required",
       "permissions" => "nullable",
-      'phone' => 'nullable',
-      'country' => 'nullable',
+      "phone" => "nullable",
+      "country" => "nullable",
       "companyId" => "nullable",
       "merchant_id" => "nullable",
       "merchant_parent_id" => "nullable",
       "price_limit" => "nullable",
-      "phoneCode" => 'nullable'
+      "phoneCode" => "nullable",
       // 'password' => 'required|min:6|confirmed'
     ]);
 
