@@ -2437,7 +2437,7 @@ class CompaniesSeeder extends Seeder
 
             $company['agreed_rebate'] = (float) $company['agreed_rebate'];
 
-            unset($company['id']);
+//            unset($company['id']);
             unset($company['created_at']);
             unset($company['updated_at']);
 

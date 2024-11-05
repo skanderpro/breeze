@@ -27,6 +27,7 @@ class Company extends Model
     "limit_5_role",
     "limit_6_role",
     "url",
+    'id',
     "companyContactPhone",
     "phoneCode",
     "companyContactPhoneCode",
