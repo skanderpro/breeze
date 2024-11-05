@@ -176,6 +176,7 @@ Route::prefix("v1")
         Route::get("export", [PoController::class, "export"])->name("export");
         Route::get("/{id}", [PoController::class, "show"])->name("show");
         Route::post("/", [PoController::class, "storePo"])->name("storePo");
+        Route::post("/update-company-po/{po}", [PoController::class, "updateCompanyPo"])->name("updateCompanyPo");
         Route::post("/visit/{id}", [PoController::class, "visit"])->name(
           "visitPo"
         );

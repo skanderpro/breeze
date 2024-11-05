@@ -38,6 +38,7 @@ class PoResource extends JsonResource
       "cancelled_by" => $this->resource->poCancelledBy,
       "completed" => $this->resource->poCompleted,
       "notes" => $this->resource->poNotes,
+      "company_po" => $this->resource->poCompanyPo,
       "created_at" => $this->resource->created_at,
       "created_by" => $this->resource->createdBy
         ? UserResource::make($this->resource->createdBy)

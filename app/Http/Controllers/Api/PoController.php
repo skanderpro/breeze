@@ -92,6 +92,18 @@ class PoController extends Controller
     return PoResource::make($po);
   }
 
+    public function updateCompanyPo(Po $po, Request $request)
+    {
+        $payload = $request->validate([
+            "poCompanyPo" => "required",
+        ]);
+
+        $po->fill($payload);
+        $po->update();
+
+        return PoResource::make($po);
+    }
+
   public function podUpload($id, Request $request)
   {
     $po = $this->uploadPoPod($id, $request);
