@@ -271,7 +271,7 @@ class Po extends Model
           "content" => "Your PO for {$model->merchant->merchantName} is Ready – [EM-{$model->id}]. Click here to open PO and use it for collection. Please ensure your goods are ready and available before proceeding to the Supplier.",
           "active" => 0,
           "user_id" => $model->u_id,
-          "type" => "po_created_anothe_user",
+          "type" => "po_created_another_user",
           "data" => $model->id,
         ]);
       }

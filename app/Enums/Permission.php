@@ -46,6 +46,7 @@ enum Permission: string
   case COMPANIES_BY_OWN = "COMPANIES:BY-OWN";
   case COMPANIES_ADMIN = "COMPANIES:ADMIN";
   case COMPANY_REPORTS = "COMPANY:REPORTS";
+  case COMPANY_ADD = "COMPANY:ADD";
   case SUPPLIER_MANAGE = "SUPPLIER:MANAGE";
   case SUPPLIERS_ADMIN = "SUPPLIERS:ADMIN";
   case SUPPLIERS_ALL = "SUPPLIERS:ALL";
@@ -61,6 +62,16 @@ enum Permission: string
   case ADMIN_GROUP = "ADMIN:GROUP";
   case COMPANY_GROUP = "COMPANY:GROUP";
   case SUPPLIER_GROUP = "SUPPLIER:GROUP";
+  //ROLES
+  case ADMIN_SENIOR_MANAGEMENT = "ADMIN:SENIOR:MANAGEMENT";
+  case ADMIN_ACCESS = "ADMIN:ACCESS";
+  case COMPANY_FULL_PLAN = "COMPANY:FULL:PLAN";
+  case COMPANY_PRO_PLAN = "COMPANY:PRO:PLAN";
+  case COMPANY_STANDART_PLAN = "COMPANY:STANDART:PLAN";
+  case COMPANY_LIMITED_PLAN = "COMPANY:LIMITED:PLAN";
+  case COMPANY_BASIC_PLAN = "COMPANY:BASIC:PLAN";
+  case SUPPLIER_HEAD_OFFICE = "SUPPLIER:HEAD:OFFICE";
+  case SUPPLIER_BRANCH_MANAGER = "SUPPLIER:BRANCH:MANAGER";
 
   public static function getRoleMap()
   {
@@ -90,6 +101,8 @@ enum Permission: string
         Permission::PO_OVERLIMIT->value,
         Permission::ADMIN_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::ADMIN_SENIOR_MANAGEMENT->value,
+        Permission::COMPANY_ADD->value,
         // Permission::PO_READ_LIST_ALL->value,
         // Permission::MENU_READ_ADMIN->value,
         // Permission::PO_READ_USERS_ALL->value,
@@ -124,6 +137,7 @@ enum Permission: string
         Permission::PO_OVERLIMIT->value,
         Permission::ADMIN_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::ADMIN_ACCESS->value,
         // Permission::PO_READ_LIST_COMPANY_ALL->value,
         // Permission::COMPANY_MANAGE->value,
         // Permission::USERS_READ_COMPANY->value,
@@ -149,6 +163,7 @@ enum Permission: string
         Permission::PO_OVERLIMIT->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::COMPANY_FULL_PLAN->value,
         // Permission::PO_READ_LIST_COMPANY->value,
         // Permission::PO_EXPORT_CLIENT->value,
       ],
@@ -169,6 +184,7 @@ enum Permission: string
         Permission::PO_OVERLIMIT->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::COMPANY_PRO_PLAN->value,
       ],
       "5" => [
         Permission::PO_CREATE->value,
@@ -187,6 +203,7 @@ enum Permission: string
         Permission::PO_OVERLIMIT->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::COMPANY_STANDART_PLAN->value,
       ],
       "6" => [
         Permission::PO_CREATE->value,
@@ -203,6 +220,7 @@ enum Permission: string
         Permission::COMPANIES_BY_OWN->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::COMPANY_LIMITED_PLAN->value,
       ],
       "7" => [
         Permission::PO_MANAGE_BY_COMPANY->value,
@@ -216,6 +234,7 @@ enum Permission: string
         Permission::COMPANIES_BY_OWN->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
+        Permission::COMPANY_BASIC_PLAN->value,
       ],
       "8" => [
         Permission::PO_UPDATE->value,
@@ -229,6 +248,7 @@ enum Permission: string
         Permission::POS_BY_OWN_MERCHANT->value,
         Permission::ADMIN_PANEL->value,
         Permission::SUPPLIER_GROUP->value,
+        Permission::SUPPLIER_HEAD_OFFICE->value,
       ],
       "9" => [
         Permission::PO_UPDATE->value,
@@ -240,6 +260,7 @@ enum Permission: string
         Permission::POS_BY_OWN_BRANCH->value,
         Permission::SUPPLIER_GROUP->value,
         Permission::ADMIN_PANEL->value,
+        Permission::SUPPLIER_BRANCH_MANAGER->value,
       ],
     ];
   }

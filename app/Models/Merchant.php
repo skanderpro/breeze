@@ -40,6 +40,7 @@ class Merchant extends Model
     "merchantContactPhone",
     "parent_id",
     "merchantPhoneCode",
+    "merchantRebate",
   ];
 
   public function getAddress()

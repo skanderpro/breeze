@@ -83,6 +83,7 @@ class PoController extends Controller
       "contractName" => "nullable",
       "status" => "required",
       "poMaterials" => "required",
+      "poProject" => "nullable",
     ]);
 
     $po->fill($payload);
