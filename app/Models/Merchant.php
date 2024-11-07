@@ -43,6 +43,11 @@ class Merchant extends Model
     "merchantRebate",
   ];
 
+  public function parent()
+  {
+    return $this->belongsTo(self::class, "parent_id");
+  }
+
   public function getAddress()
   {
     $addressParts = [];
