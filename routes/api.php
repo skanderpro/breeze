@@ -77,6 +77,10 @@ Route::prefix("v1")
         Route::post("/", [MerchantController::class, "createMerchant"])->name(
           "store"
         );
+        Route::get("/admin-list", [
+          MerchantController::class,
+          "getAdminList",
+        ])->name("admin-list");
         Route::put("/{id}", [
           MerchantController::class,
           "updateMerchant",
@@ -170,13 +174,17 @@ Route::prefix("v1")
       ->group(function () {
         Route::get("/", [PoController::class, "index"])->name("index");
         Route::get("/my-pos", [PoController::class, "myPos"])->name("myPos");
+
         Route::get("/{user}/by-user", [PoController::class, "byUser"])->name(
           "by-user"
         );
         Route::get("export", [PoController::class, "export"])->name("export");
         Route::get("/{id}", [PoController::class, "show"])->name("show");
         Route::post("/", [PoController::class, "storePo"])->name("storePo");
-        Route::post("/update-company-po/{po}", [PoController::class, "updateCompanyPo"])->name("updateCompanyPo");
+        Route::post("/update-company-po/{po}", [
+          PoController::class,
+          "updateCompanyPo",
+        ])->name("updateCompanyPo");
         Route::post("/visit/{id}", [PoController::class, "visit"])->name(
           "visitPo"
         );
