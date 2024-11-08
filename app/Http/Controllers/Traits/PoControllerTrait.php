@@ -135,6 +135,7 @@ trait PoControllerTrait
         Mail::to($item["email"])->send(new PoRequestMerchant($item["po"]));
       } catch (\Exception $e) {
         Log::error("email send error", [
+          "message" => $e->getMessage(),
           "error" => $e,
         ]);
       }
@@ -185,7 +186,7 @@ trait PoControllerTrait
           "poCompany",
           "poAdminCompany"
         ),
-        function ($message) use ($request, $poAdminCompany, $poCompany) {
+        function ($message) use ($request, $poAdminCompany, $poCompany, $creatPO) {
           if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
             $message->from(
               "webtools@cornellstudios.com",
@@ -201,25 +202,25 @@ trait PoControllerTrait
           if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
             $message
               ->to("webtools@cornellstudios.com")
-              ->subject("A Purchase Order has been created | Local");
+              ->subject('New PO ' . $creatPO->poNumber);
           } else {
             $message
               ->to("helpdesk@express-merchants.co.uk")
-              ->subject("A Purchase Order has been created");
+              ->subject('New PO ' . $creatPO->poNumber);
           }
 
           if ($poAdminCompany) {
             foreach ($poAdminCompany as $poAdminComp) {
               $message
                 ->cc($poAdminComp->email)
-                ->subject("A Purchase Order has been created");
+                ->subject('New PO ' . $creatPO->poNumber);
             }
           }
 
           if ($poCompany) {
             $message
               ->cc($poCompany->companyContactEmail)
-              ->subject("A Purchase Order has been created");
+              ->subject('New PO ' . $creatPO->poNumber);
           }
 
           // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
