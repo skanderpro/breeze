@@ -316,22 +316,111 @@
                             "
                             width="100%"
                         >
-                            <table>
+                            <table
+                                class="paragraph_block block-1"
+                                role="presentation"
+                                style="
+                                mso-table-lspace: 0pt;
+                                mso-table-rspace: 0pt;
+                                word-break: break-word;
+                              "
+                                width="100%"
+                            >
                                 <tr>
-                                    <td>Task/Project Number: </td>
-                                    <td>{{ $creatPO->poProject }}</td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Task/Project Number: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->poProject }}</span></p></td>
                                 </tr>
                                 <tr>
-                                    <td>Contract: </td>
-                                    <td>{{ $creatPO->contract?->companyName }}</td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Contract: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->contract?->companyName }}</span></p></td>
                                 </tr>
                                 <tr>
-                                    <td>Job Location: </td>
-                                    <td>{{ $creatPO->poProjectLocation }}</td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Job Location: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->poProjectLocation }}</span></p></td>
                                 </tr>
                                 <tr>
-                                    <td>Supplier Cost: </td>
-                                    <td>{{ $creatPO->poValue }}</td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Supplier Cost: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->poValue }}</span></p></td>
                                 </tr>
                             </table>
 
