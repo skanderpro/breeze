@@ -8,6 +8,7 @@ use App\Http\Resources\MerchantResource;
 use App\Models\Merchant;
 use Illuminate\Http\Request;
 use App\Services\Merchant\MerchantFilter;
+use Illuminate\Support\Facades\Log;
 
 class MerchantController extends Controller
 {
@@ -19,12 +20,15 @@ class MerchantController extends Controller
 
     $filter = new MerchantFilter($qb);
     $filter
-      ->filterByParentAndDisabled()
+      // ->filterByParentAndDisabled()
       ->filterBySearch($request->get("search"))
       ->filterByName($request->get("name"))
       ->filterByMerchantId($request->get("merchant_id"))
       ->filterByGreenSupplier($request->get("green_supplier"))
       ->filterByMerchantAttributes($request);
+
+    Log::info($qb->toSql(), $qb->getBindings());
+    // return ["sql" => get_class($filter)];
     return MerchantResource::collection($qb->get());
   }
 

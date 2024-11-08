@@ -25,7 +25,6 @@ class MerchantFilter
             $query->where("disabled", 0);
           });
       });
-
     return $this;
   }
 
