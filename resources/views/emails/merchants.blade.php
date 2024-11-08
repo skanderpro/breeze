@@ -355,6 +355,7 @@
                                                 ><br /><br />
 
                                                 {!! $po->poNotes !!}
+                                                {!! $po->poMaterials !!}
                                             </div>
                                         </div>
                                     </td>

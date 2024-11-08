@@ -82,16 +82,9 @@
                                     "
                                         >
                                             <p style="margin: 0">
-                                                Hello,<br /><br />We require a quotation
-                                                for the following <br />Material Brief.<br /><br /><strong
-                                                >IMPORTANT: Please reply directly to
-                                                    this </strong
-                                                ><br /><strong
-                                                >email attaching your quotation in PDF
-                                                    format</strong
-                                                ><br /><strong>
-                                                    and using the following Ref:</strong
-                                                ><br /><br />
+                                                Hello,<br /><br />
+                                                A new Purchase Order has been created for you:
+                                                <br /><br />
                                             </p>
                                         </div>
                                     </td>
@@ -302,6 +295,8 @@
                       "
                     width="600"
                 >
+
+
                     <tbody>
                     <tr>
                         <td
@@ -321,6 +316,117 @@
                             "
                             width="100%"
                         >
+                            <table
+                                class="paragraph_block block-1"
+                                role="presentation"
+                                style="
+                                mso-table-lspace: 0pt;
+                                mso-table-rspace: 0pt;
+                                word-break: break-word;
+                              "
+                                width="100%"
+                            >
+                                <tr>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Task/Project Number: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->poProject }}</span></p></td>
+                                </tr>
+                                <tr>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Contract: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->contract?->companyName }}</span></p></td>
+                                </tr>
+                                <tr>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Job Location: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->poProjectLocation }}</span></p></td>
+                                </tr>
+                                <tr>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">Supplier Cost: </span></p></td>
+                                    <td><p><span style="
+                                      color: #332e2b;
+                                      direction: ltr;
+                                      font-family: 'Helvetica Neue', Helvetica,
+                                        Arial, sans-serif;
+                                      font-weight: 400;
+                                      letter-spacing: 0px;
+                                      line-height: 120%;
+                                      text-align: center;
+                                      mso-line-height-alt: 36px;
+                                    ">{{ $creatPO->poValue }}</span></p></td>
+                                </tr>
+                            </table>
+
+                            <br>
+                            <br>
+
                             <table
                                 border="0"
                                 cellpadding="0"
@@ -355,6 +461,7 @@
                                                 ><br /><br />
 
                                                 {!! $creatPO->poNotes !!}
+                                                {!! $creatPO->poMaterials !!}
                                             </div>
                                         </div>
                                     </td>
