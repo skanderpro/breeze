@@ -30,7 +30,7 @@ class PoRequestMerchant extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Po Request Merchant',
+            subject: 'Quotation Request ' . $this->po->poNumber,
         );
     }
 

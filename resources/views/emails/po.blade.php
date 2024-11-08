@@ -82,16 +82,9 @@
                                     "
                                         >
                                             <p style="margin: 0">
-                                                Hello,<br /><br />We require a quotation
-                                                for the following <br />Material Brief.<br /><br /><strong
-                                                >IMPORTANT: Please reply directly to
-                                                    this </strong
-                                                ><br /><strong
-                                                >email attaching your quotation in PDF
-                                                    format</strong
-                                                ><br /><strong>
-                                                    and using the following Ref:</strong
-                                                ><br /><br />
+                                                Hello,<br /><br />
+                                                A new Purchase Order has been created for you:
+                                                <br /><br />
                                             </p>
                                         </div>
                                     </td>
@@ -302,6 +295,8 @@
                       "
                     width="600"
                 >
+
+
                     <tbody>
                     <tr>
                         <td
@@ -321,6 +316,28 @@
                             "
                             width="100%"
                         >
+                            <table>
+                                <tr>
+                                    <td>Task/Project Number: </td>
+                                    <td>{{ $creatPO->poProject }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Contract: </td>
+                                    <td>{{ $creatPO->contract?->companyName }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Job Location: </td>
+                                    <td>{{ $creatPO->poProjectLocation }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Supplier Cost: </td>
+                                    <td>{{ $creatPO->poValue }}</td>
+                                </tr>
+                            </table>
+
+                            <br>
+                            <br>
+
                             <table
                                 border="0"
                                 cellpadding="0"
@@ -355,6 +372,7 @@
                                                 ><br /><br />
 
                                                 {!! $creatPO->poNotes !!}
+                                                {!! $creatPO->poMaterials !!}
                                             </div>
                                         </div>
                                     </td>
