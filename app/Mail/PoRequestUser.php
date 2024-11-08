@@ -30,7 +30,7 @@ class PoRequestUser extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Po Request User',
+            subject: 'New PO ' . $this->po->poNumber,
         );
     }
 
