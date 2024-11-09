@@ -99,6 +99,7 @@ class UserController extends Controller
       "accessLevel" => "required",
       "permissions" => "nullable",
       "country" => "nullable",
+      "price_limit" => "nullable",
       "phone" => "nullable",
       "phoneCode" => "nullable",
       "companyId" => "nullable",
