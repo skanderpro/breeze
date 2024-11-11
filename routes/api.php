@@ -52,6 +52,10 @@ Route::prefix("v1")
       ->prefix("/companies")
       ->group(function () {
         Route::get("/", [CompanyController::class, "index"])->name("index");
+        Route::get("/admin-list", [
+          CompanyController::class,
+          "getAdminList",
+        ])->name("admin-list");
         Route::get("/{company}", [CompanyController::class, "single"])->name(
           "single"
         );

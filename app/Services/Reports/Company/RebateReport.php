@@ -6,8 +6,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Services\Reports\DateRangeHelper;
 use Illuminate\Support\Facades\DB;
+use App\Services\Reports\ReportInterface;
 
-class RebateReport
+class RebateReport implements ReportInterface
 {
   protected $user;
 

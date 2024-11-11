@@ -5,8 +5,9 @@ use App\Models\Po;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Services\Reports\DateRangeHelper;
+use App\Services\Reports\ReportInterface;
 
-class ContractComplianceReport
+class ContractComplianceReport implements ReportInterface
 {
   public function getStatistics($type, $id, $interval)
   {

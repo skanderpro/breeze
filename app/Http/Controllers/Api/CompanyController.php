@@ -6,19 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Services\Filters\Company\CompanyFilter;
 
 class CompanyController extends Controller
 {
   public function index(Request $request)
   {
     $qb = Company::query();
-    $query = $request->input("query");
-    if (!empty($query)) {
-      $qb = $qb->where("companyName", "like", "%{$query}%");
-      $qb = $qb->orWhere("companyContactEmail", "like", "%{$query}%");
-      $qb = $qb->orWhere("companyAddress", "like", "%{$query}%");
-    }
+    $filter = new CompanyFilter($qb);
+    $filter->filterByParentAndDisabled();
 
+    return CompanyResource::collection($qb->get());
+  }
+
+  public function getAdminList(Request $request)
+  {
+    $qb = Company::query();
+    $query = $request->input("query");
+    $filter = new CompanyFilter($qb);
+    $filter->filterBySearch($query);
     return CompanyResource::collection($qb->get());
   }
 
