@@ -95,6 +95,14 @@ class UserController extends Controller
     return UserResource::make($user);
   }
 
+  protected function createPassword()
+  {
+    $password = Uuid::uuid4()->toString();
+    $password = str_replace('-', '', $password);
+
+    return substr($password, 0, 8);
+  }
+
   public function storeUser(Request $request)
   {
     $input = $request->validate([
@@ -112,7 +120,7 @@ class UserController extends Controller
     ]);
 
 
-    $password = Uuid::uuid4()->toString();
+    $password = $this->createPassword();
     $input["password"] = Hash::make($password);
 
     if (empty($input["permissions"])) {
@@ -141,7 +149,7 @@ class UserController extends Controller
        "email" => "required|email",
      ]);
 
-      $password = Uuid::uuid4()->toString();
+      $password = $this->createPassword();
       $input = [
           "password" => Hash::make($password),
       ];
