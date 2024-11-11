@@ -64,6 +64,13 @@ class User extends Authenticatable
     return $this->permsJson;
   }
 
+  public static function getByEmail($email)
+  {
+     return static::getActiveUsersQB()
+       ->where('email', $email)
+       ->firstOrFail();
+  }
+
   public function setPermissionsAttribute(array $perms)
   {
     $map = [];
@@ -114,7 +121,7 @@ class User extends Authenticatable
         default:
           return 0;
       }
-    }  
+    }
     return 0;
   }
 

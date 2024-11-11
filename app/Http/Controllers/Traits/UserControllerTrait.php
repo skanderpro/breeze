@@ -79,7 +79,6 @@ trait UserControllerTrait
       "merchant_parent_id" => "nullable",
       "price_limit" => "nullable",
       "phoneCode" => "nullable",
-      // 'password' => 'required|min:6|confirmed'
     ]);
 
     $editUser = User::findOrFail($id);
