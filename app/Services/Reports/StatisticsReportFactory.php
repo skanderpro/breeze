@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\Reports\Company\RebateReport;
 use App\Services\Reports\Company\SpendAnalysis;
 use App\Services\Reports\Company\ContractComplianceReport;
+use App\Services\Reports\ReportInterface;
 
 class StatisticsReportFactory
 {
@@ -16,7 +17,7 @@ class StatisticsReportFactory
     $this->user = $user;
   }
 
-  public function create($reportType)
+  public function create($reportType): ReportInterface
   {
     switch ($reportType) {
       case "spend":

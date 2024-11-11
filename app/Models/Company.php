@@ -27,7 +27,7 @@ class Company extends Model
     "limit_5_role",
     "limit_6_role",
     "url",
-    'id',
+    "id",
     "companyContactPhone",
     "phoneCode",
     "companyContactPhoneCode",
@@ -39,6 +39,11 @@ class Company extends Model
       ->where("id", $this->parent_id)
       ->first();
     return $company;
+  }
+
+  public function parent()
+  {
+    return $this->belongsTo(self::class, "parent_id");
   }
 
   public function lockout()

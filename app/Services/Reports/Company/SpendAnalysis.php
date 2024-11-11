@@ -6,8 +6,9 @@ use App\Models\Po;
 use App\Services\Reports\DateRangeHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Services\Reports\ReportInterface;
 
-class SpendAnalysis
+class SpendAnalysis implements ReportInterface
 {
   public function getStatistics($type, $id, $interval)
   {

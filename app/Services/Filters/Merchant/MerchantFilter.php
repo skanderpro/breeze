@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Services\Merchant;
+namespace App\Services\Filters\Merchant;
+
+use App\Services\Filters\FilterTrait;
 
 class MerchantFilter
 {
+  use FilterTrait;
   protected $query;
 
   public function __construct($query)
@@ -11,37 +14,18 @@ class MerchantFilter
     $this->query = $query;
   }
 
-  public function filterByParentAndDisabled()
-  {
-    $this->query
-      ->where(function ($query) {
-        $query->where("parent_id", 0)->where("disabled", 0);
-      })
-      ->orWhere(function ($query) {
-        $query
-          ->where("parent_id", "!=", 0)
-          ->where("disabled", 0)
-          ->whereHas("parent", function ($query) {
-            $query->where("disabled", 0);
-          });
-      });
-    return $this;
-  }
-
   public function filterBySearch($search)
   {
     if (!empty($search)) {
-      $this->query
-        ->where(function ($query) use ($search) {
-          $query
-            ->where("merchantName", "LIKE", "%$search%")
-            ->orWhere("merchantId", "LIKE", "%$search%")
-            ->orWhere("merchantAddress1", "LIKE", "%$search%")
-            ->orWhere("merchantAddress2", "LIKE", "%$search%")
-            ->orWhere("merchantPostcode", "LIKE", "%$search%")
-            ->orWhere("merchantEmail", "LIKE", "%$search%");
-        })
-        ->orderBy("merchantName", "asc");
+      $this->query->where(function ($query) use ($search) {
+        $query
+          ->where("merchantName", "LIKE", "%$search%")
+          ->orWhere("merchantId", "LIKE", "%$search%")
+          ->orWhere("merchantAddress1", "LIKE", "%$search%")
+          ->orWhere("merchantAddress2", "LIKE", "%$search%")
+          ->orWhere("merchantPostcode", "LIKE", "%$search%")
+          ->orWhere("merchantEmail", "LIKE", "%$search%");
+      });
     }
 
     return $this;

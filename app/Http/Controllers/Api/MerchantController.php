@@ -7,7 +7,7 @@ use App\Http\Controllers\Traits\MerchantControllerTrait;
 use App\Http\Resources\MerchantResource;
 use App\Models\Merchant;
 use Illuminate\Http\Request;
-use App\Services\Merchant\MerchantFilter;
+use App\Services\Filters\Merchant\MerchantFilter;
 use Illuminate\Support\Facades\Log;
 
 class MerchantController extends Controller
@@ -20,7 +20,7 @@ class MerchantController extends Controller
 
     $filter = new MerchantFilter($qb);
     $filter
-      // ->filterByParentAndDisabled()
+      ->filterByParentAndDisabled()
       ->filterBySearch($request->get("search"))
       ->filterByName($request->get("name"))
       ->filterByMerchantId($request->get("merchant_id"))
@@ -29,7 +29,7 @@ class MerchantController extends Controller
 
     Log::info($qb->toSql(), $qb->getBindings());
     // return ["sql" => get_class($filter)];
-    return MerchantResource::collection($qb->get());
+    return MerchantResource::collection($qb->orderBy("id", "asc")->get());
   }
 
   public function getAdminList(Request $request)
