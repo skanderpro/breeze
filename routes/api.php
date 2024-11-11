@@ -38,6 +38,7 @@ Route::prefix("v1")
   ->name("v1.")
   ->group(function () {
     Route::post("/login", [AuthController::class, "login"]);
+    Route::post("/reset-password", [UserController::class, "resetPassword"]);
 
     Route::name("pages.")
       ->prefix("/pages")
