@@ -653,8 +653,7 @@
                                     "
                                                 >
                                                     <p style="margin: 0">
-                                                        If you have any queries about this
-                                                        quotation <br /><span
+                                                        If you have any queries <br /><span
                                                             style="word-break: break-word; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif background-color: transparent;"
                                                         >please contact:<br /><br
                                                             /></span>

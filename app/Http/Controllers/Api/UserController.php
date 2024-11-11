@@ -7,6 +7,7 @@ use App\Http\Controllers\Traits\UserControllerTrait;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserSettingResource;
+use App\Mail\NewPasswordMail;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\UserSetting;
@@ -14,7 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Ramsey\Uuid\Uuid;
 
 class UserController extends Controller
 {
@@ -105,16 +109,11 @@ class UserController extends Controller
       "companyId" => "nullable",
       "merchant_id:" => "nullable",
       "merchant_parent_id" => "nullable",
-      // 'password' => 'required|min:6|confirmed'
     ]);
 
-    $newPassword = $request->get("password");
 
-    if (!empty($newPassword)) {
-      $input["password"] = Hash::make($request["password"]);
-    } else {
-      unset($input["password"]);
-    }
+    $password = Uuid::uuid4()->toString();
+    $input["password"] = Hash::make($password);
 
     if (empty($input["permissions"])) {
       unset($input["permissions"]);
@@ -127,7 +126,37 @@ class UserController extends Controller
     }
     $user->companies()->sync($ids);
 
+    try {
+        Mail::to($user->email)->send(new NewPasswordMail($user->email, $password));
+    } catch (\Exception $exception) {
+        Log::error($exception->getMessage());
+    }
+
     return UserResource::make($user);
+  }
+
+  public function resetPassword(Request $request)
+  {
+     $payload = $request->validate([
+       "email" => "required|email",
+     ]);
+
+      $password = Uuid::uuid4()->toString();
+      $input = [
+          "password" => Hash::make($password),
+      ];
+
+      $user = User::getByEmail($payload["email"]);
+      $user->fill($input);
+      $user->save();
+
+      try {
+          Mail::to($user->email)->send(new NewPasswordMail($user->email, $password));
+      } catch (\Exception $exception) {
+          Log::error($exception->getMessage());
+      }
+
+      return response()->json([]);
   }
 
   public function isEmailUnique($user, $email)
