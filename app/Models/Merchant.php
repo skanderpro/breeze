@@ -9,6 +9,7 @@ class Merchant extends Model
   protected $fillable = [
     "merchantName",
     "merchantId",
+    "id",
     "merchantAddress1",
     "merchantAddress2",
     "merchantCounty",
