@@ -10,6 +10,8 @@ use App\Events\CheckOrderLimit;
 use App\Listeners\CheckOrderLimitListener;
 use App\Events\CompanyCreated;
 use App\Listeners\DuplicateCompany;
+use App\Models\Po;
+use App\Observers\PoObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -29,7 +31,8 @@ class EventServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
-    //
+    parent::boot();
+    Po::observe(PoObserver::class);
   }
 
   /**
