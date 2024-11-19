@@ -186,7 +186,12 @@ trait PoControllerTrait
           "poCompany",
           "poAdminCompany"
         ),
-        function ($message) use ($request, $poAdminCompany, $poCompany, $creatPO) {
+        function ($message) use (
+          $request,
+          $poAdminCompany,
+          $poCompany,
+          $creatPO
+        ) {
           if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
             $message->from(
               "webtools@cornellstudios.com",
@@ -202,25 +207,25 @@ trait PoControllerTrait
           if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
             $message
               ->to("webtools@cornellstudios.com")
-              ->subject('New PO ' . $creatPO->poNumber);
+              ->subject("New PO " . $creatPO->poNumber);
           } else {
             $message
               ->to("helpdesk@express-merchants.co.uk")
-              ->subject('New PO ' . $creatPO->poNumber);
+              ->subject("New PO " . $creatPO->poNumber);
           }
 
           if ($poAdminCompany) {
             foreach ($poAdminCompany as $poAdminComp) {
               $message
                 ->cc($poAdminComp->email)
-                ->subject('New PO ' . $creatPO->poNumber);
+                ->subject("New PO " . $creatPO->poNumber);
             }
           }
 
           if ($poCompany) {
             $message
               ->cc($poCompany->companyContactEmail)
-              ->subject('New PO ' . $creatPO->poNumber);
+              ->subject("New PO " . $creatPO->poNumber);
           }
 
           // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
@@ -713,6 +718,7 @@ trait PoControllerTrait
     $editPo->poCancelled = 1;
     $editPo->poCancelledBy = Auth::user()->name;
     $editPo->poCompletedStatus = $status;
+    $editPo->status = "Cancelled";
     $editPo->update();
     return $editPo;
   }

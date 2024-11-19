@@ -10,20 +10,13 @@ use App\Services\Reports\ReportInterface;
 
 class StatisticsReportFactory
 {
-  protected $user;
-
-  public function __construct(User $user)
-  {
-    $this->user = $user;
-  }
-
   public function create($reportType): ReportInterface
   {
     switch ($reportType) {
       case "spend":
         return new SpendAnalysis();
       case "rebate":
-        return new RebateReport($this->user);
+        return new RebateReport();
       case "contract-compliance":
         return new ContractComplianceReport();
       default:

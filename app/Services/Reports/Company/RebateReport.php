@@ -7,14 +7,15 @@ use Carbon\Carbon;
 use App\Services\Reports\DateRangeHelper;
 use Illuminate\Support\Facades\DB;
 use App\Services\Reports\ReportInterface;
+use Illuminate\Support\Facades\Auth;
 
 class RebateReport implements ReportInterface
 {
   protected $user;
 
-  public function __construct(User $user)
+  public function __construct()
   {
-    $this->user = $user;
+    $this->user = Auth::user();
   }
 
   public function getStatistics($type, $id, $interval)
