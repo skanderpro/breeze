@@ -11,11 +11,11 @@ class ReportController extends Controller
 {
   protected $statisticsReportFactory;
 
-  // public function __construct()
-  // {
-  //   $this->middleware("auth:sanctum");
-  //   $this->statisticsReportFactory = new StatisticsReportFactory(Auth::user());
-  // }
+  public function __construct(StatisticsReportFactory $statisticsReportFactory)
+  {
+    $this->middleware("auth:sanctum");
+    $this->statisticsReportFactory = $statisticsReportFactory;
+  }
 
   public function index(Request $request)
   {
@@ -27,7 +27,7 @@ class ReportController extends Controller
     ]);
 
     $user = Auth::user(); // Отримуємо автентифікованого користувача
-    $this->statisticsReportFactory = new StatisticsReportFactory($user); // Передаємо користувача в конструктор
+    // $this->statisticsReportFactory = new StatisticsReportFactory($user); // Передаємо користувача в конструктор
     $type = $request->input("type");
     $id = $request->input("id");
     $interval = $request->input("interval");

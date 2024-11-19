@@ -57,14 +57,6 @@ class PoObserver
       Po::setGroupStatus($po->poNumber, "Pending Approval");
     }
 
-    if ($po->isDirty("poCancelled") && $po->isDirty("poCompletedStatus")) {
-      PoHistory::create([
-        "action" => "Cancelled PO",
-        "data" => null,
-        "user_id" => $user->id,
-        "po_id" => $po->id,
-      ]);
-    }
     if ($po->isDirty("poPod") && !empty($po->poPod)) {
       PoHistory::create([
         "action" => "Uploaded POD",
