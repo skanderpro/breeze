@@ -225,6 +225,7 @@ enum Permission: string
       ],
       "7" => [
         Permission::PO_MANAGE_BY_COMPANY->value,
+        Permission::PO_UPDATE->value,
         Permission::REQUEST_CREATE->value,
         Permission::REQUEST_VIEW->value,
         Permission::REQUESTS_BY_OWN->value,
