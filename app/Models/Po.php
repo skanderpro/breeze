@@ -151,7 +151,7 @@ class Po extends Model
 
   public function contract()
   {
-    return $this->belongsTo(Company::class, "companyId");
+    return $this->belongsTo(Company::class, "contract_id");
   }
 
   public function history()
