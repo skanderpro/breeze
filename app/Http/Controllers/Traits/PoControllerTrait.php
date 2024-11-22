@@ -9,6 +9,7 @@ use App\Models\Merchant;
 use App\Models\Po;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\PoMailService\PoMailService;
 use App\Services\AccessCheckInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -154,83 +155,10 @@ trait PoControllerTrait
     $creatPO->created_by_id = Auth::id();
     $creatPO->update();
 
-    $poUser = User::all()
-      ->where("id", $request->input("u_id"))
-      ->first();
-
-    $poCompany = Company::select("companyContactEmail")
-      ->where("id", $request->input("companyId"))
-      ->first();
-
-    $poAdminCompany = User::select("email")
-      ->where("companyId", $request->input("companyId"))
-      ->where("accessLevel", "2")
-      ->where("emailNotify", "!=", "1")
-      ->get();
-
-    $creatPOmechant = Merchant::all()
-      ->where("id", $request->input("selectMerchant"))
-      ->first();
-
-    $creatPOinputmechant = $request->input("inputMerchant");
+    $poEmailService = new PoMailService($creatPO);
 
     try {
-      // email function to come, if validation above it met
-      Mail::send(
-        "emails.po",
-        compact(
-          "creatPO",
-          "creatPOmechant",
-          "creatPOinputmechant",
-          "poUser",
-          "poCompany",
-          "poAdminCompany"
-        ),
-        function ($message) use (
-          $request,
-          $poAdminCompany,
-          $poCompany,
-          $creatPO
-        ) {
-          if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
-            $message->from(
-              "webtools@cornellstudios.com",
-              $name = "Express Merchants | Local"
-            );
-          } else {
-            $message->from(
-              "helpdesk@express-merchants.co.uk",
-              $name = "Express Merchants Helpdesk"
-            );
-          }
-
-          if ($_SERVER["REMOTE_ADDR"] == "127.0.0.1") {
-            $message
-              ->to("webtools@cornellstudios.com")
-              ->subject("New PO " . $creatPO->poNumber);
-          } else {
-            $message
-              ->to("helpdesk@express-merchants.co.uk")
-              ->subject("New PO " . $creatPO->poNumber);
-          }
-
-          if ($poAdminCompany) {
-            foreach ($poAdminCompany as $poAdminComp) {
-              $message
-                ->cc($poAdminComp->email)
-                ->subject("New PO " . $creatPO->poNumber);
-            }
-          }
-
-          if ($poCompany) {
-            $message
-              ->cc($poCompany->companyContactEmail)
-              ->subject("New PO " . $creatPO->poNumber);
-          }
-
-          // $message->bcc( 'webtools@cornellstudios.com' )->subject( 'A Purchase Order has been created' );
-        }
-      );
+      $poEmailService->send();
     } catch (\Exception $e) {
       Log::error($e->getMessage(), [
         "error" => $e,
