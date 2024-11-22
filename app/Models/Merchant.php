@@ -30,6 +30,7 @@ class Merchant extends Model
     "merchantRoofing",
     "merchantFixings",
     "merchantIronmongery",
+    "merchantOther",
     "merchantTyres",
     "merchantHealth",
     "green_supplier",
