@@ -91,6 +91,21 @@ class PoObserver
         "po_id" => $po->id,
       ]);
     }
+
+    if ($po->isDirty("is_request") && !$po->is_request) {
+      PoHistory::create([
+        "action" => "Quote Accepted",
+        "data" => $po->request_file,
+        "user_id" => $user->id,
+        "po_id" => $po->id,
+      ]);
+      PoHistory::create([
+        "action" => "Created PO",
+        "data" => null,
+        "user_id" => $user->id,
+        "po_id" => $po->id,
+      ]);
+    }
   }
 
   /**

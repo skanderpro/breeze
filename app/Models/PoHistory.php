@@ -21,6 +21,7 @@ class PoHistory extends Model
     switch ($this->action) {
       case "Document":
       case "Uploaded POD":
+      case "Quote Accepted":
         return url($this->data);
       default:
         return $this->data;
