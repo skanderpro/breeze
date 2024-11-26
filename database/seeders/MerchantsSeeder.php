@@ -62,8 +62,6 @@ class MerchantsSeeder extends Seeder
                 $payload[$value] = $merchant[$key];
             }
 
-//            unset($payload['id']);
-
             Merchant::create($payload);
         }
 
