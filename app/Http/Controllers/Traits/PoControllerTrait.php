@@ -96,12 +96,18 @@ trait PoControllerTrait
     $payload = $request->toArray();
     $pos = [];
     $notify = [];
+    $id = null;
     foreach ($payload["items"] as $item) {
       $item["is_request"] = "1";
       $item["poNumber"] = $poNumber;
       $item["created_by_id"] = Auth::id();
       $item["status"] = "Awaiting Quote(s)";
       $po = Po::create($item);
+      if (empty($id)) {
+          $id = $po->id;
+      }
+      $po->poNumber = "RQ-{$id}";
+      $po->save();
       $pos[] = $po;
 
       $merchant = !empty($item["selectMerchant"])
