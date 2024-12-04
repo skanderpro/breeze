@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Services\AccessCheckInterface;
 use App\Services\GateAccessService;
 use App\Services\Reports\StatisticsReportFactory;
+use App\Services\Firebase\FirebaseMessagesService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -20,7 +21,8 @@ class AppServiceProvider extends ServiceProvider
     $this->app->singleton(
       AccessCheckInterface::class,
       GateAccessService::class,
-      StatisticsReportFactory::class
+      StatisticsReportFactory::class,
+      FirebaseMessagesService::class
     );
   }
 

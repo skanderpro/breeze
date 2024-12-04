@@ -6,9 +6,17 @@ use App\Models\Po;
 use App\Models\PoHistory;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Firebase\FirebaseMessagesService;
 
 class PoObserver
 {
+  private $firebaseMessagesService;
+
+  public function __construct(FirebaseMessagesService $firebaseMessagesService)
+  {
+    $this->firebaseMessagesService = $firebaseMessagesService;
+  }
+
   /**
    * Handle the Po "created" event.
    */
@@ -35,6 +43,12 @@ class PoObserver
         "type" => "po_created_another_user",
         "data" => $po->id,
       ]);
+
+      $this->firebaseMessagesService->sendNotification(
+        "test send",
+        "test description",
+        "dX_rHplBT56hB7sQLzrEeX:APA91bHwK8p26Ah6R3Kpo2ISKzqUpTsW_IB93tbPU8-KLRNiGw-mekWVF2vuPpsCBeBZJwp3yO7EVM0I_51rG150Njsg2v5q5x6qeJ_wLO6Ox23IcU1OyKA"
+      );
     }
   }
 
