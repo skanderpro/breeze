@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\PoDocumentController;
 use App\Http\Controllers\Api\PoHistoryController;
 use App\Http\Controllers\Api\PoNoteController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\UserDeviceController;
 use App\Models\PoHistory;
 
 /*
@@ -107,10 +108,15 @@ Route::prefix("v1")
         Route::get("/", [NotificationController::class, "index"])->name(
           "index"
         );
+
         Route::get("/count-unread", [
           NotificationController::class,
           "countUnread",
         ])->name("count-unread");
+        Route::get("/{notification}", [
+          NotificationController::class,
+          "show",
+        ])->name("show");
         Route::patch("/{notification}", [
           NotificationController::class,
           "markAsRead",
@@ -171,6 +177,13 @@ Route::prefix("v1")
         Route::delete("/{id}", [UserController::class, "removeUser"])->name(
           "remove"
         );
+      });
+
+    Route::name("user-device.")
+      ->prefix("/user-device")
+      ->middleware(["auth:sanctum"])
+      ->group(function () {
+        Route::post("/", [UserDeviceController::class, "store"])->name("store");
       });
 
     Route::name("po.")

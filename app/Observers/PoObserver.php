@@ -6,7 +6,11 @@ use App\Models\Po;
 use App\Models\PoHistory;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\PoResource;
 use App\Services\Firebase\FirebaseMessagesService;
+use App\Mail\PoRequestUser;
 
 class PoObserver
 {
@@ -31,24 +35,24 @@ class PoObserver
     ]);
 
     if ($user->id !== $po->u_id) {
-      $merchant = $po->merchant
-          ? $po->merchant->merchantName
-          : $po->alt_merchant_name;
-
       Notification::create([
         "title" => "Breeze Order - #EM-{$po->id}",
-        "content" => "Your PO for {$merchant} is Ready – [EM-{$po->id}]. Click here to open PO and use it for collection. Please ensure your goods are ready and available before proceeding to the Supplier.",
+        "content" => "Your PO for {$po->merchant->merchantName} is Ready – [EM-{$po->id}]. Click here to open PO and use it for collection. Please ensure your goods are ready and available before proceeding to the Supplier.",
         "active" => 0,
         "user_id" => $po->u_id,
         "type" => "po_created_another_user",
         "data" => $po->id,
       ]);
+      $poUser = $po->user;
+      $devices = $poUser->devices;
 
-      $this->firebaseMessagesService->sendNotification(
-        "test send",
-        "test description",
-        "dX_rHplBT56hB7sQLzrEeX:APA91bHwK8p26Ah6R3Kpo2ISKzqUpTsW_IB93tbPU8-KLRNiGw-mekWVF2vuPpsCBeBZJwp3yO7EVM0I_51rG150Njsg2v5q5x6qeJ_wLO6Ox23IcU1OyKA"
-      );
+      for ($i = 0; $i < count($devices); $i++) {
+        $this->firebaseMessagesService->sendNotification(
+          "Breeze Purchase Order #" . $po->id,
+          "A PO has been created for you",
+          $devices[$i]->device
+        );
+      }
     }
   }
 
@@ -71,8 +75,36 @@ class PoObserver
       ]);
     }
 
-    if ($po->isDirty("billable_value_final") && $po->is_request) {
+    if (
+      $po->isDirty("billable_value_final") &&
+      $po->isDirty("request_file") &&
+      $po->is_request
+    ) {
       Po::setGroupStatus($po->poNumber, "Pending Approval");
+      Notification::create([
+        "type" => "po_request",
+        "title" => "Breeze Quotations - #{$po->poNumber}",
+        "content" => "Order request was updated",
+        "active" => true,
+        "data" => json_encode(["po" => PoResource::make($po)]),
+        "user_id" => $po->user->id,
+      ]);
+
+      if ($po->user->setting_push_notification) {
+        $poUser = $po->user;
+        $devices = $poUser->devices;
+
+        for ($i = 0; $i < count($devices); $i++) {
+          $this->firebaseMessagesService->sendNotification(
+            "Breeze Quote Request #" . $po->id,
+            "You’ve received a quote",
+            $devices[$i]->device
+          );
+        }
+      }
+      if ($po->user->setting_email_notification) {
+        Mail::to($po->user->email)->send(new PoRequestUser($po));
+      }
     }
 
     if ($po->isDirty("poPod") && !empty($po->poPod)) {
@@ -124,6 +156,10 @@ class PoObserver
         "po_id" => $po->id,
       ]);
     }
+
+    // Log::info("is_request " . $po->is_request);
+    // Log::info("request file " . $po->isDirty("request_file"));
+    // Log::info("status " . $po->status);
   }
 
   /**

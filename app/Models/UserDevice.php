@@ -9,5 +9,5 @@ class UserDevice extends Model
 {
   use HasFactory;
 
-  protected $fillable = ["user_id", "platform"];
+  protected $fillable = ["user_id", "platform", "device"];
 }

@@ -24,10 +24,11 @@ enum Permission: string
   case POS_ALL = "POS:ALL";
   case POS_BY_COMPANY = "POS:BY-COMPANY";
   case POS_BY_CONTRACT = "POS:BY_CONTRACT";
-  case POS_BY_OWN = "PO:UPDATE:BY-OWN";
+  case POS_BY_OWN = "POS:BY-OWN";
   case POS_BY_OWN_MERCHANT = "POS:BY-OWN-MERCHANT";
   case POS_BY_OWN_BRANCH = "POS:BY-OWN-BRANCH";
   case PO_MANAGE_BY_COMPANY = "PO:MANAGE:BY-COMPANY";
+  case PO_MANAGE_BY_CONTRACTS = "PO:MANAGE:BY-CONTRACTS";
   case PO_VIEW_BY_SUPPLIER = "PO:VIEW:BY-SUPPLIER";
   case PO_OVERLIMIT = "PO:OVERLIMIT";
   case REQUEST_CREATE = "REQUEST:CREATE";
@@ -176,16 +177,17 @@ enum Permission: string
         Permission::REQUEST_VIEW->value,
         Permission::REQUESTS_BY_CONTRACT->value,
         Permission::EV_CHARGING->value,
-        // Permission::USER_MANAGE->value,
+        Permission::ADMIN_PANEL->value,
         Permission::SETTINGS->value,
         Permission::ACCOUNT->value,
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_CONTRACT->value,
         Permission::COMPANIES_BY_OWN->value,
-        Permission::PO_OVERLIMIT->value,
+        Permission::PO_MANAGE_BY_CONTRACTS->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
         Permission::COMPANY_PRO_PLAN->value,
+        Permission::USERS_BY_COMPANY->value,
       ],
       "5" => [
         Permission::PO_CREATE->value,
@@ -195,16 +197,17 @@ enum Permission: string
         Permission::REQUEST_VIEW->value,
         Permission::REQUESTS_BY_CONTRACT->value,
         Permission::EV_CHARGING->value,
-        // Permission::USER_MANAGE->value,
+        Permission::ADMIN_PANEL->value,
         Permission::SETTINGS->value,
         Permission::ACCOUNT->value,
         Permission::VIEW_NOTIFICATIION->value,
         Permission::POS_BY_CONTRACT->value,
         Permission::COMPANIES_BY_OWN->value,
-        Permission::PO_OVERLIMIT->value,
+        Permission::PO_MANAGE_BY_CONTRACTS->value,
         Permission::COMPANY_GROUP->value,
         Permission::APP_CONTROL_PANEL->value,
         Permission::COMPANY_STANDART_PLAN->value,
+        Permission::USERS_BY_COMPANY->value,
       ],
       "6" => [
         Permission::PO_CREATE->value,

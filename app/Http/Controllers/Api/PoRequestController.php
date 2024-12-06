@@ -174,27 +174,6 @@ class PoRequestController extends Controller
     $po->fill($request->all());
     $po->update();
 
-    try {
-      if ($po->user->setting_push_notification) {
-        Notification::create([
-          "type" => "po_request",
-          "title" => "Breeze Quotations - #{$po->poNumber}",
-          "content" => "Order request was updated",
-          "active" => true,
-          "data" => json_encode(["po" => PoResource::make($po)]),
-          "user_id" => $po->user->id,
-        ]);
-      }
-      if ($po->user->setting_email_notification) {
-        Mail::to($po->user->email)->send(new PoRequestUser($po));
-      }
-    } catch (\Exception $e) {
-      Log::error("email send error", [
-        "e" => $e,
-        "payload" => $request->all(),
-      ]);
-    }
-
     return PoResource::make($po);
   }
 }

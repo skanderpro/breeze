@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use JsonSerializable;
 use Ramsey\Uuid\Uuid;
 
 class NotificationController extends Controller
@@ -43,6 +44,11 @@ class NotificationController extends Controller
       ->get();
 
     return NotificationResource::collection($notifications);
+  }
+
+  public function show(Notification $notification)
+  {
+    return response()->json(NotificationResource::make($notification));
   }
 
   public function countUnread()

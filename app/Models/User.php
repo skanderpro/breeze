@@ -34,8 +34,8 @@ class User extends Authenticatable
     "merchant_id",
     "merchant_parent_id",
     "price_limit",
-    'country',
-    'phoneCode',
+    "country",
+    "phoneCode",
   ];
 
   /**
@@ -66,9 +66,9 @@ class User extends Authenticatable
 
   public static function getByEmail($email)
   {
-     return static::getActiveUsersQB()
-       ->where('email', $email)
-       ->firstOrFail();
+    return static::getActiveUsersQB()
+      ->where("email", $email)
+      ->firstOrFail();
   }
 
   public function setPermissionsAttribute(array $perms)
@@ -101,6 +101,11 @@ class User extends Authenticatable
   public function settings()
   {
     return $this->hasMany(UserSetting::class);
+  }
+
+  public function devices()
+  {
+    return $this->hasMany(UserDevice::class);
   }
 
   public function getOrderLimitAttribute()
