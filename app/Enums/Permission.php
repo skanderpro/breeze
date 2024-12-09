@@ -43,6 +43,7 @@ enum Permission: string
   case USERS_ALL = "USERS:ALL";
   case USERS_BY_COMPANY = "USERS:BY-COMPANY";
   case COMPANY_MANAGE = "COMPANY:MANAGE";
+  case CONTRACTS_MANAGE = "CONTRACTS:MANAGE";
   case COMPANIES_COMPANY_ADMIN = "COMPANIES:COMPANY-ADMIN";
   case COMPANIES_BY_OWN = "COMPANIES:BY-OWN";
   case COMPANIES_ADMIN = "COMPANIES:ADMIN";
@@ -188,6 +189,8 @@ enum Permission: string
         Permission::APP_CONTROL_PANEL->value,
         Permission::COMPANY_PRO_PLAN->value,
         Permission::USERS_BY_COMPANY->value,
+        Permission::USER_MANAGE->value,
+        Permission::CONTRACTS_MANAGE->value,
       ],
       "5" => [
         Permission::PO_CREATE->value,
@@ -208,6 +211,8 @@ enum Permission: string
         Permission::APP_CONTROL_PANEL->value,
         Permission::COMPANY_STANDART_PLAN->value,
         Permission::USERS_BY_COMPANY->value,
+        Permission::USER_MANAGE->value,
+        Permission::CONTRACTS_MANAGE->value,
       ],
       "6" => [
         Permission::PO_CREATE->value,

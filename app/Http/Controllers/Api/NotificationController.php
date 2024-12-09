@@ -84,57 +84,6 @@ class NotificationController extends Controller
 
     return response()->json([]);
   }
-
-  public function getBanner()
-  {
-    $existingBanner = Setting::get("site_banner", "[]");
-    $existingBanner = json_decode($existingBanner, true);
-    if (!is_array($existingBanner)) {
-      $existingBanner = [];
-    }
-
-    foreach ($existingBanner as $key => $val) {
-      $existingBanner[$key] = Storage::disk("public")->url($val);
-    }
-
-    return response()->json([
-      "data" => $existingBanner,
-    ]);
-  }
-
-  public function setBanner(Request $request)
-  {
-    $existingBanner = Setting::get("site_banner", "[]");
-    $existingBanner = json_decode($existingBanner, true);
-    if (!is_array($existingBanner)) {
-      $existingBanner = [];
-    }
-
-    $destinationPath = "uploads/";
-
-    $sizes = ["lg", "md", "sm"];
-    foreach ($sizes as $size) {
-      if ($request->hasFile($size)) {
-        $tmpName = Uuid::uuid4();
-        $filename = "{$tmpName}";
-        $request
-          ->file($size)
-          ->move(Storage::disk("public")->path($destinationPath), $filename);
-        $existingBanner[$size] = "/{$destinationPath}{$filename}";
-      }
-    }
-
-    Setting::set("site_banner", json_encode($existingBanner));
-
-    foreach ($existingBanner as $key => $val) {
-      $existingBanner[$key] = Storage::disk("public")->url($val);
-    }
-
-    return response()->json([
-      "data" => $existingBanner,
-    ]);
-  }
-
   public function sendToAll(Request $request)
   {
     $payload = $request->validate([

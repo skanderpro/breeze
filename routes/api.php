@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\PoHistoryController;
 use App\Http\Controllers\Api\PoNoteController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\UserDeviceController;
+use App\Http\Controllers\Api\BannerController;
 use App\Models\PoHistory;
 
 /*
@@ -124,18 +125,19 @@ Route::prefix("v1")
         Route::delete("/", [NotificationController::class, "removeRead"])->name(
           "removeRead"
         );
-        Route::get("/banner", [
-          NotificationController::class,
-          "getBanner",
-        ])->name("getBanner");
-        Route::post("/banner", [
-          NotificationController::class,
-          "setBanner",
-        ])->name("setBanner");
+
         Route::post("/send-to-all", [
           NotificationController::class,
           "sendToAll",
         ])->name("sendToAll");
+      });
+
+    Route::name("banners")
+      ->prefix("/banners")
+      ->middleware("auth:sanctum")
+      ->group(function () {
+        Route::get("/", [BannerController::class, "show"])->name("show");
+        Route::post("/", [BannerController::class, "store"])->name("store");
       });
 
     Route::name("users.")

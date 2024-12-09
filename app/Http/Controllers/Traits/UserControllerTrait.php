@@ -13,7 +13,7 @@ trait UserControllerTrait
   public function userList(Request $request)
   {
     $accessLevel = Auth::user()->accessLevel;
-
+    $user = Auth::user();
     $search = $request->get("search");
 
     $query = User::query();
@@ -46,7 +46,16 @@ trait UserControllerTrait
         }
         break;
       case "3":
-        $query = $query->where("companyId", "=", Auth::user()->companyId);
+        $query = $query
+          ->where("companyId", "=", Auth::user()->companyId)
+          ->where("accessLevel", ">=", intval($accessLevel));
+        break;
+
+      case "4":
+      case "5":
+        $query = $query->whereHas("companies", function ($query) use ($user) {
+          $query->whereIn("companies.id", $user->companies->pluck("id"));
+        });
         break;
     }
 
