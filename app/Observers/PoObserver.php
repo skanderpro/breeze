@@ -163,6 +163,24 @@ class PoObserver
   }
 
   /**
+   * Handle the Po "updating" event.
+   */
+  public function updating(Po $po): void
+  {
+    if ($po->isDirty("poVisitStatus") && $po->poVisitStatus) {
+      $po->client_status = "POD Required";
+    }
+
+    if ($po->isDirty("poPod")) {
+      $po->client_status = "Complete";
+    }
+
+    if ($po->isDirty("status") && $po->status === "Cancelled") {
+      $po->client_status = "Cancelled";
+    }
+  }
+
+  /**
    * Handle the Po "deleted" event.
    */
   public function deleted(Po $po): void

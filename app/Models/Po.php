@@ -45,6 +45,7 @@ class Po extends Model
     "billable_date",
     "overlimit_value",
     "created_by_id",
+    "client_status",
   ];
 
   protected $dispatchesEvents = [
