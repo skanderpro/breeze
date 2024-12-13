@@ -104,7 +104,7 @@ trait PoControllerTrait
       $item["status"] = "Awaiting Quote(s)";
       $po = Po::create($item);
       if (empty($id)) {
-        $id = $po->id;
+          $id = $po->id;
       }
       $po->poNumber = "RQ-{$id}";
       $po->save();
