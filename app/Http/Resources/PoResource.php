@@ -21,6 +21,12 @@ class PoResource extends JsonResource
       "select_merchant" => $this->resource->selectMerchant,
       "input_merchant" => $this->resource->inputMerchant,
       "company_id" => $this->companyId,
+      "company" => $this->resource->company
+          ? CompanyResource::make($this->resource->company)
+          : null,
+      "contract" => $this->resource->contract
+          ? CompanyResource::make($this->resource->contract)
+          : null,
       "type" => $this->resource->poType,
       "purpose" => $this->resource->poPurpose,
       "materials" => $this->resource->poMaterials,

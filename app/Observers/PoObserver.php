@@ -35,9 +35,13 @@ class PoObserver
     ]);
 
     if ($user->id !== $po->u_id) {
+      $merchant = $po->merchant
+          ? $po->merchant->merchantName
+          : $po->alt_merchant_name;
+
       Notification::create([
         "title" => "Breeze Order - #EM-{$po->id}",
-        "content" => "Your PO for {$po->merchant->merchantName} is Ready – [EM-{$po->id}]. Click here to open PO and use it for collection. Please ensure your goods are ready and available before proceeding to the Supplier.",
+        "content" => "Your PO for {$merchant} is Ready – [EM-{$po->id}]. Click here to open PO and use it for collection. Please ensure your goods are ready and available before proceeding to the Supplier.",
         "active" => 0,
         "user_id" => $po->u_id,
         "type" => "po_created_another_user",
