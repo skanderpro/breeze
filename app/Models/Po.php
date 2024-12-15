@@ -155,6 +155,11 @@ class Po extends Model
     return $this->belongsTo(Company::class, "contract_id");
   }
 
+  public function company()
+  {
+    return $this->belongsTo(Company::class, "companyId");
+  }
+
   public function history()
   {
     return $this->hasMany(PoHistory::class, "po_id")->orderBy("id", "desc");
