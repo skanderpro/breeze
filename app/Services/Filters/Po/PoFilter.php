@@ -109,4 +109,10 @@ class PoFilter
     }
     return $this;
   }
+
+  public function orderBy($order, $param)
+  {
+    $this->query->orderBy($order, $param);
+    return $this;
+  }
 }

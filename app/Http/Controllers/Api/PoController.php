@@ -58,8 +58,9 @@ class PoController extends Controller
       ->filterByOwner()
       ->filterByDates()
       ->filterByClientStatuses()
-      ->filterSeachByText();
-    Log::info($query->get());
+      ->filterSeachByText()
+      ->orderBy("id", "desc");
+
     return PoResource::collection($query->get());
   }
 
@@ -71,7 +72,8 @@ class PoController extends Controller
       ->filterOnlyPos()
       ->filterByDates()
       ->filterByAdminStatuses()
-      ->filterSeachByText();
+      ->filterSeachByText()
+      ->orderBy("id", "desc");
 
     return PoResource::collection($query->get());
   }

@@ -16,14 +16,20 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Services\Filters\Po\PoFilter;
 
 class PoRequestController extends Controller
 {
   use PoControllerTrait;
 
-  public function __construct(AccessCheckInterface $accessCheckService)
-  {
+  private PoFilter $poFilter;
+
+  public function __construct(
+    AccessCheckInterface $accessCheckService,
+    PoFilter $poFilter
+  ) {
     $this->accessCheckService = $accessCheckService;
+    $this->poFilter = $poFilter;
   }
 
   protected function groupRequests($poRequests)
@@ -64,7 +70,6 @@ class PoRequestController extends Controller
     }
 
     $path = $file->store("files", "public");
-
     Po::updateRequests($poNumber, [
       "request_file" => $path,
     ]);
@@ -72,12 +77,31 @@ class PoRequestController extends Controller
     return $this->groupRequests(Po::getRequestsByNumber($poNumber));
   }
 
-  public function index(Request $request)
+  public function myRequests()
   {
-    $input = $request->all();
-    $data = $this->getAdminRequestList($input);
+    $query = Po::query();
+    $this->poFilter
+      ->setQuery($query)
+      ->filterOnlyReequests()
+      ->filterByOwner()
+      ->filterByDates()
+      ->filterByClientStatuses()
+      ->filterSeachByText()
+      ->orderBy("id", "desc");
+    return $this->groupRequests($query->get());
+  }
 
-    return $this->groupRequests($data);
+  public function adminRequests()
+  {
+    $query = Po::query();
+    $this->poFilter
+      ->setQuery($query)
+      ->filterOnlyReequests()
+      ->filterByDates()
+      ->filterByAdminStatuses()
+      ->filterSeachByText()
+      ->orderBy("id", "desc");
+    return $this->groupRequests($query->get());
   }
 
   public function approve($id)

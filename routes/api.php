@@ -264,7 +264,15 @@ Route::prefix("v1")
       ->prefix("/po-request")
       ->middleware(["auth:sanctum"])
       ->group(function () {
-        Route::get("/", [PoRequestController::class, "index"])->name("index");
+        // Route::get("/", [PoRequestController::class, "index"])->name("index");
+        Route::get("/my-requests", [
+          PoRequestController::class,
+          "myRequests",
+        ])->name("myRequests");
+        Route::get("/admin-requests", [
+          PoRequestController::class,
+          "adminRequests",
+        ])->name("adminsRequests");
         Route::get("/counts", [PoRequestController::class, "getCounts"])->name(
           "counts"
         );

@@ -104,7 +104,7 @@ trait PoControllerTrait
       $item["status"] = "Awaiting Quote(s)";
       $po = Po::create($item);
       if (empty($id)) {
-          $id = $po->id;
+        $id = $po->id;
       }
       $po->poNumber = "RQ-{$id}";
       $po->save();
@@ -498,64 +498,6 @@ trait PoControllerTrait
     }
 
     return $editPo;
-  }
-
-  public function getList4Role($user, $filter)
-  {
-    $pos = Po::select("pos.*")
-      ->whereNot("pos.is_request", "1")
-      ->join("companies", "companies.id", "=", "pos.companyId")
-      ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");
-
-    if (
-      !empty($filter["filter"]["startDate"]) &&
-      !empty($filter["filter"]["endDate"])
-    ) {
-      $startDate = date(
-        "Y-m-d H:i:s",
-        strtotime($filter["filter"]["startDate"])
-      );
-      $endDate = date("Y-m-d H:i:s", strtotime($filter["filter"]["endDate"]));
-
-      $pos = $pos->where(function ($q) use ($startDate, $endDate) {
-        $q->where("pos.created_at", ">=", $startDate)->where(
-          "pos.created_at",
-          "<=",
-          $endDate
-        );
-      });
-    }
-
-    if (!empty($filter["filter"]["search"])) {
-      $pos = $pos->where(function ($q) use ($filter) {
-        $q->where(
-          "merchants.merchantName",
-          "like",
-          "%" . $filter["filter"]["search"] . "%"
-        )
-          ->orWhere(
-            "pos.alt_merchant_name",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          )
-          ->orWhere(
-            "pos.poNumber",
-            "like",
-            "%" . $filter["filter"]["search"] . "%"
-          );
-      });
-    }
-
-    $pos = $pos->orderBy("pos.id", "desc")->get();
-
-    if (!empty($filter["filter"]["statuses"])) {
-      $statuses = explode(",", $filter["filter"]["statuses"]);
-      $pos = $pos->filter(function ($item) use ($statuses) {
-        return in_array($item->status, $statuses);
-      });
-    }
-
-    return $pos;
   }
 
   public function getRequestList4Role($user, $filter)
