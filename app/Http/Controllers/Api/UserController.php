@@ -154,7 +154,7 @@ class UserController extends Controller
           "password" => Hash::make($password),
       ];
 
-      $user = User::getByEmail($payload["email"]);
+      $user = User::where("email", $payload["email"])->first();
       $user->fill($input);
       $user->save();
 
