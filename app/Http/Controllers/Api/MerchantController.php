@@ -27,8 +27,6 @@ class MerchantController extends Controller
       ->filterByGreenSupplier($request->get("green_supplier"))
       ->filterByMerchantAttributes($request);
 
-    Log::info($qb->toSql(), $qb->getBindings());
-    // return ["sql" => get_class($filter)];
     return MerchantResource::collection($qb->orderBy("id", "asc")->get());
   }
 

@@ -16,15 +16,21 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Exports\PosExport;
+use App\Services\Filters\Po\PoFilter;
 use Excel;
 
 class PoController extends Controller
 {
   use PoControllerTrait;
 
-  public function __construct(AccessCheckInterface $accessCheckService)
-  {
+  private PoFilter $poFilter;
+
+  public function __construct(
+    AccessCheckInterface $accessCheckService,
+    PoFilter $poFilter
+  ) {
     $this->accessCheckService = $accessCheckService;
+    $this->poFilter = $poFilter;
   }
 
   public function storePo(Request $request)
@@ -43,20 +49,31 @@ class PoController extends Controller
     return PoResource::collection($data);
   }
 
-  public function myPos(Request $request)
+  public function myPos()
   {
-    $input = $request->all();
-    $user = Auth::user();
+    $query = Po::query();
+    $this->poFilter
+      ->setQuery($query)
+      ->filterOnlyPos()
+      ->filterByOwner()
+      ->filterByDates()
+      ->filterByClientStatuses()
+      ->filterSeachByText();
+    Log::info($query->get());
+    return PoResource::collection($query->get());
+  }
 
-    if (empty($input["filter"])) {
-      $input["filter"] = [];
-    }
+  public function adminPos()
+  {
+    $query = Po::query();
+    $this->poFilter
+      ->setQuery($query)
+      ->filterOnlyPos()
+      ->filterByDates()
+      ->filterByAdminStatuses()
+      ->filterSeachByText();
 
-    $input["filter"]["u_id"] = Auth::id();
-
-    $data = $this->getList4Role($user, $input);
-
-    return PoResource::collection($data);
+    return PoResource::collection($query->get());
   }
 
   public function show($id)

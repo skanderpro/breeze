@@ -7,6 +7,7 @@ use App\Services\AccessCheckInterface;
 use App\Services\GateAccessService;
 use App\Services\Reports\StatisticsReportFactory;
 use App\Services\Firebase\FirebaseMessagesService;
+use App\Services\Filters\Po\PoFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -22,7 +23,8 @@ class AppServiceProvider extends ServiceProvider
       AccessCheckInterface::class,
       GateAccessService::class,
       StatisticsReportFactory::class,
-      FirebaseMessagesService::class
+      FirebaseMessagesService::class,
+      PoFilter::class
     );
   }
 

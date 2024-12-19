@@ -194,7 +194,9 @@ Route::prefix("v1")
       ->group(function () {
         Route::get("/", [PoController::class, "index"])->name("index");
         Route::get("/my-pos", [PoController::class, "myPos"])->name("myPos");
-
+        Route::get("/admin-pos", [PoController::class, "adminPos"])->name(
+          "adminPos"
+        );
         Route::get("/{user}/by-user", [PoController::class, "byUser"])->name(
           "by-user"
         );
