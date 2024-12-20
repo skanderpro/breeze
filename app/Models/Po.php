@@ -77,13 +77,6 @@ class Po extends Model
     return $qb->get()->count();
   }
 
-  public function getMerchantName()
-  {
-        return !empty($this->merchant->alt_merchant_name)
-            ? $this->merchant->alt_merchant_name
-            : $this->merchant->merchantName;
-  }
-
   public static function getOrdersCount($number = null, $user = null)
   {
     $qb = static::query()->whereNot("is_request", 1);
@@ -160,11 +153,6 @@ class Po extends Model
   public function contract()
   {
     return $this->belongsTo(Company::class, "contract_id");
-  }
-
-  public function company()
-  {
-    return $this->belongsTo(Company::class, "companyId");
   }
 
   public function history()

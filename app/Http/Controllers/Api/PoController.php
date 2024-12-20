@@ -103,6 +103,7 @@ class PoController extends Controller
       "status" => "required",
       "poMaterials" => "required",
       "poProject" => "nullable",
+      "poCompanyPo" => "nullable",
     ]);
 
     $po->fill($payload);
