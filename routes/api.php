@@ -207,7 +207,7 @@ Route::prefix("v1")
           PoController::class,
           "updateCompanyPo",
         ])->name("updateCompanyPo");
-        Route::post("/visit/{id}", [PoController::class, "visit"])->name(
+        Route::patch("/{id}/visit", [PoController::class, "visit"])->name(
           "visitPo"
         );
         Route::post("/upload-pod/{id}", [
