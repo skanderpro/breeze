@@ -240,6 +240,7 @@ enum Permission: string
         Permission::EV_CHARGING->value,
         Permission::SETTINGS->value,
         Permission::ACCOUNT->value,
+        Permission::POS_BY_OWN->value,
         Permission::VIEW_NOTIFICATIION->value,
         Permission::COMPANIES_BY_OWN->value,
         Permission::COMPANY_GROUP->value,
