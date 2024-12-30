@@ -71,9 +71,14 @@ class PoController extends Controller
       ->setQuery($query)
       ->filterOnlyPos()
       ->filterByDates()
-      ->filterByAdminStatuses()
-      ->filterSeachByText()
-      ->orderBy("id", "desc");
+      ->filterSeachByText();
+
+    if (in_array(auth()->user()->accessLevel, ["4", "5"])) {
+      $this->poFilter->filterByClientStatuses();
+    } else {
+      $this->poFilter->filterByAdminStatuses();
+    }
+    $query->orderBy("id", "desc");
 
     return PoResource::collection($query->get());
   }
