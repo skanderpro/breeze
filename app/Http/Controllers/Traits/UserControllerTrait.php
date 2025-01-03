@@ -59,6 +59,11 @@ trait UserControllerTrait
         break;
     }
 
+    if ($request->get("accessLevels")) {
+      $levels = explode(",", $request->get("accessLevels"));
+      $query->whereIn("users.accessLevel", $levels);
+    }
+
     return [$query->orderBy("id", "desc")->get(), $search];
   }
 
