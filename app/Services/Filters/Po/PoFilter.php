@@ -17,7 +17,7 @@ class PoFilter
   {
     $this->query = $query
       ->select("pos.*")
-      ->join("companies", "companies.id", "=", "pos.companyId")
+      ->join("companies", "companies.id", "=", "pos.contract_id")
       ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");
     return $this;
   }
@@ -102,6 +102,26 @@ class PoFilter
           )
           ->orWhere(
             "pos.poNumber",
+            "like",
+            "%" . $filter["filter"]["search"] . "%"
+          )
+          ->orWhere(
+            "pos.poProject",
+            "like",
+            "%" . $filter["filter"]["search"] . "%"
+          )
+          ->orWhere(
+            "pos.poCompanyPo",
+            "like",
+            "%" . $filter["filter"]["search"] . "%"
+          )
+          ->orWhere(
+            "pos.poProjectLocation",
+            "like",
+            "%" . $filter["filter"]["search"] . "%"
+          )
+          ->orWhere(
+            "companies.companyName",
             "like",
             "%" . $filter["filter"]["search"] . "%"
           );
