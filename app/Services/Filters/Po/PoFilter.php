@@ -125,6 +125,11 @@ class PoFilter
             "companies.companyName",
             "like",
             "%" . $filter["filter"]["search"] . "%"
+          )
+          ->orWhere(
+            "users.name",
+            "like",
+            "%" . $filter["filter"]["search"] . "%"
           );
       });
     }

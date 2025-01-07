@@ -61,6 +61,12 @@ class PoResource extends JsonResource
       "contract_id" => $this->contract_id,
       "counts" => $this->resource->request_count,
       "client_status" => $this->resource->client_status,
+      "company" => $this->resource->company
+        ? CompanyResource::make($this->resource->company)
+        : null,
+      "contract" => $this->resource->contract
+        ? CompanyResource::make($this->resource->contract)
+        : null,
     ];
   }
 }
