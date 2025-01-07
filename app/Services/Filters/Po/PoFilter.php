@@ -18,6 +18,7 @@ class PoFilter
     $this->query = $query
       ->select("pos.*")
       ->join("companies", "companies.id", "=", "pos.contract_id")
+      ->join("users", "users.id", "=", "pos.u_id")
       ->leftJoin("merchants", "merchants.id", "=", "pos.selectMerchant");
     return $this;
   }
