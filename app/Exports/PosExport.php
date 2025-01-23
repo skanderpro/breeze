@@ -3,10 +3,10 @@
 namespace App\Exports;
 
 use App\Models\Po;
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PosExport implements FromQuery, WithHeadings
+class PosExport implements FromArray, WithHeadings
 {
   protected $startDate;
   protected $endDate;
@@ -20,49 +20,18 @@ class PosExport implements FromQuery, WithHeadings
   public function headings(): array
   {
     return [
-      "id",
-      "poNumber",
-      "u_id",
-      "companyId",
-      "selectMerchant",
-      "inputMerchant",
-      "poType",
-      "poPurpose",
-      "poMaterials",
-      "poProject",
-      "poProjectLocation",
-      "poValue",
-      "poInvoice",
-      "poEMInvoice",
-      "poCostSheet",
-      "poPod",
-      "poJobStatus",
-      "poFinanceStatus",
-      "poCompanyPo",
-      "poCancelled",
-      "poCancelledBy",
-      "poCompleted",
-      "poNotes",
-      "created_at",
-      "updated_at",
-      "alt_merchant_name",
-      "alt_merchant_contact",
-      "contract_id",
-      "poCompletedStatus",
-      "poVisitStatus",
-      "alt_merchant_email",
-      "status",
-      "is_request",
-      "request_file",
-      "billable_value_final",
-      "billable_date",
-      "overlimit_value",
-      "created_by_id",
-      "actual_value",
+      "EM Number",
+      "Supplier Name",
+      "PO Billable Value",
+      "Job Location",
+      "Job Number",
+      "PO Note",
+      "Tech Name",
+      "Date Created",
     ];
   }
 
-  public function query()
+  public function array(): array
   {
     $query = Po::query();
 
@@ -74,6 +43,21 @@ class PosExport implements FromQuery, WithHeadings
       $query->where("created_at", "<=", $this->endDate);
     }
 
-    return $query;
+    $results = $query->get();
+    $data = $results->map(function ($item) {
+      return [
+        $item->poNumber,
+        $item->poType === "Pre Approved"
+          ? $item->merchant->merchantName
+          : $item->alt_merchant_name,
+        $item->billable_value_final,
+        $item->poProjectLocation,
+        $item->poCompanyPo,
+        $item->poMaterials,
+        $item->user->name,
+        $item->created_at,
+      ];
+    });
+    return $data->toArray();
   }
 }
