@@ -21,12 +21,26 @@ class PosExport implements FromArray, WithHeadings
   {
     return [
       "EM Number",
+      "EM Manual Status",
+      "Company Name",
+      "Contract Name",
+      "User Name (Plan Level)",
+      "Created By (Plan Level)",
+      "Order Purpose (Project, Van Stock, Reactive, PPM)",
+      "Order Status (Client-Side Auto Status)",
+      "Project/Task",
+      "Project Location",
       "Supplier Name",
+      "PO Type (Pre-Approved OR Alternative)",
+      "Alternative Supplier Name",
+      "Alternative Supplier Contact Name",
+      "Alternative Supplier Email",
+      "Supplier Cost (As entered by the User",
+      "Actual Supplier Cost",
       "PO Billable Value",
-      "Job Location",
-      "Job Number",
-      "PO Note",
-      "Tech Name",
+      "Material Brief",
+      "PO Cancelled",
+      "Reason for Cancelling (From Reason Clicked when cancelled)",
       "Date Created",
     ];
   }
@@ -47,14 +61,26 @@ class PosExport implements FromArray, WithHeadings
     $data = $results->map(function ($item) {
       return [
         $item->poNumber,
-        $item->poType === "Pre Approved"
-          ? $item->merchant->merchantName
-          : $item->alt_merchant_name,
-        $item->billable_value_final,
+        $item->status,
+        $item->company?->companyName,
+        $item->contract?->companyName,
+        $item->user?->name . " (" . $item->user->accessLevel . ")",
+        $item->createdBy?->name . " (" . $item->createdBy->accessLevel . ")",
+        $item->poPurpose,
+        $item->client_status,
+        $item->poProject,
         $item->poProjectLocation,
-        $item->poCompanyPo,
+        $item->poType === "Pre Approved" ? $item->merchant->merchantName : "",
+        $item->poType,
+        $item->alt_merchant_name,
+        $item->alt_merchant_contact,
+        $item->alt_merchant_email,
+        $item->poValue,
+        $item->actual_value,
+        $item->billable_value_final,
         $item->poMaterials,
-        $item->user->name,
+        $item->poCancelled === 1 ? "Yes" : "No",
+        $item->poCompletedStatus,
         $item->created_at,
       ];
     });

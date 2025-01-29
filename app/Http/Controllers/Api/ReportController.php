@@ -26,8 +26,6 @@ class ReportController extends Controller
       "typeReport" => "required",
     ]);
 
-    $user = Auth::user(); // Отримуємо автентифікованого користувача
-    // $this->statisticsReportFactory = new StatisticsReportFactory($user); // Передаємо користувача в конструктор
     $type = $request->input("type");
     $id = $request->input("id");
     $interval = $request->input("interval");

@@ -7,6 +7,7 @@ use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Services\Filters\Company\CompanyFilter;
+use Exception;
 
 class CompanyController extends Controller
 {
@@ -90,5 +91,24 @@ class CompanyController extends Controller
   {
     $companies = Company::where("parent_id", $parent_id)->get();
     return CompanyResource::collection($companies);
+  }
+
+  public function lockoutValidate(Company $company, Request $request)
+  {
+    try {
+      $merchantsRequest = $request->get("merchants");
+      $merchants = explode(",", $merchantsRequest);
+      $lockout = $company->lockout->pluck("id");
+      $containsAny = collect($merchants)->some(
+        fn($merchant) => $lockout->contains($merchant)
+      );
+      if ($containsAny) {
+        return ["status" => false];
+      } else {
+        return ["status" => true];
+      }
+    } catch (Exception $exception) {
+      return ["status" => false];
+    }
   }
 }

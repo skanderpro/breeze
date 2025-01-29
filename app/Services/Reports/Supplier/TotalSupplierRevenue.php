@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Services\Reports\Company;
+namespace App\Services\Reports\Supplier;
 
-use App\Models\Po;
-use App\Services\Reports\AbstractReport;
+use App\Services\Reports\Supplier\AbstractSupplierReport;
+
 use App\Services\Reports\DateRangeHelper;
 
-class SpendAnalysis extends AbstractReport
+class TotalSupplierRevenue extends AbstractSupplierReport
 {
   public function getStatistics($type, $id, $interval)
   {
-    $query = $this->filterByType(Po::query(), $type, $id);
+    $query = $this->filterByType($this->query, $type, 8);
     [
       $startDate,
       $endDate,
       $interval,
       $dateFormat,
     ] = $this->getDateRangeAndFormat($interval);
+
     $dateRange = DateRangeHelper::generateDateRange(
       $startDate->copy(),
       $endDate,
@@ -43,7 +44,7 @@ class SpendAnalysis extends AbstractReport
 
       $totalProfit = $clonedQuery
         ->whereBetween("billable_date", [$date, $nextDate])
-        ->sum("billable_value_final");
+        ->sum("actual_value");
 
       return [
         $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,

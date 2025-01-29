@@ -3,13 +3,14 @@ namespace App\Services\Reports\Company;
 
 use App\Models\Po;
 use App\Models\User;
+use App\Services\Reports\AbstractReport;
 use Carbon\Carbon;
 use App\Services\Reports\DateRangeHelper;
 use Illuminate\Support\Facades\DB;
 use App\Services\Reports\ReportInterface;
 use Illuminate\Support\Facades\Auth;
 
-class RebateReport implements ReportInterface
+class RebateReport extends AbstractReport
 {
   protected $user;
 
@@ -44,62 +45,6 @@ class RebateReport implements ReportInterface
     return $this->formatStatistics($dateRange, $results, $interval);
   }
 
-  private function filterByType($query, $type, $id)
-  {
-    switch ($type) {
-      case "company":
-        $query->where("companyId", $id);
-        break;
-      case "contract":
-        $query->where("contract_id", $id);
-        break;
-    }
-    return $query;
-  }
-
-  private function getDateRangeAndFormat($interval)
-  {
-    $now = Carbon::now();
-    switch ($interval) {
-      case "Last Week":
-        $startDate = $now
-          ->subWeek()
-          ->addDays(1)
-          ->startOfDay();
-        $dateFormat = "d/m";
-        $interval = "1 day";
-        break;
-      case "Last Month":
-        $startDate = $now
-          ->subMonth()
-          ->addDays(1)
-          ->startOfDay();
-        $dateFormat = "d/m";
-        $interval = "1 week";
-        break;
-      case "Past 90 days":
-        $startDate = $now
-          ->subDays(90)
-          ->addDays(1)
-          ->startOfDay();
-        $dateFormat = "d/m";
-        $interval = "1 week";
-        break;
-      case "Past 180 days":
-        $startDate = $now
-          ->subDays(180)
-          ->addDays(1)
-          ->startOfDay();
-        $dateFormat = "d/m";
-        $interval = "1 week";
-        break;
-      default:
-        throw new \InvalidArgumentException("Invalid interval");
-    }
-    $endDate = Carbon::now()->endOfDay();
-    return [$startDate, $endDate, $interval, $dateFormat];
-  }
-
   private function calculateResults(
     $query,
     $dateRange,
@@ -126,18 +71,6 @@ class RebateReport implements ReportInterface
 
       return [
         $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,
-      ];
-    });
-  }
-
-  private function formatStatistics($dateRange, $results, $interval)
-  {
-    return $dateRange->map(function ($date) use ($results, $interval) {
-      $formattedDate = $date->format($interval === "1 day" ? "d/m" : "Y-m-d");
-      $titleFormattedDate = $date->format("d/m");
-      return [
-        "date" => $titleFormattedDate,
-        "total_profit" => $results->get($formattedDate) ?? 0,
       ];
     });
   }

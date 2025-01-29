@@ -74,6 +74,10 @@ Route::prefix("v1")
           CompanyController::class,
           "findByParent",
         ])->name("find-by-parent");
+        Route::get("/{company}/lockout-validate", [
+          CompanyController::class,
+          "lockoutValidate",
+        ])->name("lockout-validate");
       });
 
     Route::name("merchants.")

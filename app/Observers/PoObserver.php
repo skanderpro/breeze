@@ -36,8 +36,8 @@ class PoObserver
 
     if ($user->id !== $po->u_id) {
       $merchant = $po->merchant
-          ? $po->merchant->merchantName
-          : $po->alt_merchant_name;
+        ? $po->merchant->merchantName
+        : $po->alt_merchant_name;
 
       Notification::create([
         "title" => "Breeze Order - #EM-{$po->id}",
@@ -66,8 +66,10 @@ class PoObserver
   public function updated(Po $po): void
   {
     $user = Auth::user();
-    if ($po->isDirty("billable_value_final" && $po->billable_value_final)) {
-      $po->billable_date = now();
+    Log::info("billable_value_final " . $po->billable_value_final);
+    Log::info("isDirty" . $po->isDirty("billable_value_final"));
+    // Log::info("status " . $po->status);
+    if ($po->isDirty("billable_value_final") && $po->billable_value_final) {
       if ($po->is_request) {
       }
 
@@ -181,6 +183,9 @@ class PoObserver
 
     if ($po->isDirty("status") && $po->status === "Cancelled") {
       $po->client_status = "Cancelled";
+    }
+    if ($po->isDirty("billable_value_final") && $po->billable_value_final) {
+      $po->billable_date = now();
     }
   }
 
