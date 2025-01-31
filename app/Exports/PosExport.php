@@ -22,6 +22,7 @@ class PosExport implements FromArray, WithHeadings
     return [
       "EM Number",
       "EM Manual Status",
+      "POD Uploaded",
       "Company Name",
       "Contract Name",
       "User Name (Plan Level)",
@@ -40,6 +41,7 @@ class PosExport implements FromArray, WithHeadings
       "PO Billable Value",
       "Material Brief",
       "PO Cancelled",
+      "Cancelled By (Name & Plan Level)",
       "Reason for Cancelling (From Reason Clicked when cancelled)",
       "Date Created",
     ];
@@ -62,15 +64,16 @@ class PosExport implements FromArray, WithHeadings
       return [
         $item->poNumber,
         $item->status,
+        $item->poPod ? "Yes" : "No",
         $item->company?->companyName,
         $item->contract?->companyName,
         $item->user?->name . " (" . $item->user->accessLevel . ")",
-        $item->createdBy?->name . " (" . $item->createdBy->accessLevel . ")",
+        $item->createdBy?->name . " (" . $item->createdBy?->accessLevel . ")",
         $item->poPurpose,
         $item->client_status,
         $item->poProject,
         $item->poProjectLocation,
-        $item->poType === "Pre Approved" ? $item->merchant->merchantName : "",
+        $item->poType === "Pre Approved" ? $item->merchant?->merchantName : "",
         $item->poType,
         $item->alt_merchant_name,
         $item->alt_merchant_contact,
@@ -80,6 +83,7 @@ class PosExport implements FromArray, WithHeadings
         $item->billable_value_final,
         $item->poMaterials,
         $item->poCancelled === 1 ? "Yes" : "No",
+        $item->poCancelledBy,
         $item->poCompletedStatus,
         $item->created_at,
       ];

@@ -150,6 +150,11 @@ class Po extends Model
     return $this->belongsTo(User::class, "u_id");
   }
 
+  public function company()
+  {
+    return $this->belongsTo(Company::class, "companyId");
+  }
+
   public function contract()
   {
     return $this->belongsTo(Company::class, "contract_id");

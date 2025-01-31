@@ -105,6 +105,7 @@ enum Permission: string
         Permission::APP_CONTROL_PANEL->value,
         Permission::ADMIN_SENIOR_MANAGEMENT->value,
         Permission::COMPANY_ADD->value,
+        Permission::COMPANY_REPORTS->value,
         // Permission::PO_READ_LIST_ALL->value,
         // Permission::MENU_READ_ADMIN->value,
         // Permission::PO_READ_USERS_ALL->value,

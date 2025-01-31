@@ -10,7 +10,7 @@ class TotalSupplierRevenue extends AbstractSupplierReport
 {
   public function getStatistics($type, $id, $interval)
   {
-    $query = $this->filterByType($this->query, $type, 8);
+    $query = $this->filterByType($this->query, $type, $id);
     [
       $startDate,
       $endDate,
