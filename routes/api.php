@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\ExportReportController;
 use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
@@ -143,6 +144,24 @@ Route::prefix("v1")
         Route::get("/", [BannerController::class, "show"])->name("show");
         Route::post("/", [BannerController::class, "store"])->name("store");
       });
+
+      Route::name("export")
+          ->prefix("/export")
+          ->middleware("auth:sanctum")
+          ->group(function () {
+              Route::post("/by-company", [ExportReportController::class, "byCompany"])->name("byCompany");
+              Route::post("/by-contract", [ExportReportController::class, "byContract"])->name("byContract");
+              Route::post("/by-user", [ExportReportController::class, "byUser"])->name("byUser");
+              Route::post("/by-company-rebate", [ExportReportController::class, "byCompanyRebate"])->name("byCompanyRebate");
+              Route::post("/by-contract-rebate", [ExportReportController::class, "byContractRebate"])->name("byContractRebate");
+              Route::post("/company-compliens-report", [ExportReportController::class, "companyCompliensReport"])->name("companyCompliensReport");
+              Route::post("/contract-compliens-report", [ExportReportController::class, "contractCompliensReport"])->name("contractCompliensReport");
+              Route::post("/user-compliens-report", [ExportReportController::class, "userCompliensReport"])->name("userCompliensReport");
+              Route::post("/supplier-type-report", [ExportReportController::class, "supplierTypeReport"])->name("supplierTypeReport");
+              Route::post("/company-status-report", [ExportReportController::class, "companyStatusReport"])->name("companyStatusReport");
+              Route::post("/contract-status-report", [ExportReportController::class, "contractStatusReport"])->name("contractStatusReport");
+              Route::post("/user-status-report", [ExportReportController::class, "userStatusReport"])->name("userStatusReport");
+          });
 
     Route::name("users.")
       ->prefix("/users")
