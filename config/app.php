@@ -188,4 +188,10 @@ return [
       "Excel" => Maatwebsite\Excel\Facades\Excel::class,
     ])
     ->toArray(),
+
+
+    /**
+     * custom
+     */
+    'po_send_emails' => env("PO_SEND_EMAILS", []),
 ];
