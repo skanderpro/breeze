@@ -8,7 +8,7 @@ use App\Services\Reports\DateRangeHelper;
 
 class SpendAnalysis extends AbstractReport
 {
-  public function getStatistics($type, $id, $interval)
+  public function getStatistics($type, $id, $interval, $dateStart, $dateEnd)
   {
     $query = $this->filterByType(Po::query(), $type, $id);
     [
@@ -16,7 +16,7 @@ class SpendAnalysis extends AbstractReport
       $endDate,
       $interval,
       $dateFormat,
-    ] = $this->getDateRangeAndFormat($interval);
+    ] = $this->getDateRangeAndFormat($interval, $dateStart, $dateEnd);
     $dateRange = DateRangeHelper::generateDateRange(
       $startDate->copy(),
       $endDate,

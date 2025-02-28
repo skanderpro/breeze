@@ -4,7 +4,13 @@ use Carbon\Carbon;
 
 abstract class AbstractReport
 {
-  abstract public function getStatistics($type, $id, $interval);
+  abstract public function getStatistics(
+    $type,
+    $id,
+    $interval,
+    $dateStart,
+    $dateEnd
+  );
 
   protected function filterByType($query, $type, $id)
   {
@@ -21,50 +27,49 @@ abstract class AbstractReport
       case "supplier":
         $query->where("selectMerchant", $id);
         break;
+      case "supplier_type":
+        $query
+          ->join("merchants", "merchants.id", "=", "pos.selectMerchant")
+          ->where("{$id}", "YES");
+        break;
     }
     return $query;
   }
 
-  protected function getDateRangeAndFormat($interval)
+  protected function getDateRangeAndFormat($interval, $dateStart, $dateEnd)
   {
-    $now = Carbon::now();
+    if (!$dateStart || !$dateEnd) {
+      throw new \InvalidArgumentException("Start and end dates are required");
+    }
+
+    $startDate = Carbon::parse($dateStart)->startOfDay();
+    $endDate = Carbon::parse($dateEnd)->endOfDay();
+
     switch ($interval) {
-      case "Last Week":
-        $startDate = $now
-          ->subWeek()
-          ->addDays(1)
-          ->startOfDay();
+      case "By Days":
         $dateFormat = "%d/%m";
         $interval = "1 day";
         break;
-      case "Last Month":
-        $startDate = $now
-          ->subMonth()
-          ->addDays(1)
-          ->startOfDay();
+      case "By Weeks":
         $dateFormat = "%d/%m";
         $interval = "1 week";
         break;
-      case "Past 90 days":
-        $startDate = $now
-          ->subDays(90)
-          ->addDays(1)
-          ->startOfDay();
+      case "By Months":
         $dateFormat = "%d/%m";
-        $interval = "1 week";
+        $interval = "1 month";
         break;
-      case "Past 180 days":
-        $startDate = $now
-          ->subDays(180)
-          ->addDays(1)
-          ->startOfDay();
+      case "By Quarters":
         $dateFormat = "%d/%m";
-        $interval = "1 week";
+        $interval = "3 months";
+        break;
+      case "By Half of Years":
+        $dateFormat = "%d/%m";
+        $interval = "6 months";
         break;
       default:
         throw new \InvalidArgumentException("Invalid interval");
     }
-    $endDate = Carbon::now();
+
     return [$startDate, $endDate, $interval, $dateFormat];
   }
 

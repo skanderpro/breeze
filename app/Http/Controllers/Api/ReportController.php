@@ -24,15 +24,25 @@ class ReportController extends Controller
       "id" => "required",
       "interval" => "required",
       "typeReport" => "required",
+      "dateStart" => "required",
+      "dateEnd" => "required",
     ]);
 
     $type = $request->input("type");
     $id = $request->input("id");
     $interval = $request->input("interval");
+    $dateEnd = $request->input("dateEnd");
+    $dateStart = $request->input("dateStart");
     $typeReport = $request->input("typeReport", "profit"); // Default to 'profit'
     $reportService = $this->statisticsReportFactory->create($typeReport);
 
-    $statistics = $reportService->getStatistics($type, $id, $interval);
+    $statistics = $reportService->getStatistics(
+      $type,
+      $id,
+      $interval,
+      $dateStart,
+      $dateEnd
+    );
 
     return response()->json($statistics);
   }
