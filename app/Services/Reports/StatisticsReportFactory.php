@@ -7,6 +7,8 @@ use App\Services\Reports\Company\RebateReport;
 use App\Services\Reports\Company\SpendAnalysis;
 use App\Services\Reports\Company\ContractComplianceReport;
 use App\Services\Reports\AbstractReport;
+use App\Services\Reports\Company\PoStatus;
+use App\Services\Reports\Company\SupplierReport;
 use App\Services\Reports\Supplier\NumbersEmptyOrders;
 use App\Services\Reports\Supplier\NumbersOrders;
 use App\Services\Reports\Supplier\QuoteAverageTime;
@@ -23,6 +25,10 @@ class StatisticsReportFactory
         return new RebateReport();
       case "contract-compliance":
         return new ContractComplianceReport();
+      case "supplier":
+        return new SupplierReport();
+      case "po-statuses":
+        return new PoStatus();
       case "total-supplier-revenue":
         return new TotalSupplierRevenue();
       case "numbers-orders":

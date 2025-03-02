@@ -2,23 +2,11 @@
 namespace App\Services\Reports\Company;
 
 use App\Models\Po;
-use App\Models\User;
 use App\Services\Reports\AbstractReport;
-use Carbon\Carbon;
 use App\Services\Reports\DateRangeHelper;
-use Illuminate\Support\Facades\DB;
-use App\Services\Reports\ReportInterface;
-use Illuminate\Support\Facades\Auth;
 
-class RebateReport extends AbstractReport
+class SupplierReport extends AbstractReport
 {
-  protected $user;
-
-  public function __construct()
-  {
-    $this->user = Auth::user();
-  }
-
   public function getStatistics($type, $id, $interval, $dateStart, $dateEnd)
   {
     $query = $this->filterByType(Po::query(), $type, $id);
@@ -30,31 +18,18 @@ class RebateReport extends AbstractReport
     ] = $this->getDateRangeAndFormat($interval, $dateStart, $dateEnd);
     $dateRange = DateRangeHelper::generateDateRange(
       $startDate->copy(),
-      $endDate->copy(),
+      $endDate,
       $interval
     );
-    $rebatePercentage = $this->user->company->agreed_rebate;
-    $results = $this->calculateResults(
-      $query,
-      $dateRange,
-      $rebatePercentage,
-      $interval,
-      $endDate
-    );
+    $results = $this->calculateResults($query, $dateRange, $interval, $endDate);
 
     return $this->formatStatistics($dateRange, $results, $interval);
   }
 
-  private function calculateResults(
-    $query,
-    $dateRange,
-    $rebatePercentage,
-    $interval,
-    $endDate
-  ) {
+  private function calculateResults($query, $dateRange, $interval, $endDate)
+  {
     return $dateRange->mapWithKeys(function ($date) use (
       $query,
-      $rebatePercentage,
       $interval,
       $endDate
     ) {
@@ -67,7 +42,7 @@ class RebateReport extends AbstractReport
 
       $totalProfit = $clonedQuery
         ->whereBetween("billable_date", [$date, $nextDate])
-        ->sum(DB::raw("billable_value_final * " . $rebatePercentage / 100));
+        ->sum("actual_value");
 
       return [
         $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,
