@@ -21,8 +21,12 @@ class PoMailService
     $companyAdmins = $this->getCompanyAdmins();
     $contractAdmins = $this->getContractUsers();
 
-    $poSendEmails = config('app.po_send_emails', []);
-    $poSendEmails = explode(',', $poSendEmails);
+    $poSendEmails = config('app.po_send_emails', '');
+    if (empty($poSendEmails)) {
+        $poSendEmails = [];
+    } else {
+        $poSendEmails = explode(',', $poSendEmails);
+    }
 
     $emails = array_merge($companyAdmins, $contractAdmins, $poSendEmails);
 
