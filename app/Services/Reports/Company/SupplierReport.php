@@ -4,6 +4,7 @@ namespace App\Services\Reports\Company;
 use App\Models\Po;
 use App\Services\Reports\AbstractReport;
 use App\Services\Reports\DateRangeHelper;
+use Illuminate\Support\Facades\Log;
 
 class SupplierReport extends AbstractReport
 {
@@ -22,7 +23,7 @@ class SupplierReport extends AbstractReport
       $interval
     );
     $results = $this->calculateResults($query, $dateRange, $interval, $endDate);
-
+    Log::info($results);
     return $this->formatStatistics($dateRange, $results, $interval);
   }
 
@@ -39,11 +40,11 @@ class SupplierReport extends AbstractReport
       }
 
       $clonedQuery = clone $query;
-
+      Log::info("SQL Query: " . $clonedQuery->toSql(), $clonedQuery->getBindings());
       $totalProfit = $clonedQuery
         ->whereBetween("billable_date", [$date, $nextDate])
         ->sum("actual_value");
-
+        Log::info($totalProfit);
       return [
         $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,
       ];

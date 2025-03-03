@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Reports;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 abstract class AbstractReport
 {
@@ -78,9 +79,11 @@ abstract class AbstractReport
     return $dateRange->map(function ($date) use ($results, $interval) {
       $formattedDate = $date->format($interval === "1 day" ? "d/m" : "Y-m-d");
       $titleFormattedDate = $date->format("d/m");
+      
+      $total_profit = $results->get($formattedDate) ?? 0;
       return [
         "date" => $titleFormattedDate,
-        "total_profit" => $results->get($formattedDate) ?? 0,
+        "total_profit" => $total_profit,
       ];
     });
   }

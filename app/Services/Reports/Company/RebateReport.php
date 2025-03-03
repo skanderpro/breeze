@@ -67,7 +67,7 @@ class RebateReport extends AbstractReport
 
       $totalProfit = $clonedQuery
         ->whereBetween("billable_date", [$date, $nextDate])
-        ->sum(DB::raw("billable_value_final * " . $rebatePercentage / 100));
+        ->sum(DB::raw("billable_value_final - actual_value"));
 
       return [
         $date->format($interval === "1 day" ? "d/m" : "Y-m-d") => $totalProfit,
