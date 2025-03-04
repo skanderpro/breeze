@@ -9,10 +9,27 @@ use App\Models\PoNote;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportReportController extends Controller
 {
+    protected function exportResponse($data)
+    {
+        $fileName = now()->format('y/m') . '/export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv';
+
+        Excel::store(
+            new PosExternalExport($data),
+            $fileName,
+            'public',
+            \Maatwebsite\Excel\Excel::CSV
+        );
+
+        return response()->json([
+            'url' => Storage::disk('public')->url($fileName),
+        ]);
+    }
+
     public function byCompany(Request $request)
     {
         $qb = Po::query();
@@ -52,11 +69,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function byContract(Request $request)
@@ -98,11 +111,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
 
@@ -149,11 +158,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function byCompanyRebate(Request $request)
@@ -191,11 +196,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
 
@@ -234,11 +235,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function companyCompliensReport(Request $request)
@@ -284,11 +281,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function contractCompliensReport(Request $request)
@@ -333,11 +326,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function userCompliensReport(Request $request)
@@ -382,11 +371,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function supplierTypeReport(Request $request)
@@ -429,11 +414,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function companyStatusReport(Request $request)
@@ -488,11 +469,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function contractStatusReport(Request $request)
@@ -543,11 +520,7 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 
     public function userStatusReport(Request $request)
@@ -598,10 +571,6 @@ class ExportReportController extends Controller
             ];
         }
 
-        return Excel::download(
-            new PosExternalExport($data),
-            'export-' . now()->format('y-m-d-m-Y-H-i-s') . '.csv',
-            \Maatwebsite\Excel\Excel::CSV
-        );
+        return $this->exportResponse($data);
     }
 }
