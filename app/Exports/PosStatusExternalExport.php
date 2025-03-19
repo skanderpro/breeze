@@ -6,12 +6,12 @@ use App\Models\Po;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PosExternalExport implements FromArray, WithHeadings
+class PosStatusExternalExport implements FromArray, WithHeadings
 {
   protected $data;
   public function __construct($data)
   {
-      $this->data = $data;
+    $this->data = $data;
   }
 
   public function headings(): array
@@ -19,7 +19,7 @@ class PosExternalExport implements FromArray, WithHeadings
     return [
       "EM Number",
       "EM Manual Status",
-      "POD Uploaded",
+      "POD Uploaded (Yes/No)",
       "Company Name",
       "Contract Name",
       "User Name (Plan Level)",
@@ -33,13 +33,13 @@ class PosExternalExport implements FromArray, WithHeadings
       "Alternative Supplier Name",
       "Alternative Supplier Contact Name",
       "Alternative Supplier Email",
-      "Supplier Cost (As entered by the User",
+      "Supplier Cost",
       "Actual Supplier Cost",
       "PO Billable Value",
       "Material Brief",
-      "PO Cancelled",
+      "PO Cancelled (Yes/No)",
       "Cancelled By (Name & Plan Level)",
-      "Reason for Cancelling (From Reason Clicked when cancelled)",
+      "Reason for Cancelling",
       "Date Created",
     ];
   }

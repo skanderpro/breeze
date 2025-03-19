@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\CompanyController;
-use App\Http\Controllers\Api\ExportReportController;
 use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
@@ -20,6 +19,11 @@ use App\Http\Controllers\Api\PoNoteController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\UserDeviceController;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\ExportReport\ExportContractComplianceReportController;
+use App\Http\Controllers\Api\ExportReport\ExportRebateReportController;
+use App\Http\Controllers\Api\ExportReport\ExportSpendReportController;
+use App\Http\Controllers\Api\ExportReport\ExportStatusReportController;
+use App\Http\Controllers\Api\ExportReport\ExportSupplierReportController;
 use App\Models\PoHistory;
 
 /*
@@ -150,55 +154,55 @@ Route::prefix("v1")
       ->middleware("auth:sanctum")
       ->group(function () {
         Route::post("/by-company", [
-          ExportReportController::class,
+          ExportSpendReportController::class,
           "byCompany",
         ])->name("byCompany");
         Route::post("/by-contract", [
-          ExportReportController::class,
+          ExportSpendReportController::class,
           "byContract",
         ])->name("byContract");
         Route::post("/by-user", [
-          ExportReportController::class,
+          ExportSpendReportController::class,
           "byUser",
         ])->name("byUser");
         Route::post("/by-company-rebate", [
-          ExportReportController::class,
+          ExportRebateReportController::class,
           "byCompanyRebate",
         ])->name("byCompanyRebate");
         Route::post("/by-contract-rebate", [
-          ExportReportController::class,
+          ExportRebateReportController::class,
           "byContractRebate",
         ])->name("byContractRebate");
         Route::post("/company-compliens-report", [
-          ExportReportController::class,
+          ExportContractComplianceReportController::class,
           "companyCompliensReport",
         ])->name("companyCompliensReport");
         Route::post("/contract-compliens-report", [
-          ExportReportController::class,
+          ExportContractComplianceReportController::class,
           "contractCompliensReport",
         ])->name("contractCompliensReport");
         Route::post("/user-compliens-report", [
-          ExportReportController::class,
+          ExportContractComplianceReportController::class,
           "userCompliensReport",
         ])->name("userCompliensReport");
         Route::post("/supplier-supplier-report", [
-          ExportReportController::class,
+          ExportSupplierReportController::class,
           "supplierSupplierReport",
         ])->name("supplierSupplierReport");
         Route::post("/supplier-type-report", [
-          ExportReportController::class,
+          ExportSupplierReportController::class,
           "supplierTypeReport",
         ])->name("supplierTypeReport");
         Route::post("/company-status-report", [
-          ExportReportController::class,
+          ExportStatusReportController::class,
           "companyStatusReport",
         ])->name("companyStatusReport");
         Route::post("/contract-status-report", [
-          ExportReportController::class,
+          ExportStatusReportController::class,
           "contractStatusReport",
         ])->name("contractStatusReport");
         Route::post("/user-status-report", [
-          ExportReportController::class,
+          ExportStatusReportController::class,
           "userStatusReport",
         ])->name("userStatusReport");
       });
