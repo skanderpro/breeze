@@ -16,7 +16,7 @@ trait UserControllerTrait
     $user = Auth::user();
     $search = $request->get("search");
 
-    $query = User::query();
+    $query = User::query()->distinct();
     switch ($accessLevel) {
       case "2":
       case "1":
