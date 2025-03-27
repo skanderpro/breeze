@@ -48,23 +48,23 @@ abstract class AbstractReport
 
     switch ($interval) {
       case "By Days":
-        $dateFormat = "%d/%m";
+        $dateFormat = "%d/%m/%Y";
         $interval = "1 day";
         break;
       case "By Weeks":
-        $dateFormat = "%d/%m";
+        $dateFormat = "%d/%m%m/%Y";
         $interval = "1 week";
         break;
       case "By Months":
-        $dateFormat = "%d/%m";
+        $dateFormat = "%d/%m%m/%Y";
         $interval = "1 month";
         break;
       case "By Quarters":
-        $dateFormat = "%d/%m";
+        $dateFormat = "%d/%m%m/%Y";
         $interval = "3 months";
         break;
       case "By Half of Years":
-        $dateFormat = "%d/%m";
+        $dateFormat = "%d/%m%m/%Y";
         $interval = "6 months";
         break;
       default:
@@ -78,8 +78,8 @@ abstract class AbstractReport
   {
     return $dateRange->map(function ($date) use ($results, $interval) {
       $formattedDate = $date->format($interval === "1 day" ? "d/m" : "Y-m-d");
-      $titleFormattedDate = $date->format("d/m");
-      
+      $titleFormattedDate = $date->format("d/m/Y");
+
       $total_profit = $results->get($formattedDate) ?? 0;
       return [
         "date" => $titleFormattedDate,
